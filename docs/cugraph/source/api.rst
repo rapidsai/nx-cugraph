@@ -10,7 +10,7 @@ Structure
 Graph
 -----
 
-.. autoclass:: cugraph.structure.graph.Graph
+.. autoclass:: cugraph.structure.graph_classes.Graph
     :members:
     :undoc-members:
 
@@ -143,7 +143,7 @@ Core Number
 .. automodule:: cugraph.cores.core_number
     :members:
     :undoc-members:
-    
+
 K-Core
 ------
 
@@ -192,11 +192,11 @@ Pagerank
     :undoc-members:
 
 Pagerank (MG)
----------
+-------------
 
 .. automodule:: cugraph.dask.link_analysis.pagerank
     :members: pagerank
-    :undoc-members: 
+    :undoc-members:
 
 
 Link Prediction
@@ -247,7 +247,7 @@ Breadth-first-search
     :undoc-members:
 
 Breadth-first-search (MG)
---------------------
+-------------------------
 
 .. automodule:: cugraph.dask.traversal.bfs
     :members:
@@ -261,9 +261,16 @@ Single-source-shortest-path
     :undoc-members:
 
 Single-source-shortest-path (MG)
----------------------------
+--------------------------------
 
 .. automodule:: cugraph.dask.traversal.sssp
+    :members:
+    :undoc-members:
+
+Traveling-salesperson-problem
+-----------------------------
+
+.. automodule:: cugraph.traversal.traveling_salesperson
     :members:
     :undoc-members:
 
@@ -275,27 +282,25 @@ Minimum Spanning Tree
 ---------------------
 
 .. automodule:: cugraph.tree.minimum_spanning_tree
-    :members:
+    :members: minimum_spanning_tree
     :undoc-members:
 
 Maximum Spanning Tree
 ---------------------
 
-.. automodule:: cugraph.tree.maximum_spanning_tree
-    :members:
+.. automodule:: cugraph.tree.minimum_spanning_tree
+    :members: maximum_spanning_tree
     :undoc-members:
+    :noindex:
 
 
-DASK MG Helper functions 
+DASK MG Helper functions
 ===========================
 
 .. automodule:: cugraph.comms.comms
-    :members: initialize
+    :members: initialize, destroy
     :undoc-members:
-
-.. automodule:: cugraph.comms.comms
-    :members: destroy
-    :undoc-members:
+    :member-order: bysource
 
 .. automodule:: cugraph.dask.common.read_utils
     :members: get_chunksize
