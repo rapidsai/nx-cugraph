@@ -1,4 +1,5 @@
 # Copyright (c) 2023, NVIDIA CORPORATION.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -10,23 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from networkx.exception import *
+#
 
-from . import utils
+import importlib.resources
 
-from . import classes
-from .classes import *
-
-from . import convert
-from .convert import *
-
-from . import convert_matrix
-from .convert_matrix import *
-
-from . import generators
-from .generators import *
-
-from . import algorithms
-from .algorithms import *
-
-from nx_cugraph._version import __git_commit__, __version__
+# Read VERSION file from the module that is symlinked to VERSION file
+# in the root of the repo at build time or copied to the moudle at
+# installation. VERSION is a separate file that allows CI build-time scripts
+# to update version info (including commit hashes) without modifying
+# source files.
+__version__ = (
+    importlib.resources.files("nx_cugraph").joinpath("VERSION").read_text().strip()
+)
+__git_commit__ = ""
