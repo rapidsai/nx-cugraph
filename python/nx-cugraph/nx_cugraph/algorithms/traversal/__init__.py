@@ -10,9 +10,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from setuptools import find_packages, setup
-
-packages = find_packages(include=["nx_cugraph*"])
-setup(
-    package_data={key: ["VERSION"] for key in packages},
-)
+from .breadth_first_search import *
