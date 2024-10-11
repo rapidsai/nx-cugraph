@@ -21,7 +21,7 @@ jobs:
       needs: ${{ toJSON(needs) }}
   # changed-files:
   #   secrets: inherit
-  #   uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@branch-24.12
+  #   uses: rapidsai/shared-    workflows/.github/workflows/changed-files.yaml@branch-24.12
   #   with:
   #     files_yaml: |
   #       test_notebooks:
@@ -47,3 +47,9 @@ jobs:
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-24.12
     with:
       enable_check_generated_files: false
+  conda-python-build:
+    needs: checks
+    secrets: inherit
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@branch-24.12
+    with:
+      build_type: pull-request
