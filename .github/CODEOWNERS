@@ -1,23 +1,28 @@
 # https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
 # Order matters - match of highest importance goes last (last match wins)
 
+#doc code owners
+datasets/          @rapidsai/nxcugraph-doc-codeowners
+notebooks/         @rapidsai/nxcugraph-doc-codeowners
+docs/              @rapidsai/nxcugraph-doc-codeowners
+**/*.txt           @rapidsai/nxcugraph-doc-codeowners
+**/*.md            @rapidsai/nxcugraph-doc-codeowners
+**/*.rst           @rapidsai/nxcugraph-doc-codeowners
+**/*.ipynb         @rapidsai/nxcugraph-doc-codeowners
+**/*.pdf           @rapidsai/nxcugraph-doc-codeowners
+**/*.png           @rapidsai/nxcugraph-doc-codeowners
 
-# doc code owners
-# 
+#python code owners
+python/            @rapidsai/nxcugraph-python-codeowners
 
+#CI code owners
+/.github/                @rapidsai/ci-codeowners
+/ci/                     @rapidsai/ci-codeowners
+/.pre-commit-config.yaml @rapidsai/ci-codeowners
 
-# python code owners
-# example
-# python/nx_cugraph			@rapidsai/nx-cugraph-python-codeowners
-
-
-# CI code owners
-# /ci/			@rapidsai/ci-codeowners
-
-
-# packaging code owners
-# /conda/            @rapidsai/packaging-codeowners
-# /dependencies.yaml @rapidsai/packaging-codeowners
-# /build.sh          @rapidsai/packaging-codeowners
-# pyproject.toml     @rapidsai/packaging-codeowners
-# VERSION            @rapidsai/packaging-codeowners
+#packaging code owners
+# /.devcontainer/  @rapidsai/packaging-codeowners
+/conda/            @rapidsai/packaging-codeowners
+/dependencies.yaml @rapidsai/packaging-codeowners
+/build.sh          @rapidsai/packaging-codeowners
+pyproject.toml     @rapidsai/packaging-codeowners
