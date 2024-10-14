@@ -12,7 +12,7 @@ concurrency:
 jobs:
   pr-builder:
     needs:
-      # - changed-files
+      - changed-files
       - checks
       - conda-python-build
     secrets: inherit
