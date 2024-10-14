@@ -8,8 +8,8 @@ release_drafter: true
 forward_merger: true
 
 # enables/disables the Recently Updated Check
-recently_updated: true
+recently_updated: false
 
 # sets the threshold for how many commits behind the pull request must be to trigger a failure.
 # defaults to 5 if not set
-recently_updated_threshold: 5
+#recently_updated_threshold: 5
