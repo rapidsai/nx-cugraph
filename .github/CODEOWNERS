@@ -2,18 +2,18 @@
 # Order matters - match of highest importance goes last (last match wins)
 
 #doc code owners
-datasets/          @rapidsai/nxcugraph-doc-codeowners
-notebooks/         @rapidsai/nxcugraph-doc-codeowners
-docs/              @rapidsai/nxcugraph-doc-codeowners
-**/*.txt           @rapidsai/nxcugraph-doc-codeowners
-**/*.md            @rapidsai/nxcugraph-doc-codeowners
-**/*.rst           @rapidsai/nxcugraph-doc-codeowners
-**/*.ipynb         @rapidsai/nxcugraph-doc-codeowners
-**/*.pdf           @rapidsai/nxcugraph-doc-codeowners
-**/*.png           @rapidsai/nxcugraph-doc-codeowners
+datasets/          @rapidsai/nx-cugraph-doc-codeowners
+docs/              @rapidsai/nx-cugraph-doc-codeowners
+**/*.txt           @rapidsai/nx-cugraph-doc-codeowners
+notebooks/         @rapidsai/nx-cugraph-doc-codeowners
+**/*.md            @rapidsai/nx-cugraph-doc-codeowners
+**/*.rst           @rapidsai/nx-cugraph-doc-codeowners
+**/*.ipynb         @rapidsai/nx-cugraph-doc-codeowners
+**/*.pdf           @rapidsai/nx-cugraph-doc-codeowners
+**/*.png           @rapidsai/nx-cugraph-doc-codeowners
 
 #python code owners
-python/            @rapidsai/nxcugraph-python-codeowners
+python/            @rapidsai/nx-cugraph-python-codeowners
 
 #CI code owners
 /.github/                @rapidsai/ci-codeowners
