@@ -1,0 +1,217 @@
+# Dependency list for https://github.com/rapidsai/dependency-file-generator
+files:
+  all:
+    output: [conda]
+    matrix:
+      cuda: ["11.8", "12.5"]
+      arch: [x86_64]
+    includes:
+      - checks
+      - cuda
+      - cuda_version
+      - docs
+      - python_build_rapids
+      - python_build_wheel
+      - test_python_common
+      - python_run_nx_cugraph
+      - depends_on_pylibcugraph
+      - test_python_nx_cugraph
+      - depends_on_cupy
+  checks:
+    output: none
+    includes:
+      - checks
+      - py_version
+  docs:
+    output: none
+    includes:
+      - cuda_version
+      - docs
+      - py_version
+  py_build_nx_cugraph:
+    output: pyproject
+    pyproject_dir: python/nx-cugraph
+    extras:
+      table: build-system
+    includes:
+      - python_build_rapids
+      - python_build_wheel
+  py_run_nx_cugraph:
+    output: pyproject
+    pyproject_dir: python/nx-cugraph
+    extras:
+      table: project
+    includes:
+      - depends_on_pylibcugraph
+      - depends_on_cupy
+      - python_run_nx_cugraph
+  py_test_nx_cugraph:
+    output: pyproject
+    pyproject_dir: python/nx-cugraph
+    extras:
+      table: project.optional-dependencies
+      key: test
+    includes:
+      - test_python_common
+      - test_python_nx_cugraph
+
+channels:
+  - rapidsai
+  - rapidsai-nightly
+  - dask/label/dev
+  - dglteam/label/th23_cu118
+  - conda-forge
+  - nvidia
+dependencies:
+  checks:
+    common:
+      - output_types: [conda, requirements]
+        packages:
+          - pre-commit
+  cuda_version:
+    specific:
+      - output_types: conda
+        matrices:
+          - matrix:
+              cuda: "11.2"
+            packages:
+              - cuda-version=11.2
+          - matrix:
+              cuda: "11.4"
+            packages:
+              - cuda-version=11.4
+          - matrix:
+              cuda: "11.5"
+            packages:
+              - cuda-version=11.5
+          - matrix:
+              cuda: "11.8"
+            packages:
+              - cuda-version=11.8
+          - matrix:
+              cuda: "12.0"
+            packages:
+              - cuda-version=12.0
+          - matrix:
+              cuda: "12.2"
+            packages:
+              - cuda-version=12.2
+          - matrix:
+              cuda: "12.5"
+            packages:
+              - cuda-version=12.5
+  cuda:
+    specific:
+      - output_types: [conda]
+        matrices:
+          - matrix:
+              cuda: "12.*"
+            packages:
+              - cuda-cudart-dev
+              - cuda-nvtx-dev
+              - cuda-profiler-api
+              - libcublas-dev
+              - libcurand-dev
+              - libcusolver-dev
+              - libcusparse-dev
+          - matrix:
+              cuda: "11.*"
+            packages:
+              - cudatoolkit
+              - cuda-nvtx
+  docs:
+    common:
+      - output_types: [conda]
+        packages:
+          - breathe
+          - doxygen
+          - graphviz
+          - ipython
+          - nbsphinx
+          - numpydoc
+          - pydata-sphinx-theme
+          - recommonmark
+          - sphinx-copybutton
+          - sphinx-markdown-tables
+          - sphinx<6
+          - sphinxcontrib-websupport
+  py_version:
+    specific:
+      - output_types: [conda]
+        matrices:
+          - matrix:
+              py: "3.10"
+            packages:
+              - python=3.10
+          - matrix:
+              py: "3.11"
+            packages:
+              - python=3.11
+          - matrix:
+              py: "3.12"
+            packages:
+              - python=3.12
+          - matrix:
+            packages:
+              - python>=3.10,<3.13
+  python_build_rapids:
+    common:
+      - output_types: [conda, pyproject, requirements]
+        packages:
+          - rapids-build-backend>=0.3.1,<0.4.0.dev0
+  python_build_wheel:
+    common:
+      - output_types: [conda, pyproject, requirements]
+        packages:
+          - setuptools>=61.0.0
+          - wheel
+  test_python_common:
+    common:
+      - output_types: [conda, pyproject]
+        packages:
+          - pandas
+          - pytest
+          - pytest-benchmark
+          - pytest-cov
+          - pytest-xdist
+          - scipy
+  python_run_nx_cugraph:
+    common:
+      - output_types: [conda, pyproject]
+        packages:
+          - networkx>=3.0
+          - &numpy numpy>=1.23,<3.0a0
+  test_python_nx_cugraph:
+    common:
+      - output_types: [conda, pyproject]
+        packages:
+            # not needed by nx-cugraph tests, but is required for running networkx tests
+          - pytest-mpl
+  depends_on_cupy:
+    common:
+      - output_types: conda
+        packages:
+          - cupy>=12.0.0
+    # NOTE: This is intentionally not broken into groups by a 'cuda_suffixed' selector like
+    #       other packages with -cu{nn}x suffixes in this file.
+    #       All RAPIDS wheel builds (including in devcontainers) expect cupy to be suffixed.
+    specific:
+      - output_types: [requirements, pyproject]
+        matrices:
+          - matrix: {cuda: "12.*"}
+            packages:
+              - cupy-cuda12x>=12.0.0
+          - matrix: {cuda: "11.*"}
+            packages: &cupy_packages_cu11
+              - cupy-cuda11x>=12.0.0
+          - {matrix: null, packages: *cupy_packages_cu11}
+  depends_on_pylibcugraph:
+    common:
+      - output_types: conda
+        packages:
+          - &pylibcugraph_unsuffixed pylibcugraph==24.12.*,>=0.0.0a0
+      - output_types: requirements
+        packages:
+          # pip recognizes the index as a global option for the requirements.txt file
+          - --extra-index-url=https://pypi.nvidia.com
+          - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
