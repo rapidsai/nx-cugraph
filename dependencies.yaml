@@ -7,7 +7,6 @@ files:
       arch: [x86_64]
     includes:
       - checks
-      - cuda
       - cuda_version
       - docs
       - python_build_rapids
@@ -98,25 +97,6 @@ dependencies:
               cuda: "12.5"
             packages:
               - cuda-version=12.5
-  cuda:
-    specific:
-      - output_types: [conda]
-        matrices:
-          - matrix:
-              cuda: "12.*"
-            packages:
-              - cuda-cudart-dev
-              - cuda-nvtx-dev
-              - cuda-profiler-api
-              - libcublas-dev
-              - libcurand-dev
-              - libcusolver-dev
-              - libcusparse-dev
-          - matrix:
-              cuda: "11.*"
-            packages:
-              - cudatoolkit
-              - cuda-nvtx
   docs:
     common:
       - output_types: [conda]
