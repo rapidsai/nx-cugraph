@@ -27,6 +27,12 @@ files:
       - cuda_version
       - docs
       - py_version
+  test_notebooks:
+    output: none
+    includes:
+      - cuda_version
+      - py_version
+      - test_notebook
   py_build_nx_cugraph:
     output: pyproject
     pyproject_dir: python/nx-cugraph
@@ -51,6 +57,7 @@ files:
       table: project.optional-dependencies
       key: test
     includes:
+      - depends_on_cudf
       - test_python_common
       - test_python_nx_cugraph
 
@@ -141,6 +148,15 @@ dependencies:
         packages:
           - setuptools>=61.0.0
           - wheel
+  test_notebook:
+    common:
+      - output_types: [conda, requirements]
+        packages:
+          - ipython
+          - notebook>=0.5.0
+      - output_types: [conda]
+        packages:
+          - wget
   test_python_common:
     common:
       - output_types: [conda, pyproject]
@@ -181,13 +197,51 @@ dependencies:
             packages: &cupy_packages_cu11
               - cupy-cuda11x>=12.0.0
           - {matrix: null, packages: *cupy_packages_cu11}
-  depends_on_pylibcugraph:
+  depends_on_cudf:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==24.12.*,>=0.0.0a0
+          - &cudf_unsuffixed cudf==24.12.*
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
           - --extra-index-url=https://pypi.nvidia.com
           - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
+    specific:
+      - output_types: [requirements, pyproject]
+        matrices:
+          - matrix:
+              cuda: "12.*"
+              cuda_suffixed: "true"
+            packages:
+              - cudf-cu12==24.12.*
+          - matrix:
+              cuda: "11.*"
+              cuda_suffixed: "true"
+            packages:
+              - cudf-cu11==24.12.*
+          - {matrix: null, packages: [*cudf_unsuffixed]}
+  depends_on_pylibcugraph:
+    common:
+      - output_types: conda
+        packages:
+          - &pylibcugraph_unsuffixed pylibcugraph==24.12.*
+      - output_types: requirements
+        packages:
+          # pip recognizes the index as a global option for the requirements.txt file
+          - --extra-index-url=https://pypi.nvidia.com
+          - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
+    specific:
+      - output_types: [requirements, pyproject]
+        matrices:
+          - matrix:
+              cuda: "12.*"
+              cuda_suffixed: "true"
+            packages:
+              - pylibcugraph-cu12==24.12.*
+          - matrix:
+              cuda: "11.*"
+              cuda_suffixed: "true"
+            packages:
+              - pylibcugraph-cu11==24.12.*
+          - {matrix: null, packages: [*pylibcugraph_unsuffixed]}
