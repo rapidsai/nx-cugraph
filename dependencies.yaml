@@ -185,7 +185,7 @@ dependencies:
     common:
       - output_types: [conda, pyproject]
         packages:
-            # not needed by nx-cugraph tests, but is required for running networkx tests
+          # not needed by nx-cugraph tests, but is required for running networkx tests
           - pytest-mpl
   depends_on_cupy:
     common:
