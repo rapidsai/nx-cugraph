@@ -7,7 +7,6 @@ files:
       arch: [x86_64]
     includes:
       - checks
-      - cuda
       - cuda_version
       - docs
       - python_build_rapids
@@ -58,8 +57,6 @@ files:
 channels:
   - rapidsai
   - rapidsai-nightly
-  - dask/label/dev
-  - dglteam/label/th23_cu118
   - conda-forge
   - nvidia
 dependencies:
@@ -100,31 +97,10 @@ dependencies:
               cuda: "12.5"
             packages:
               - cuda-version=12.5
-  cuda:
-    specific:
-      - output_types: [conda]
-        matrices:
-          - matrix:
-              cuda: "12.*"
-            packages:
-              - cuda-cudart-dev
-              - cuda-nvtx-dev
-              - cuda-profiler-api
-              - libcublas-dev
-              - libcurand-dev
-              - libcusolver-dev
-              - libcusparse-dev
-          - matrix:
-              cuda: "11.*"
-            packages:
-              - cudatoolkit
-              - cuda-nvtx
   docs:
     common:
       - output_types: [conda]
         packages:
-          - breathe
-          - doxygen
           - graphviz
           - ipython
           - nbsphinx
@@ -185,7 +161,7 @@ dependencies:
     common:
       - output_types: [conda, pyproject]
         packages:
-          # not needed by nx-cugraph tests, but is required for running networkx tests
+            # not needed by nx-cugraph tests, but is required for running networkx tests
           - pytest-mpl
   depends_on_cupy:
     common:
@@ -209,7 +185,7 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==24.12.*,>=0.0.0a0
+          - &pylibcugraph_unsuffixed pylibcugraph==24.12.*
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
