@@ -63,8 +63,8 @@ repos:
     hooks:
       - id: nx-cugraph-meta-data-update
         name: nx-cugraph meta-data updater
-        entry: bash -c "PYTHONPATH=./python/nx-cugraph python ./python/nx-cugraph/_nx_cugraph/__init__.py"
-        files: ^python/nx-cugraph/
+        entry: bash -c "PYTHONPATH=. python _nx_cugraph/__init__.py"
+        files: ^(nx_cugraph|_nx_cugraph)/
         types: [python]
         language: python
         pass_filenames: false
@@ -73,8 +73,8 @@ repos:
     hooks:
       - id: nx-cugraph-readme-update
         name: nx-cugraph README updater
-        entry: bash -c "PYTHONPATH=./python/nx-cugraph python ./python/nx-cugraph/scripts/update_readme.py ./python/nx-cugraph/README.md"
-        files: ^python/nx-cugraph/
+        entry: bash -c "PYTHONPATH=. python scripts/update_readme.py README.md"
+        files: ^(nx_cugraph|_nx_cugraph)/
         types_or: [python, markdown]
         language: python
         pass_filenames: false

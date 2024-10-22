@@ -79,7 +79,7 @@ datasets/*
 !datasets/netscience.csv
 
 # nx-cugraph side effects
-python/nx-cugraph/objects.inv
+objects.inv
 
 .pydevproject
 

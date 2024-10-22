@@ -159,8 +159,8 @@ fi
 # Build and install the nx-cugraph Python package
 if buildDefault || hasArg nx-cugraph || hasArg all; then
     if hasArg --clean; then
-        cleanPythonDir ${REPODIR}/python/nx-cugraph
+        cleanPythonDir ${REPODIR}
     else
-        python ${PYTHON_ARGS_FOR_INSTALL} ${REPODIR}/python/nx-cugraph
+        python ${PYTHON_ARGS_FOR_INSTALL} ${REPODIR}
     fi
 fi
