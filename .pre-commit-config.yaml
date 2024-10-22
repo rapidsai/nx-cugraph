@@ -18,14 +18,14 @@ repos:
       - id: black
         language_version: python3
         args: [--target-version=py310]
-        files: ^(python/.*|benchmarks/.*)$
-        exclude: ^python/nx-cugraph/
+        files: ^(nx_cugraph.*|benchmarks/.*)$
+        exclude: ^nx_cugraph/
   - repo: https://github.com/PyCQA/flake8
     rev: 7.1.1
     hooks:
       - id: flake8
         args: ["--config=.flake8"]
-        files: python/.*$
+        files: nx_cugraph.*$
         types: [file]
         types_or: [python] # TODO: Enable [python, cython]
         additional_dependencies: ["flake8-force"]
@@ -63,8 +63,8 @@ repos:
     hooks:
       - id: nx-cugraph-meta-data-update
         name: nx-cugraph meta-data updater
-        entry: bash -c "PYTHONPATH=./python/nx-cugraph python ./python/nx-cugraph/_nx_cugraph/__init__.py"
-        files: ^python/nx-cugraph/
+        entry: bash -c "PYTHONPATH=./nx_cugraph python ./nx_cugraph/_nx_cugraph/__init__.py"
+        files: ^nx_cugraph
         types: [python]
         language: python
         pass_filenames: false
@@ -73,8 +73,8 @@ repos:
     hooks:
       - id: nx-cugraph-readme-update
         name: nx-cugraph README updater
-        entry: bash -c "PYTHONPATH=./python/nx-cugraph python ./python/nx-cugraph/scripts/update_readme.py ./python/nx-cugraph/README.md"
-        files: ^python/nx-cugraph/
+        entry: bash -c "PYTHONPATH=./nx_cugraph python ./scripts/update_readme.py ./README.md"
+        files: ^nx_cugraph/
         types_or: [python, markdown]
         language: python
         pass_filenames: false
