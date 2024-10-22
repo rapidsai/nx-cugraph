@@ -35,14 +35,10 @@ htmlcov
 dist/
 *.egg-info/
 python/build
-python/cugraph/bindings/*.cpp
 wheels/
 wheelhouse/
 _skbuild/
 cufile.log
-
-## pylibcugraph build directories & artifacts
-python/pylibcugraph/pylibcugraph.egg-info
 
 ## Patching
 *.diff
@@ -53,9 +49,6 @@ python/pylibcugraph/pylibcugraph.egg-info
 CMakeFiles/
 Debug
 build/
-cpp/build/
-cpp/include/cugraph/ipc_generated/*.h
-cpp/thirdparty/googletest/
 
 ## Eclipse IDE
 .project
@@ -91,14 +84,8 @@ cpp/doxygen/html
 docs/cugraph/lib*
 docs/cugraph/api/*
 
-# created by Dask tests
-python/dask-worker-space
-python/cugraph/dask-worker-space
-python/cugraph/cugraph/dask-worker-space
-python/cugraph/cugraph/tests/dask-worker-space
-
 # Sphinx docs & build artifacts
-docs/cugraph/source/api_docs/api/*
+docs/nx-cugraph/source/api_docs/api/*
 _html
 _text
 

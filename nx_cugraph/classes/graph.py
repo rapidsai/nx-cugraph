@@ -197,7 +197,7 @@ class Graph(nx.Graph):
                 f"{type(self).__name__} cannot be converted to the GPU, because it is "
                 "not on the CPU! This is not supposed to be possible. If you believe "
                 "you have found a bug, please report a minimum reproducible example to "
-                "https://github.com/rapidsai/cugraph/issues/new/choose"
+                "https://github.com/rapidsai/nx-cugraph/issues/new/choose"
             )
         try:
             Gcg = nxcg.from_networkx(
