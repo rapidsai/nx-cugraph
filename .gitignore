@@ -9,7 +9,7 @@ __pycache__
 .coverage
 .vscode
 .lock
-*.swp
+*.sw?
 *.pytest_cache
 *~
 DartConfiguration.tcl
