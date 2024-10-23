@@ -15,6 +15,9 @@ export CMAKE_GENERATOR=Ninja
 
 rapids-print-env
 
+export RAPIDS_BUILD_TYPE=nightly
+export RAPIDS_REPOSITORY=rapidsai/cugraph
+export RAPIDS_NIGHTLY_DATE=$(printf '%(%Y-%m-%d)T\n' -1)
 CPP_CHANNEL=$(rapids-download-conda-from-s3 cpp)
 
 rapids-generate-version > ./VERSION
