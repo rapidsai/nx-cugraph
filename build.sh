@@ -31,7 +31,6 @@ VALIDARGS="
    -g
    -n
    --pydevelop
-   --allgpuarch
    --clean
    -h
    --help
@@ -49,7 +48,6 @@ HELP="$0 [<target> ...] [<flag> ...]
    -g                         - build for debug
    -n                         - do not install after a successful build (does not affect Python packages)
    --pydevelop                - install the Python packages in editable mode
-   --allgpuarch               - build for all supported GPU architectures
    --clean                    - clean an individual target (note: to do a complete rebuild, use the clean target described above)
    -h                         - print this text
 
@@ -106,9 +104,6 @@ if hasArg -g; then
 fi
 if hasArg -n; then
     INSTALL_TARGET=""
-fi
-if hasArg --allgpuarch; then
-    BUILD_ALL_GPU_ARCH=1
 fi
 if hasArg --pydevelop; then
     PYTHON_ARGS_FOR_INSTALL="${PYTHON_ARGS_FOR_INSTALL} -e"
