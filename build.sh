@@ -116,18 +116,6 @@ fi
 
 # If clean or uninstall targets given, run them prior to any other steps
 if hasArg uninstall; then
-    # TODO: can lines 119-128 be removed since this is just a Python project?
-    if [[ "$INSTALL_PREFIX" != "" ]]; then
-        rm -rf ${INSTALL_PREFIX}/include/cugraph
-        rm -f ${INSTALL_PREFIX}/lib/libcugraph.so
-        rm -rf ${INSTALL_PREFIX}/include/cugraph_c
-        rm -f ${INSTALL_PREFIX}/lib/libcugraph_c.so
-        rm -rf ${INSTALL_PREFIX}/include/cugraph_etl
-        rm -f ${INSTALL_PREFIX}/lib/libcugraph_etl.so
-        rm -rf ${INSTALL_PREFIX}/lib/cmake/cugraph
-        rm -rf ${INSTALL_PREFIX}/lib/cmake/cugraph_etl
-    fi
-    # uninstall nx-cugraph
     # FIXME: if multiple versions of these packages are installed, this only
     # removes the latest one and leaves the others installed. build.sh uninstall
     # can be run multiple times to remove all of them, but that is not obvious.
