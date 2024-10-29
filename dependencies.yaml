@@ -16,6 +16,7 @@ files:
       - depends_on_pylibcugraph
       - test_python_nx_cugraph
       - depends_on_cupy
+      - depends_on_cudf
   checks:
     output: none
     includes:
