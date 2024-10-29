@@ -45,7 +45,7 @@ jobs:
           - '!.github/**'
   checks:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@python-3.12
+    uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-24.12
     with:
       enable_check_generated_files: false
   conda-python-build:
