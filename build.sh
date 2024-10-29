@@ -31,7 +31,6 @@ VALIDARGS="
    -g
    -n
    --pydevelop
-   --allgpuarch
    --clean
    -h
    --help
@@ -49,7 +48,6 @@ HELP="$0 [<target> ...] [<flag> ...]
    -g                         - build for debug
    -n                         - do not install after a successful build (does not affect Python packages)
    --pydevelop                - install the Python packages in editable mode
-   --allgpuarch               - build for all supported GPU architectures
    --clean                    - clean an individual target (note: to do a complete rebuild, use the clean target described above)
    -h                         - print this text
 
@@ -107,27 +105,12 @@ fi
 if hasArg -n; then
     INSTALL_TARGET=""
 fi
-if hasArg --allgpuarch; then
-    BUILD_ALL_GPU_ARCH=1
-fi
 if hasArg --pydevelop; then
     PYTHON_ARGS_FOR_INSTALL="${PYTHON_ARGS_FOR_INSTALL} -e"
 fi
 
 # If clean or uninstall targets given, run them prior to any other steps
 if hasArg uninstall; then
-    # TODO: can lines 119-128 be removed since this is just a Python project?
-    if [[ "$INSTALL_PREFIX" != "" ]]; then
-        rm -rf ${INSTALL_PREFIX}/include/cugraph
-        rm -f ${INSTALL_PREFIX}/lib/libcugraph.so
-        rm -rf ${INSTALL_PREFIX}/include/cugraph_c
-        rm -f ${INSTALL_PREFIX}/lib/libcugraph_c.so
-        rm -rf ${INSTALL_PREFIX}/include/cugraph_etl
-        rm -f ${INSTALL_PREFIX}/lib/libcugraph_etl.so
-        rm -rf ${INSTALL_PREFIX}/lib/cmake/cugraph
-        rm -rf ${INSTALL_PREFIX}/lib/cmake/cugraph_etl
-    fi
-    # uninstall nx-cugraph
     # FIXME: if multiple versions of these packages are installed, this only
     # removes the latest one and leaves the others installed. build.sh uninstall
     # can be run multiple times to remove all of them, but that is not obvious.
@@ -159,8 +142,8 @@ fi
 # Build and install the nx-cugraph Python package
 if buildDefault || hasArg nx-cugraph || hasArg all; then
     if hasArg --clean; then
-        cleanPythonDir ${REPODIR}/python/nx-cugraph
+        cleanPythonDir ${REPODIR}
     else
-        python ${PYTHON_ARGS_FOR_INSTALL} ${REPODIR}/python/nx-cugraph
+        python ${PYTHON_ARGS_FOR_INSTALL} ${REPODIR}
     fi
 fi
