@@ -1,0 +1,8 @@
+#!/bin/bash
+# Copyright (c) 2024, NVIDIA CORPORATION.
+
+set -euo pipefail
+
+rapids-logger "Running pre-commit"
+pre-commit install
+pre-commit run --all-files
