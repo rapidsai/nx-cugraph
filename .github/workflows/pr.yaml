@@ -49,7 +49,7 @@ jobs:
     with:
       enable_check_generated_files: false
   pre-commit:
-    needs: checks
+    needs: [checks, changed-files]
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/custom-job.yaml@branch-24.12
     with:
