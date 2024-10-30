@@ -12,46 +12,14 @@ concurrency:
 jobs:
   pr-builder:
     needs:
-      - changed-files
       - checks
-      - pre-commit
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@branch-24.12
     if: always()
     with:
       needs: ${{ toJSON(needs) }}
-  changed-files:
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@branch-24.12
-    with:
-      files_yaml: |
-        test_notebooks:
-          - '**'
-          - '!.devcontainers/**'
-          - '!CONTRIBUTING.md'
-          - '!README.md'
-          - '!docs/**'
-          # TODO: Remove this before merging
-          - '!.github/**'
-        test_python:
-          - '**'
-          - '!.devcontainers/**'
-          - '!CONTRIBUTING.md'
-          - '!README.md'
-          - '!docs/**'
-          - '!img/**'
-          - '!notebooks/**'
-          # TODO: Remove this before merging
-          - '!.github/**'
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-24.12
     with:
       enable_check_generated_files: false
-  pre-commit:
-    needs: [checks, changed-files]
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/custom-job.yaml@branch-24.12
-    with:
-      build_type: pull-request
-      run_script: "ci/check_pre-commit.sh"
