@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023, NVIDIA CORPORATION.
+# Copyright (c) 2019-2024, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -31,7 +31,7 @@ def isfunction(obj):
 
     new_val = hasattr(type(obj), "__code__")
 
-    if (orig_val != new_val):
+    if orig_val != new_val:
         return new_val
 
     return orig_val
@@ -39,19 +39,18 @@ def isfunction(obj):
 
 inspect.isfunction = isfunction
 
-REVISION_CMD = 'git rev-parse --short HEAD'
+REVISION_CMD = "git rev-parse --short HEAD"
 
-source_regex = re.compile(r"^File: (.*?) \(starting at line ([0-9]*?)\)$",
-                          re.MULTILINE)
+source_regex = re.compile(r"^File: (.*?) \(starting at line ([0-9]*?)\)$", re.MULTILINE)
 
 
 def _get_git_revision():
     try:
         revision = subprocess.check_output(REVISION_CMD.split()).strip()
     except (subprocess.CalledProcessError, OSError):
-        print('Failed to execute git to get revision')
+        print("Failed to execute git to get revision")
         return None
-    return revision.decode('utf-8')
+    return revision.decode("utf-8")
 
 
 def _linkcode_resolve(domain, info, url_fmt, revision):
@@ -71,14 +70,14 @@ def _linkcode_resolve(domain, info, url_fmt, revision):
 
     if revision is None:
         return
-    if domain != 'py':
+    if domain != "py":
         return
-    if not info.get('module') or not info.get('fullname'):
+    if not info.get("module") or not info.get("fullname"):
         return
 
-    class_name = info['fullname'].split('.')[0]
-    module = __import__(info['module'], fromlist=[class_name])
-    obj = attrgetter(info['fullname'])(module)
+    class_name = info["fullname"].split(".")[0]
+    module = __import__(info["module"], fromlist=[class_name])
+    obj = attrgetter(info["fullname"])(module)
 
     # Unwrap the object to get the correct source
     # file in case that is wrapped by a decorator
@@ -91,7 +90,7 @@ def _linkcode_resolve(domain, info, url_fmt, revision):
     if not obj_module:
         print(f"could not infer source code link for: {info}")
         return
-    module_name = obj_module.__name__.split('.')[0]
+    module_name = obj_module.__name__.split(".")[0]
 
     module_dir_dict = {
         "cugraph_dgl": "cugraph-dgl",
@@ -107,24 +106,22 @@ def _linkcode_resolve(domain, info, url_fmt, revision):
         return
 
     obj_path = "/".join(obj_module.__name__.split(".")[1:])
-    obj_file_ext = obj_module.__file__.split('.')[-1]
+    obj_file_ext = obj_module.__file__.split(".")[-1]
     source_ext = "pyx" if obj_file_ext == "so" else "py"
     fn = f"{module_dir}/{module_name}/{obj_path}.{source_ext}"
 
     # Get the line number if we need it. (Can work without it)
-    if (lineno is None):
+    if lineno is None:
         try:
             lineno = inspect.getsourcelines(obj)[1]
         except Exception:
 
             # Can happen if its a cyfunction. See if it has `__code__`
-            if (hasattr(obj, "__code__")):
+            if hasattr(obj, "__code__"):
                 lineno = obj.__code__.co_firstlineno
             else:
-                lineno = ''
-    return url_fmt.format(revision=revision,
-                          path=fn,
-                          lineno=lineno)
+                lineno = ""
+    return url_fmt.format(revision=revision, path=fn, lineno=lineno)
 
 
 def make_linkcode_resolve(url_fmt):
@@ -137,6 +134,4 @@ def make_linkcode_resolve(url_fmt):
                                    '{path}#L{lineno}')
     """
     revision = _get_git_revision()
-    return partial(_linkcode_resolve,
-                   revision=revision,
-                   url_fmt=url_fmt)
+    return partial(_linkcode_resolve, revision=revision, url_fmt=url_fmt)

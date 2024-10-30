@@ -72,6 +72,7 @@ repos:
         types_or: [python, rst, markdown]
         additional_dependencies: [tomli]
         files: ^(nx_cugraph|docs)/
+        args: ["-L thirdparty"]
   - repo: https://github.com/pre-commit/mirrors-clang-format
     rev: v16.0.6
     hooks:
