@@ -72,11 +72,6 @@ repos:
         types_or: [python, rst, markdown]
         additional_dependencies: [tomli]
         files: ^(nx_cugraph|docs)/
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.7
-    hooks:
-      - id: ruff
-        args: [--show-fixes]
   - repo: https://github.com/pre-commit/mirrors-clang-format
     rev: v16.0.6
     hooks:
