@@ -4,7 +4,7 @@
 set -euo pipefail
 
 rapids-logger "Install"
-pip install --yes pre-commit
+pip install pre-commit
 
 rapids-logger "Running pre-commit"
 pre-commit install
