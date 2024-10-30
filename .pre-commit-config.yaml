@@ -5,7 +5,7 @@
 # To update: `make lint-update`
 #  - &flake8_dependencies below needs updated manually
 exclude: '^thirdparty'
-fail_fast: true # TODO flip off
+fail_fast: false
 default_language_version:
     python: python3
 repos:
@@ -64,7 +64,6 @@ repos:
     rev: 24.8.0
     hooks:
       - id: black
-      # - id: black-jupyter
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
