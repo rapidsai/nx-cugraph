@@ -36,7 +36,7 @@ files:
       - test_notebook
   py_build_nx_cugraph:
     output: pyproject
-    pyproject_dir: python/nx-cugraph
+    pyproject_dir: .
     extras:
       table: build-system
     includes:
@@ -44,7 +44,7 @@ files:
       - python_build_wheel
   py_run_nx_cugraph:
     output: pyproject
-    pyproject_dir: python/nx-cugraph
+    pyproject_dir: .
     extras:
       table: project
     includes:
@@ -53,7 +53,7 @@ files:
       - python_run_nx_cugraph
   py_test_nx_cugraph:
     output: pyproject
-    pyproject_dir: python/nx-cugraph
+    pyproject_dir: .
     extras:
       table: project.optional-dependencies
       key: test
