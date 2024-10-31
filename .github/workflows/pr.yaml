@@ -34,11 +34,8 @@ jobs:
           - '!.github/**'
         test_python:
           - '**'
-          - '!.devcontainers/**'
-          - '!CONTRIBUTING.md'
           - '!README.md'
           - '!docs/**'
-          - '!img/**'
           - '!notebooks/**'
           # TODO: Remove this before merging
           - '!.github/**'
