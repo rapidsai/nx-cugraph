@@ -30,8 +30,6 @@ jobs:
           - '**'
           - '!README.md'
           - '!docs/**'
-          # TODO: Remove this before merging
-          - '!.github/**'
         test_python:
           - '**'
           - '!README.md'
