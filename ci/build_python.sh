@@ -26,5 +26,4 @@ rapids-conda-retry mambabuild \
   --channel "${RAPIDS_CONDA_BLD_OUTPUT_DIR}" \
   conda/recipes/nx-cugraph
 
-# TODO: uncomment when we're ready to upload artifacts in CI
-# rapids-upload-conda-to-s3 python
+rapids-upload-conda-to-s3 python
