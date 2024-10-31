@@ -28,8 +28,6 @@ jobs:
       files_yaml: |
         test_notebooks:
           - '**'
-          - '!.devcontainers/**'
-          - '!CONTRIBUTING.md'
           - '!README.md'
           - '!docs/**'
           # TODO: Remove this before merging
