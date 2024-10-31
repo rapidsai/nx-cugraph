@@ -3,4 +3,4 @@
 
 set -euo pipefail
 
-./ci/build_wheel.sh nx-cugraph python/nx-cugraph
+./ci/build_wheel.sh nx-cugraph nx-cugraph
