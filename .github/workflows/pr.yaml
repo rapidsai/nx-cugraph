@@ -41,7 +41,7 @@ jobs:
     with:
       enable_check_generated_files: false
   conda-python-build:
-    needs: [checks, changed-files]
+    needs: [checks]
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@branch-24.12
     with:
