@@ -4,4 +4,4 @@
 set -euo pipefail
 
 #                   pkg-name   pkg-dir
-./ci/build_wheel.sh nx-cugraph nx_cugraph
+./ci/build_wheel.sh nx-cugraph .
