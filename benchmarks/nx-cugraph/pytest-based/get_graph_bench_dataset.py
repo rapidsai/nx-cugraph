@@ -18,13 +18,13 @@ datasets API.
 
 Positional Arguments:
     1) dataset name (e.g. 'email_Eu_core', 'cit-patents')
-       available datasets can be found here: `python/cugraph/cugraph/datasets/__init__.py`
+       available datasets can be found here:
+        - `python/cugraph/cugraph/datasets/__init__.py`
 """
 
 import sys
 
 import cugraph.datasets as cgds
-
 
 if __name__ == "__main__":
     # download and store dataset (csv) by using the Datasets API
