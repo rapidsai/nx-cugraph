@@ -46,6 +46,8 @@ jobs:
     uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@branch-24.12
     with:
       build_type: pull-request
+      # This selects "ARCH=amd64 + the latest supported Python + CUDA".
+      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit
