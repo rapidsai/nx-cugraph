@@ -35,8 +35,6 @@ jobs:
           - '!README.md'
           - '!docs/**'
           - '!notebooks/**'
-          # TODO: Remove this before merging
-          - '!.github/**'
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-24.12
