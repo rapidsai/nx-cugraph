@@ -37,7 +37,7 @@ tests:
 
 about:
   home: https://rapids.ai/
-  dev_url: https://github.com/rapidsai/cugraph
+  dev_url: https://github.com/rapidsai/nx-cugraph
   license: Apache-2.0
   license_file: ../../../LICENSE
   summary: cuGraph backend for GPU-accelerated NetworkX
