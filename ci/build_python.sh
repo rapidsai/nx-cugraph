@@ -10,8 +10,6 @@ source rapids-date-string
 rapids-print-env
 
 rapids-generate-version > ./VERSION
-export RAPIDS_PACKAGE_VERSION=$(head -1 ./VERSION)
-
 rapids-logger "Begin py build"
 
 # TODO: Remove `--no-test` flags once importing on a CPU
