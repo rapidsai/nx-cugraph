@@ -1,53 +1,92 @@
 ## https://pre-commit.com/
 #
 # Before first use: `pre-commit install`
-# To run: `pre-commit run --all-files`
+# To run: `make lint`
+# To update: `make lint-update`
+#  - &flake8_dependencies below needs updated manually
 exclude: '^thirdparty'
+fail_fast: false
+default_language_version:
+    python: python3
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-ast
+      - id: check-toml
+      - id: check-yaml
+        exclude: '^conda/recipes/.*\.yaml$'
       - id: debug-statements
       - id: end-of-file-fixer
+        exclude_types: [svg]
       - id: mixed-line-ending
+      - id: no-commit-to-branch
+        args: [-p, "^branch-2....$"]
       - id: trailing-whitespace
   - repo: https://github.com/PyCQA/flake8
     rev: 7.1.1
     hooks:
       - id: flake8
-        args: ["--config=.flake8"]
-        files: nx_cugraph.*$
-        types: [file]
-        types_or: [python] # TODO: Enable [python, cython]
-        additional_dependencies: ["flake8-force"]
+        args: ["--config=.flake8"] # uses config
+        additional_dependencies: &flake8_dependencies
+          # These versions need updated manually
+          - flake8==7.1.1
+          - flake8-bugbear==24.8.19
+          - flake8-simplify==0.21.0
   - repo: https://github.com/asottile/yesqa
     rev: v1.3.0
     hooks:
       - id: yesqa
-        additional_dependencies:
-          - flake8==7.1.1
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v16.0.6
+        additional_dependencies: *flake8_dependencies
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.19
     hooks:
-      - id: clang-format
-        types_or: [c, c++, cuda]
-        args: ["-fallback-style=none", "-style=file", "-i"]
+      - id: validate-pyproject
+        name: Validate pyproject.toml
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        args: [--in-place]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.17.0
+    hooks:
+      - id: pyupgrade
+        args: [--py310-plus]
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        types_or: [python, rst, markdown]
+        additional_dependencies: [tomli]
+        files: ^(nx_cugraph|docs)/
+        args: ["-L thirdparty,coo,COO,numer"]
   - repo: https://github.com/rapidsai/pre-commit-hooks
     rev: v0.4.0
     hooks:
       - id: verify-copyright
         files: |
           (?x)
-              [.](cmake|cpp|cu|cuh|h|hpp|sh|pxd|py|pyx)$|
-              CMakeLists[.]txt$|
-              CMakeLists_standalone[.]txt$|
+              [.](sh|py)$|
               [.]flake8[.]cython$|
               meta[.]yaml$|
               setup[.]cfg$
       - id: verify-alpha-spec
+        args: ["--fix"]
   - repo: https://github.com/rapidsai/dependency-file-generator
-    rev: v1.13.11
+    rev: v1.16.0
     hooks:
         - id: rapids-dependency-file-generator
           args: ["--clean"]

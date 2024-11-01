@@ -12,17 +12,17 @@
 # limitations under the License.
 
 
-import re
-import pathlib
 import json
+import pathlib
 import platform
-import psutil
+import re
 import socket
 import subprocess
 
+import psutil
+
 
 def get_formatted_time_value(time):
-    res = ""
     if time < 1:
         if time < 0.001:
             units = "us"
@@ -40,7 +40,8 @@ def get_all_benchmark_info():
     # Populate benchmarks dir from .json files
     for json_file in logs_dir.glob("*.json"):
         try:
-            data = json.loads(open(json_file).read())
+            with open(json_file) as file:
+                data = json.loads(file.read())
         except json.decoder.JSONDecodeError:
             continue
 
@@ -155,8 +156,8 @@ def get_system_info():
 if __name__ == "__main__":
     logs_dir = pathlib.Path("logs")
 
-    dataset_patt = re.compile(".*ds=([\w-]+).*")
-    backend_patt = re.compile(".*backend=(\w+).*")
+    dataset_patt = re.compile(r".*ds=([\w-]+).*")
+    backend_patt = re.compile(r".*backend=(\w+).*")
     k_patt = re.compile(".*k=(10*).*")
 
     # Organize all benchmark runs by the following hierarchy: algo -> backend -> dataset
@@ -266,7 +267,7 @@ if __name__ == "__main__":
                         f"      <td>{nx_formatted} / {cg_formatted}<br>{speedup}<br>{runtime_delta}</td>"
                     )
                 else:
-                    print(f"      <td></td>")
+                    print("      <td></td>")
 
         # If a comparison between cugraph and NX cannot be made, output empty cells
         # for each dataset

@@ -11,12 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import random
-
 import networkx as nx
 import pandas as pd
 import pytest
 from cugraph import datasets
+
 import nx_cugraph as nxcg
 
 # Attempt to import the NetworkX dispatching module, which is only needed when

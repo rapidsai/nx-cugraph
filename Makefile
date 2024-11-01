@@ -2,15 +2,7 @@
 SHELL= /bin/bash
 
 .PHONY: all
-all: plugin-info lint readme
-
-.PHONY: lint
-lint:
-	git ls-files | xargs pre-commit run --config lint.yaml --files || true
-
-.PHONY: lint-update
-lint-update:
-	pre-commit autoupdate --config lint.yaml
+all: plugin-info readme
 
 .PHONY: plugin-info
 plugin-info:
