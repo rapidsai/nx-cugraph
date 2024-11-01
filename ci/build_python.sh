@@ -23,7 +23,6 @@ rapids-logger "Begin py build"
 # for the test run.
 rapids-conda-retry mambabuild \
   --no-test \
-  --channel "${RAPIDS_CONDA_BLD_OUTPUT_DIR}" \
   conda/recipes/nx-cugraph
 
 rapids-upload-conda-to-s3 python
