@@ -21,7 +21,7 @@ rapids-logger "Begin py build"
 # platform to ensure it is included in each set of artifacts, since test
 # scripts only install from one set of artifacts based on the CUDA version used
 # for the test run.
-rapids-conda-retry mambabuild \
+RAPIDS_PACKAGE_VERSION=$(head -1 ./VERSION)  rapids-conda-retry mambabuild \
   --no-test \
   conda/recipes/nx-cugraph
 
