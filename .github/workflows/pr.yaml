@@ -15,7 +15,9 @@ jobs:
       - changed-files
       - checks
       - conda-python-build
+      - conda-python-tests
       - wheel-build-nx-cugraph
+      - wheel-tests-nx-cugraph
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@branch-24.12
     if: always()
@@ -48,6 +50,13 @@ jobs:
       build_type: pull-request
       # This selects "ARCH=amd64 + the latest supported Python + CUDA".
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+  conda-python-tests:
+    needs: [conda-python-build, changed-files]
+    secrets: inherit
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@branch-24.12
+    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+    with:
+      build_type: pull-request
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit
@@ -57,3 +66,11 @@ jobs:
       script: ci/build_wheel_nx-cugraph.sh
       # This selects "ARCH=amd64 + the latest supported Python + CUDA".
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+  wheel-tests-nx-cugraph:
+    needs: [wheel-build-nx-cugraph, changed-files]
+    secrets: inherit
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@branch-24.12
+    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+    with:
+      build_type: pull-request
+      script: ci/test_wheel_nx-cugraph.sh
