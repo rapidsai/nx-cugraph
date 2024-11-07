@@ -39,7 +39,7 @@ VALIDARGS="
 HELP="$0 [<target> ...] [<flag> ...]
  where <target> is:
    clean                      - remove all existing build artifacts and configuration (start over)
-   uninstall                  - uninstall libcugraph and cugraph from a prior build/install (see also -n)
+   uninstall                  - uninstall nx-cugraph from a prior build/install (see also -n)
    nx-cugraph                 - build the nx-cugraph Python package
    docs                       - build the docs
    all                        - build everything
@@ -69,7 +69,7 @@ function buildDefault {
 
 function cleanPythonDir {
     pushd $1 > /dev/null
-    rm -rf dist dask-worker-space cugraph/raft *.egg-info
+    rm -rf dist dask-worker-space *.egg-info
     find . -type d -name __pycache__ -print | xargs rm -rf
     find . -type d -name build -print | xargs rm -rf
     find . -type d -name dist -print | xargs rm -rf
