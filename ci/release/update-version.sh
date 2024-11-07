@@ -52,10 +52,9 @@ for FILE in dependencies.yaml conda/environments/*.yaml conda/recipes/**/meta.ya
     sed_runner "/-.* ${DEP}\(-cu[[:digit:]]\{2\}\)\{0,1\}==/ s/==.*/==${NEXT_SHORT_TAG_PEP440}.*,>=0.0.0a0/g" "${FILE}"
   done
 done
-for FILE in python/**/pyproject.toml python/**/**/pyproject.toml; do
-  for DEP in "${DEPENDENCIES[@]}"; do
-    sed_runner "/\"${DEP}\(-cu[[:digit:]]\{2\}\)\{0,1\}==/ s/==.*\"/==${NEXT_SHORT_TAG_PEP440}.*,>=0.0.0a0\"/g" "${FILE}"
-  done
+
+for DEP in "${DEPENDENCIES[@]}"; do
+  sed_runner "/\"${DEP}\(-cu[[:digit:]]\{2\}\)\{0,1\}==/ s/==.*\"/==${NEXT_SHORT_TAG_PEP440}.*,>=0.0.0a0\"/g" ./pyproject.toml
 done
 
 # CI files
@@ -64,3 +63,8 @@ for FILE in .github/workflows/*.yaml; do
 done
 
 sed_runner "s/branch-[0-9][0-9].[0-9][0-9]/branch-${NEXT_SHORT_TAG}/" ./docs/nx-cugraph/source/nx_cugraph/nx_cugraph.md
+
+# issue templates
+for FILE in ./.github/ISSUE_TEMPLATE/*.yaml; do
+  sed_runner "s/example\: ${CURRENT_SHORT_TAG}/example: ${NEXT_SHORT_TAG}/" "${FILE}"
+done
