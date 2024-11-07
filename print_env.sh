@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2019-2024, NVIDIA CORPORATION.
 # Reports relevant environment information useful for diagnosing and
-# debugging cuGraph issues.
+# debugging nx-cugraph issues.
 # Usage:
 # "./print_env.sh" - prints to stdout
 # "./print_env.sh > env.txt" - prints to file "env.txt"

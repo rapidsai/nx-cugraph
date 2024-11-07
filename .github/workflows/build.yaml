@@ -1,11 +1,13 @@
 name: build
 
 on:
-  push:
-    branches:
-      - "branch-*"
-    tags:
-      - v[0-9][0-9].[0-9][0-9].[0-9][0-9]
+  # TODO: uncomment this condition when ready to start publishing
+  #       packages from this repo
+  # push:
+  #   branches:
+  #     - "branch-*"
+  #   tags:
+  #     - v[0-9][0-9].[0-9][0-9].[0-9][0-9]
   workflow_dispatch:
     inputs:
       branch:
@@ -26,34 +28,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docs-build:
-    if: github.ref_type == 'branch'
-    needs: python-build
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/custom-job.yaml@python-3.12
-    with:
-      arch: "amd64"
-      branch: ${{ inputs.branch }}
-      build_type: ${{ inputs.build_type || 'branch' }}
-      container_image: "rapidsai/ci-conda:cuda11.8.0-ubuntu22.04-py3.10"
-      date: ${{ inputs.date }}
-      node_type: "gpu-v100-latest-1"
-      run_script: "ci/build_docs.sh"
-      sha: ${{ inputs.sha }}
   wheel-build-nx-cugraph:
-    needs: wheel-publish-pylibcugraph
+    needs: wheel-publish-nx-cugraph
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@python-3.12
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@branch-24.12
     with:
       build_type: ${{ inputs.build_type || 'branch' }}
       branch: ${{ inputs.branch }}
       sha: ${{ inputs.sha }}
       date: ${{ inputs.date }}
       script: ci/build_wheel_nx-cugraph.sh
+      # This selects "ARCH=amd64 + the latest supported Python + CUDA".
+      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-publish-nx-cugraph:
     needs: wheel-build-nx-cugraph
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-publish.yaml@python-3.12
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-publish.yaml@branch-24.12
     with:
       build_type: ${{ inputs.build_type || 'branch' }}
       branch: ${{ inputs.branch }}

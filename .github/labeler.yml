@@ -9,9 +9,6 @@ python:
 benchmarks:
   - 'benchmarks/**'
 
-datasets:
-  - 'datasets/**'
-
 ci:
    - 'ci/**'
 
