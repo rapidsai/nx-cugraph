@@ -1,13 +1,11 @@
 name: build
 
 on:
-  # TODO: uncomment this condition when ready to start publishing
-  #       packages from this repo
-  # push:
-  #   branches:
-  #     - "branch-*"
-  #   tags:
-  #     - v[0-9][0-9].[0-9][0-9].[0-9][0-9]
+  push:
+    branches:
+      - "branch-*"
+    tags:
+      - v[0-9][0-9].[0-9][0-9].[0-9][0-9]
   workflow_dispatch:
     inputs:
       branch:
