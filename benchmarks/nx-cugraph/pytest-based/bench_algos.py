@@ -11,6 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Mapping
+
 import networkx as nx
 import pandas as pd
 import pytest
@@ -496,7 +498,7 @@ def bench_shortest_path(benchmark, graph_obj, backend_wrapper):
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    assert type(result) is dict
+    assert isinstance(result, Mapping)  # dict in nx, but we duck-type
 
 
 def bench_single_source_shortest_path_length(benchmark, graph_obj, backend_wrapper):
