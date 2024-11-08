@@ -33,8 +33,7 @@ mkdir -p "${RAPIDS_TESTS_DIR}" "${RAPIDS_COVERAGE_DIR}"
 rapids-print-env
 
   # TODO: remove the '>=24.12.00a1000' once we start publishing nightly packages
-  #       from the 'cugraph-gnn' repo and stop publishing them from
-  #       the 'cugraph' / 'wholegraph' repos
+  #       from the 'nx-cugraph' repo and stop publishing them from the 'cugraph' repo
 rapids-mamba-retry install \
   --channel "${PYTHON_CHANNEL}" \
   "nx-cugraph=${RAPIDS_VERSION}.*,>=24.12.00a1000"
