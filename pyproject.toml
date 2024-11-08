@@ -84,7 +84,7 @@ include = [
 
 [tool.rapids-build-backend]
 build-backend = "setuptools.build_meta"
-commit-files = ["nx_cugraph/GIT_COMMIT"]
+commit-files = ["_nx_cugraph/GIT_COMMIT"]
 dependencies-file = "dependencies.yaml"
 matrix-entry = "cuda_suffixed=true"
 
