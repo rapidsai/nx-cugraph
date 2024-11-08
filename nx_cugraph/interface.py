@@ -228,7 +228,7 @@ class BackendInterface:
                 }
             )
 
-        if _nxver <= (3, 2):
+        if _nxver < (3, 3):
             xfail.update(
                 {
                     # NetworkX versions prior to 3.2.1 have tests written to
@@ -265,7 +265,7 @@ class BackendInterface:
                 }
             )
 
-        if _nxver <= (3, 1):
+        if _nxver < (3, 2):
             # MAINT: networkx 3.0, 3.1
             # NetworkX 3.2 added the ability to "fallback to nx" if backend algorithms
             # raise NotImplementedError or `can_run` returns False. The tests below
