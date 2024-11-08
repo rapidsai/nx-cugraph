@@ -64,6 +64,7 @@ rapids-logger "pytest nx-cugraph"
 
 rapids-logger "pytest networkx using nx-cugraph backend"
 
+pushd nx_cugraph
 ../run_nx_tests.sh
 
 # run_nx_tests.sh outputs coverage data, so check that total coverage is >0.0%
@@ -77,8 +78,8 @@ echo $_coverage | awk '{ if ($NF == "0.0%") exit 1 }'
 # Run our tests again (they're fast enough) to add their coverage, then create coverage.json
 NX_CUGRAPH_USE_COMPAT_GRAPHS=False pytest \
   --pyargs nx_cugraph \
-  --config-file=./pyproject.toml \
-  --cov-config=./pyproject.toml \
+  --config-file=../pyproject.toml \
+  --cov-config=../pyproject.toml \
   --cov=nx_cugraph \
   --cov-append \
   --cov-report=
@@ -87,15 +88,16 @@ coverage report \
   --include="*/nx_cugraph/algorithms/*" \
   --omit=__init__.py \
   --show-missing \
-  --rcfile=./pyproject.toml
+  --rcfile=../pyproject.toml
 
-coverage json --rcfile=./pyproject.toml
+coverage json --rcfile=../pyproject.toml
 
 python -m nx_cugraph.tests.ensure_algos_covered
 
 # Exercise (and show results of) scripts that show implemented networkx algorithms
 python -m nx_cugraph.scripts.print_tree --dispatch-name --plc --incomplete --different
 python -m nx_cugraph.scripts.print_table
+popd
 
 rapids-logger "Test script exiting with value: $EXITCODE"
 exit ${EXITCODE}
