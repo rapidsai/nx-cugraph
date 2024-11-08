@@ -423,6 +423,9 @@ class BackendInterface:
                         }
                     )
 
+        if _nxver == (3, 4, 2):
+            xfail[key("test_pylab.py:test_return_types")] = "Ephemeral NetworkX bug"
+
         too_slow = "Too slow to run"
         skip = {
             key("test_tree_isomorphism.py:test_positive"): too_slow,

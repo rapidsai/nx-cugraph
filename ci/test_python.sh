@@ -56,7 +56,6 @@ set +e
 
 rapids-logger "pytest nx-cugraph"
 ./ci/run_nx_cugraph_pytests.sh \
-  --verbose \
   --junitxml="${RAPIDS_TESTS_DIR}/junit-nx-cugraph.xml" \
   --cov=nx_cugraph \
   --cov-report=xml:"${RAPIDS_COVERAGE_DIR}/nx-cugraph-coverage.xml" \
