@@ -131,8 +131,7 @@ def get_first_gpu_info():
             first_gpu = gpus[0]  # Get the information for the first GPU
             gpu_name, mem_total, _, _ = first_gpu.split(",")
             return f"{num_gpus} x {gpu_name.strip()} ({round(int(mem_total.strip().split()[0]) / (1024), 2)} GB)"
-        else:
-            print("No GPU found or unable to query GPU details.")
+        print("No GPU found or unable to query GPU details.")
     except subprocess.CalledProcessError:
         print("Failed to execute nvidia-smi. No GPU information available.")
 

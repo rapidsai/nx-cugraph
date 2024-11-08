@@ -79,7 +79,7 @@ def setup_module(module):
 # easier-to-read name. This is especially helpful for Dataset objs (see
 # https://docs.pytest.org/en/stable/reference/reference.html#pytest-fixture)
 @pytest.fixture(
-    scope="module", params=dataset_param_values, ids=lambda ds: f"ds={str(ds)}"
+    scope="module", params=dataset_param_values, ids=lambda ds: f"ds={ds!s}"
 )
 def graph_obj(request):
     """

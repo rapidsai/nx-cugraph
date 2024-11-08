@@ -1,8 +1,8 @@
 ## https://pre-commit.com/
 #
 # Before first use: `pre-commit install`
-# To run: `make lint`
-# To update: `make lint-update`
+# To run: `pre-commit run --all-files`
+# To update: `pre-commit autoupdate`
 #  - &flake8_dependencies below needs updated manually
 exclude: '^thirdparty'
 fail_fast: false
@@ -20,28 +20,12 @@ repos:
       - id: check-toml
       - id: check-yaml
         exclude: '^conda/recipes/.*\.yaml$'
+      - id: check-executables-have-shebangs
       - id: debug-statements
       - id: end-of-file-fixer
         exclude_types: [svg]
       - id: mixed-line-ending
-      - id: no-commit-to-branch
-        args: [-p, "^branch-2....$"]
       - id: trailing-whitespace
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-        args: ["--config=.flake8"] # uses config
-        additional_dependencies: &flake8_dependencies
-          # These versions need updated manually
-          - flake8==7.1.1
-          - flake8-bugbear==24.8.19
-          - flake8-simplify==0.21.0
-  - repo: https://github.com/asottile/yesqa
-    rev: v1.5.0
-    hooks:
-      - id: yesqa
-        additional_dependencies: *flake8_dependencies
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.22
     hooks:
@@ -65,6 +49,26 @@ repos:
     rev: 24.10.0
     hooks:
       - id: black
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.3
+    hooks:
+      - id: ruff
+        args: [--fix-only, --show-fixes]  # --unsafe-fixes]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args: ["--config=.flake8"] # uses config
+        additional_dependencies: &flake8_dependencies
+          # These versions need updated manually
+          - flake8==7.1.1
+          - flake8-bugbear==24.10.31
+          - flake8-simplify==0.21.0
+  - repo: https://github.com/asottile/yesqa
+    rev: v1.5.0
+    hooks:
+      - id: yesqa
+        additional_dependencies: *flake8_dependencies
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
@@ -73,6 +77,37 @@ repos:
         additional_dependencies: [tomli]
         files: ^(nx_cugraph|docs)/
         args: ["-L thirdparty,coo,COO,numer"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.3
+    hooks:
+      - id: ruff
+        # Don't have strict linting for miscellaneous code
+        args: [--extend-exclude, "benchmarks/,ci/,docs/,notebooks/"]
+  - repo: https://github.com/rapidsai/dependency-file-generator
+    rev: v1.16.0
+    hooks:
+        - id: rapids-dependency-file-generator
+          args: ["--clean"]
+  - repo: local
+    hooks:
+      - id: nx-cugraph-meta-data-update
+        name: nx-cugraph meta-data updater
+        entry: bash -c "PYTHONPATH=. python _nx_cugraph/__init__.py"
+        files: ^(nx_cugraph|_nx_cugraph)/
+        types: [python]
+        language: python
+        pass_filenames: false
+        additional_dependencies: ["networkx>=3.4"]
+  - repo: local
+    hooks:
+      - id: nx-cugraph-readme-update
+        name: nx-cugraph README updater
+        entry: bash -c "PYTHONPATH=. python ./scripts/update_readme.py ./README.md"
+        files: ^(nx_cugraph|_nx_cugraph)/
+        types_or: [python, markdown]
+        language: python
+        pass_filenames: false
+        additional_dependencies: ["networkx>=3.4"]
   - repo: https://github.com/rapidsai/pre-commit-hooks
     rev: v0.4.0
     hooks:
@@ -85,28 +120,8 @@ repos:
               setup[.]cfg$
       - id: verify-alpha-spec
         args: ["--fix"]
-  - repo: https://github.com/rapidsai/dependency-file-generator
-    rev: v1.16.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
     hooks:
-        - id: rapids-dependency-file-generator
-          args: ["--clean"]
-  - repo: local
-    hooks:
-      - id: nx-cugraph-meta-data-update
-        name: nx-cugraph meta-data updater
-        entry: bash -c "PYTHONPATH=. python _nx_cugraph/__init__.py"
-        files: ^nx_cugraph
-        types: [python]
-        language: python
-        pass_filenames: false
-        additional_dependencies: ["networkx>=3.4"]
-  - repo: local
-    hooks:
-      - id: nx-cugraph-readme-update
-        name: nx-cugraph README updater
-        entry: bash -c "PYTHONPATH=. python ./scripts/update_readme.py ./README.md"
-        files: ^nx_cugraph/
-        types_or: [python, markdown]
-        language: python
-        pass_filenames: false
-        additional_dependencies: ["networkx>=3.3"]
+      - id: no-commit-to-branch
+        args: [-p, "^branch-2....$"]
