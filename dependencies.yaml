@@ -34,6 +34,14 @@ files:
       - cuda_version
       - py_version
       - test_notebook
+  test_python:
+    output: none
+    includes:
+      - cuda_version
+      - depends_on_cudf
+      - py_version
+      - test_python_common
+      - test_python_nx_cugraph
   py_build_nx_cugraph:
     output: pyproject
     pyproject_dir: .
