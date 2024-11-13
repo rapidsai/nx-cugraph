@@ -3,7 +3,8 @@
 # Labels culled from https://github.com/rapidsai/nx-cugraph/labels
 
 python:
-  - 'python/**'
+  - 'nx_cugraph/**'
+  - '_nx_cugraph/**'
   - 'notebooks/**'
 
 benchmarks:
