@@ -30,13 +30,25 @@ jobs:
       files_yaml: |
         test_notebooks:
           - '**'
+          - '!.devcontainer/**'
           - '!README.md'
           - '!docs/**'
         test_python:
           - '**'
+          - '!.devcontainer/**'
           - '!README.md'
           - '!docs/**'
           - '!notebooks/**'
+  devcontainer:
+    secrets: inherit
+    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@branch-24.12
+    with:
+      arch: '["amd64"]'
+      cuda: '["12.5"]'
+      build_command: |
+        sccache -z;
+        build-all --verbose -j$(nproc --ignore=1);
+        sccache -s;
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-24.12
