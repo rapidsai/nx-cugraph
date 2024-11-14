@@ -2,10 +2,6 @@
 # Adapted from https://github.com/rapidsai/nx-cugraph/blob/main/.github/CODEOWNERS
 # Labels culled from https://github.com/rapidsai/nx-cugraph/labels
 
-python:
-  - 'python/**'
-  - 'notebooks/**'
-
 benchmarks:
   - 'benchmarks/**'
 
