@@ -27,7 +27,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.22
+    rev: v0.23
     hooks:
       - id: validate-pyproject
         name: Validate pyproject.toml
@@ -108,6 +108,17 @@ repos:
         language: python
         pass_filenames: false
         additional_dependencies: ["networkx>=3.4"]
+  - repo: local
+    hooks:
+      - id: disallow-improper-nxver-comparison
+        name: disallow improper comparison to `_nxver`
+        language: pygrep
+        # We expect bug-fix releases to be the same, so these rules avoid cases like:
+        # >>> (X, Y, 1) <= (X, Y)
+        # False
+        entry: "_nxver > |_nxver <= | < _nxver| >= _nxver"
+        # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
+        exclude: .pre-commit-config.yaml
   - repo: https://github.com/rapidsai/pre-commit-hooks
     rev: v0.4.0
     hooks:
