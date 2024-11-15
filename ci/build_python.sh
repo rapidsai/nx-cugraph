@@ -9,10 +9,7 @@ source rapids-date-string
 
 rapids-print-env
 
-# TODO: revert this once we start publishing nightly packages from the
-#       'nx-cugraph' repo and stop publishing them from the 'cugraph' repo
-# rapids-generate-version > ./VERSION
-echo "24.12.00a1000" > ./VERSION
+rapids-generate-version > ./VERSION
 
 rapids-logger "Begin py build"
 

@@ -46,6 +46,7 @@ def core_number(G):
         degree_type="bidirectional",
         do_expensive_check=False,
     )
+    core_numbers = core_numbers // 2  # Added this in 24.12 (behavior changed)
     return G._nodearrays_to_dict(node_ids, core_numbers)
 
 
