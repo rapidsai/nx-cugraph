@@ -207,9 +207,7 @@ def test_convert(graph_class):
         cp.testing.assert_array_equal(Gcg.node_values["bar"], [0, 1000, 0])
         assert Gcg.node_masks == {}
 
-    with pytest.raises(
-        TypeError, match="edge_attrs and weight arguments should not both be given"
-    ):
+    with pytest.raises(TypeError, match="unexpected keyword argument 'weight'"):
         interface.BackendInterface.convert_from_nx(G, edge_attrs={"x": 1}, weight="x")
     with pytest.raises(TypeError, match="Expected networkx.Graph"):
         nxcg.from_networkx({})
