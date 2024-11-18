@@ -30,7 +30,7 @@ By simply `installing and enabling nx-cugraph <https://github.com/rapidsai/cugra
 +------------------------------------------------------------------------------------------------------------------------+
 | **Run the same code on CPU or GPU**                                                                                    |
 |                                                                                                                        |
-| Nothing changes, not even your `import` statements, when going from CPU to GPU.                                        |
+| Nothing changes, not even your ``import`` statements, when going from CPU to GPU.                                      |
 +------------------------------------------------------------------------------------------------------------------------+
 
 
