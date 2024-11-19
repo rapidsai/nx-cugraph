@@ -38,9 +38,7 @@ def betweenness_centrality(G, nodes):
         do_expensive_check=False,
     )
     top_node_ids = G._nodekeys_to_nodearray(set(nodes))
-    bottom_node_ids = cp.delete(
-        cp.arange(G._N, dtype=top_node_ids.dtype), top_node_ids
-    )
+    bottom_node_ids = cp.delete(cp.arange(G._N, dtype=top_node_ids.dtype), top_node_ids)
     n = top_node_ids.size
     m = bottom_node_ids.size
     s, t = divmod(n - 1, m)
