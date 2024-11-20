@@ -270,7 +270,7 @@ _info = {
 
 
 def get_info():
-    """Target of ``networkx.plugin_info`` entry point.
+    """Target of ``networkx.backend_info`` entry point.
 
     This tells NetworkX about the cugraph backend without importing nx_cugraph.
     """
@@ -330,7 +330,6 @@ def get_info():
             update_env_var("NETWORKX_BACKEND_PRIORITY")
         # And for older NetworkX versions
         update_env_var("NETWORKX_AUTOMATIC_BACKENDS")  # For NetworkX 3.2
-        update_env_var("NETWORKX_GRAPH_CONVERT")  # For NetworkX 3.0 and 3.1
         # Automatically create nx-cugraph Graph from graph generators
         update_env_var("NETWORKX_BACKEND_PRIORITY_GENERATORS")
         # Run default NetworkX implementation (in >=3.4) if not implemented by nx-cugraph
