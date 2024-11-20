@@ -43,10 +43,9 @@ def core_number(G):
     node_ids, core_numbers = plc.core_number(
         resource_handle=plc.ResourceHandle(),
         graph=G._get_plc_graph(),
-        degree_type="bidirectional",
+        degree_type="outgoing",
         do_expensive_check=False,
     )
-    core_numbers = core_numbers // 2  # Added this in 24.12 (behavior changed)
     return G._nodearrays_to_dict(node_ids, core_numbers)
 
 
