@@ -3,5 +3,5 @@
 
 set -euo pipefail
 
-#                   pkg-name   pkg-dir
 ./ci/build_wheel.sh nx-cugraph .
+./ci/validate_wheel.sh dist

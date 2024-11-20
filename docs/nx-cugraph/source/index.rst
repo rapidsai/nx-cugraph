@@ -23,7 +23,7 @@ Required hardware/software for cuGraph and `RAPIDS <https://docs.rapids.ai/user-
  * NVIDIA GPU, Volta architecture or later, with `compute capability <https://developer.nvidia.com/cuda-gpus> 7.0+`_
  * CUDA 11.2-11.8, 12.0-12.5
  * Python version 3.10, 3.11, or 3.12
- * NetworkX version 3.0 or newer in order to use use the nx-cuGraph backend. NetworkX version 3.4 or newer is recommended. (`see below <#cugraph-using-networkx-code>`).
+ * NetworkX version 3.2 or newer in order to use use the nx-cuGraph backend. NetworkX version 3.4 or newer is recommended. (`see below <#cugraph-using-networkx-code>`).
 
 Installation
 The latest RAPIDS System Requirements documentation is located `here <https://docs.rapids.ai/install#system-req>`_.
