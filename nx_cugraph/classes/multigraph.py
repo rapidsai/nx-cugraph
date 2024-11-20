@@ -37,6 +37,7 @@ if TYPE_CHECKING:
 __all__ = ["MultiGraph", "CudaMultiGraph"]
 
 networkx_api = nxcg.utils.decorators.networkx_class(nx.MultiGraph)
+gpu_cpu_api = nxcg.utils.decorators._gpu_cpu_api(nx.MultiGraph, __name__)
 
 
 class MultiGraph(nx.MultiGraph, Graph):
@@ -277,6 +278,36 @@ class MultiGraph(nx.MultiGraph, Graph):
             **attr,
         )
 
+    ##########################
+    # Networkx graph methods #
+    ##########################
+
+    # Dispatch to nx.MultiGraph or CudaMultiGraph
+    __contains__ = gpu_cpu_api("__contains__")
+    __len__ = gpu_cpu_api("__len__")
+    __iter__ = gpu_cpu_api("__iter__")
+    clear = Graph.clear
+    clear_edges = Graph.clear_edges
+    get_edge_data = gpu_cpu_api("get_edge_data", edge_data=True)
+    has_edge = gpu_cpu_api("has_edge")
+    neighbors = gpu_cpu_api("neighbors")
+    has_node = gpu_cpu_api("has_node")
+    nbunch_iter = gpu_cpu_api("nbunch_iter")
+
+    @networkx_api
+    def number_of_edges(
+        self, u: NodeKey | None = None, v: NodeKey | None = None
+    ) -> int:
+        if u is not None or v is not None:
+            # NotImplemented by CudaGraph
+            nx_class = self.to_networkx_class()
+            return nx_class.number_of_edges(self, u, v)
+        return self._number_of_edges(u, v)
+
+    _number_of_edges = gpu_cpu_api("number_of_edges")
+    number_of_nodes = gpu_cpu_api("number_of_nodes")
+    order = gpu_cpu_api("order")
+
 
 class CudaMultiGraph(CudaGraph):
     # networkx properties
@@ -390,14 +421,13 @@ class CudaMultiGraph(CudaGraph):
         mask = (self.src_indices == u) & (self.dst_indices == v)
         if not mask.any():
             return default
-        if self.edge_keys is None:
+        if self.edge_keys is None and key is not None:
             if self.edge_indices is None:
                 self._calculate_edge_indices()
-            if key is not None:
-                try:
-                    mask = mask & (self.edge_indices == key)
-                except TypeError:
-                    return default
+            try:
+                mask = mask & (self.edge_indices == key)
+            except TypeError:
+                return default
         indices = cp.nonzero(mask)[0]
         if indices.size == 0:
             return default
