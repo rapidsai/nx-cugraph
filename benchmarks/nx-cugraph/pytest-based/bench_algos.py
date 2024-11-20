@@ -149,7 +149,11 @@ def get_legacy_backend_wrapper(backend_name):
     else:
         dispatch = orig_dispatch
 
-    def wrap_callable_for_dispatch(func, exhaust_returned_iterator=False):
+    def wrap_callable_for_dispatch(func, force_unlazy_eval=False):
+        # force_unlazy_eval=True forces iterators and other containers to
+        # generate a complete set of results in order to include any deferred
+        # compute or conversion in the benchmark
+
         # Networkx <3.2 registers functions when the dispatch decorator is
         # applied (called) and errors if re-registered, so clear bookkeeping to
         # allow it to be called repeatedly.
@@ -158,8 +162,11 @@ def get_legacy_backend_wrapper(backend_name):
 
         def wrapper(*args, **kwargs):
             retval = actual_func(*args, **kwargs)
-            if exhaust_returned_iterator:
-                retval = list(retval)
+            if force_unlazy_eval:
+                if isinstance(retval, Mapping):
+                    retval = dict(retval)
+                else:
+                    retval = list(retval)
             return retval
 
         return wrapper
@@ -173,13 +180,18 @@ def get_backend_wrapper(backend_name):
     "backend" kwarg on it.
     This is only supported for NetworkX >= 3.2
     """
-
-    def wrap_callable_for_dispatch(func, exhaust_returned_iterator=False):
+    def wrap_callable_for_dispatch(func, force_unlazy_eval=False):
+        # force_unlazy_eval=True forces iterators and other containers to
+        # generate a complete set of results in order to include any deferred
+        # compute or conversion in the benchmark
         def wrapper(*args, **kwargs):
             kwargs["backend"] = backend_name
             retval = func(*args, **kwargs)
-            if exhaust_returned_iterator:
-                retval = list(retval)
+            if force_unlazy_eval:
+                if isinstance(retval, Mapping):
+                    retval = dict(retval)
+                else:
+                    retval = list(retval)
             return retval
 
         return wrapper
@@ -489,7 +501,7 @@ def bench_shortest_path(benchmark, graph_obj, backend_wrapper):
     node = get_highest_degree_node(graph_obj)
 
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.shortest_path),
+        target=backend_wrapper(nx.shortest_path, force_unlazy_eval=True),
         args=(G,),
         kwargs=dict(
             source=node,
@@ -523,7 +535,7 @@ def bench_single_target_shortest_path_length(benchmark, graph_obj, backend_wrapp
     node = get_highest_degree_node(graph_obj)
     result = benchmark.pedantic(
         target=backend_wrapper(
-            nx.single_target_shortest_path_length, exhaust_returned_iterator=True
+            nx.single_target_shortest_path_length, force_unlazy_eval=True
         ),
         args=(G,),
         kwargs=dict(
@@ -533,9 +545,11 @@ def bench_single_target_shortest_path_length(benchmark, graph_obj, backend_wrapp
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    # exhaust_returned_iterator=True forces the result to a list, but is not
-    # needed for this algo in NX 3.3+ which returns a dict instead of an
-    # iterator. Forcing to a list does not change the benchmark timing.
+    # force_unlazy_eval=True forces iterators and other containers to generate
+    # a complete set of results (in order to include any deferred compute or
+    # conversion in the benchmark), but is not needed for this algo in NX 3.3+
+    # since it returns a dict instead of an iterator. Forcing eval does not
+    # change the benchmark timing.
     assert type(result) is list
 
 
@@ -574,7 +588,7 @@ def bench_generic_bfs_edges(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     node = get_highest_degree_node(graph_obj)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.generic_bfs_edges, exhaust_returned_iterator=True),
+        target=backend_wrapper(nx.generic_bfs_edges, force_unlazy_eval=True),
         args=(G,),
         kwargs=dict(
             source=node,
@@ -590,7 +604,7 @@ def bench_bfs_edges(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     node = get_highest_degree_node(graph_obj)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.bfs_edges, exhaust_returned_iterator=True),
+        target=backend_wrapper(nx.bfs_edges, force_unlazy_eval=True),
         args=(G,),
         kwargs=dict(
             source=node,
@@ -606,7 +620,7 @@ def bench_bfs_layers(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     node = get_highest_degree_node(graph_obj)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.bfs_layers, exhaust_returned_iterator=True),
+        target=backend_wrapper(nx.bfs_layers, force_unlazy_eval=True),
         args=(G,),
         kwargs=dict(
             sources=node,
@@ -622,7 +636,7 @@ def bench_bfs_predecessors(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     node = get_highest_degree_node(graph_obj)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.bfs_predecessors, exhaust_returned_iterator=True),
+        target=backend_wrapper(nx.bfs_predecessors, force_unlazy_eval=True),
         args=(G,),
         kwargs=dict(
             source=node,
@@ -638,7 +652,7 @@ def bench_bfs_successors(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     node = get_highest_degree_node(graph_obj)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.bfs_successors, exhaust_returned_iterator=True),
+        target=backend_wrapper(nx.bfs_successors, force_unlazy_eval=True),
         args=(G,),
         kwargs=dict(
             source=node,
@@ -822,7 +836,7 @@ def bench_strongly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
         target=backend_wrapper(
-            nx.strongly_connected_components, exhaust_returned_iterator=True
+            nx.strongly_connected_components, force_unlazy_eval=True
         ),
         args=(G,),
         rounds=rounds,
@@ -866,7 +880,7 @@ def bench_weakly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
         target=backend_wrapper(
-            nx.weakly_connected_components, exhaust_returned_iterator=True
+            nx.weakly_connected_components, force_unlazy_eval=True
         ),
         args=(G,),
         rounds=rounds,
