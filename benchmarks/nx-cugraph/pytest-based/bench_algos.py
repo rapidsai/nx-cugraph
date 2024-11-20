@@ -11,21 +11,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Mapping
+
 import networkx as nx
 import pandas as pd
 import pytest
 from cugraph import datasets
 
 import nx_cugraph as nxcg
-
-# Attempt to import the NetworkX dispatching module, which is only needed when
-# testing with NX <3.2 in order to dynamically switch backends. NX >=3.2 allows
-# the backend to be specified directly in the API call.
-try:
-    from networkx.classes import backends  # NX <3.2
-except ImportError:
-    backends = None
-
 
 ################################################################################
 # Fixtures and params
@@ -131,45 +124,10 @@ def nx_graph_from_dataset(dataset_obj):
     return G
 
 
-def get_legacy_backend_wrapper(backend_name):
-    """
-    Returns a callable that wraps an algo function with either the default
-    dispatcher (which dispatches based on input graph type), or the "testing"
-    dispatcher (which autoconverts and unconditionally dispatches).
-    This is only supported for NetworkX <3.2
-    """
-    backends.plugin_name = "cugraph"
-    orig_dispatch = backends._dispatch
-    testing_dispatch = backends.test_override_dispatch
-
-    if backend_name == "cugraph":
-        dispatch = testing_dispatch
-    else:
-        dispatch = orig_dispatch
-
-    def wrap_callable_for_dispatch(func, exhaust_returned_iterator=False):
-        # Networkx <3.2 registers functions when the dispatch decorator is
-        # applied (called) and errors if re-registered, so clear bookkeeping to
-        # allow it to be called repeatedly.
-        backends._registered_algorithms = {}
-        actual_func = dispatch(func)  # returns the func the dispatcher picks
-
-        def wrapper(*args, **kwargs):
-            retval = actual_func(*args, **kwargs)
-            if exhaust_returned_iterator:
-                retval = list(retval)
-            return retval
-
-        return wrapper
-
-    return wrap_callable_for_dispatch
-
-
 def get_backend_wrapper(backend_name):
     """
     Returns a callable that wraps an algo function in order to set the
     "backend" kwarg on it.
-    This is only supported for NetworkX >= 3.2
     """
 
     def wrap_callable_for_dispatch(func, exhaust_returned_iterator=False):
@@ -208,12 +166,7 @@ def backend_wrapper(request):
     if backend_name == "cugraph-preconverted":
         actual_backend_name = "cugraph"
 
-    # NX <3.2 does not support the backends= kwarg, so the backend must be
-    # enabled differently
-    if backends is not None:
-        wrapper = get_legacy_backend_wrapper(actual_backend_name)
-    else:
-        wrapper = get_backend_wrapper(actual_backend_name)
+    wrapper = get_backend_wrapper(actual_backend_name)
 
     wrapper.backend_name = backend_name
     return wrapper
@@ -496,7 +449,7 @@ def bench_shortest_path(benchmark, graph_obj, backend_wrapper):
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    assert type(result) is dict
+    assert isinstance(result, Mapping)  # dict in nx, but we duck-type
 
 
 def bench_single_source_shortest_path_length(benchmark, graph_obj, backend_wrapper):

@@ -89,8 +89,7 @@ class _GraphCache(dict):
 
 class Graph(nx.Graph):
     # Tell networkx to dispatch calls with this object to nx-cugraph
-    __networkx_backend__: ClassVar[str] = "cugraph"  # nx >=3.2
-    __networkx_plugin__: ClassVar[str] = "cugraph"  # nx <3.2
+    __networkx_backend__: ClassVar[str] = "cugraph"
 
     # Core attributes of NetowkrX graphs that will be copied and cleared as appropriate.
     # These attributes comprise the edge and node data model for NetworkX graphs.
@@ -589,8 +588,7 @@ class Graph(nx.Graph):
 
 class CudaGraph:
     # Tell networkx to dispatch calls with this object to nx-cugraph
-    __networkx_backend__: ClassVar[str] = "cugraph"  # nx >=3.2
-    __networkx_plugin__: ClassVar[str] = "cugraph"  # nx <3.2
+    __networkx_backend__: ClassVar[str] = "cugraph"
 
     # Allow networkx dispatch machinery to cache conversions.
     # This means we should clear the cache if we ever mutate the object!
