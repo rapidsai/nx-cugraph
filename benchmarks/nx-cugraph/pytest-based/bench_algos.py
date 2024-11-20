@@ -130,6 +130,9 @@ def get_backend_wrapper(backend_name):
     "backend" kwarg on it.
     """
 
+    # FIXME: consider a pytest param to run force_unlazy_eval=False for
+    # benchmarks that set it to True in order to measure the time spent for any
+    # deferred computation/conversions.
     def wrap_callable_for_dispatch(func, force_unlazy_eval=False):
         # force_unlazy_eval=True forces iterators and other containers to
         # generate a complete set of results in order to include any deferred
