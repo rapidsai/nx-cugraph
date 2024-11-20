@@ -180,6 +180,7 @@ def get_backend_wrapper(backend_name):
     "backend" kwarg on it.
     This is only supported for NetworkX >= 3.2
     """
+
     def wrap_callable_for_dispatch(func, force_unlazy_eval=False):
         # force_unlazy_eval=True forces iterators and other containers to
         # generate a complete set of results in order to include any deferred
@@ -879,9 +880,7 @@ def bench_triangles(benchmark, graph_obj, backend_wrapper):
 def bench_weakly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
-        target=backend_wrapper(
-            nx.weakly_connected_components, force_unlazy_eval=True
-        ),
+        target=backend_wrapper(nx.weakly_connected_components, force_unlazy_eval=True),
         args=(G,),
         rounds=rounds,
         iterations=iterations,
