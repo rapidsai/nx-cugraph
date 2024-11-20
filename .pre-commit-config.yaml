@@ -49,6 +49,7 @@ repos:
     rev: 24.10.0
     hooks:
       - id: black
+      # - id: black-jupyter  # Consider adding this
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.3
     hooks:
@@ -119,6 +120,11 @@ repos:
         entry: "_nxver > |_nxver <= | < _nxver| >= _nxver"
         # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
         exclude: .pre-commit-config.yaml
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+        args: ["--enable=all", "--disable=line-too-long"]
   - repo: https://github.com/rapidsai/pre-commit-hooks
     rev: v0.4.0
     hooks:
