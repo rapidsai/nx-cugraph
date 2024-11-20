@@ -51,7 +51,7 @@ repos:
       - id: black
       # - id: black-jupyter  # Consider adding this
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.3
+    rev: v0.7.4
     hooks:
       - id: ruff
         args: [--fix-only, --show-fixes]  # --unsafe-fixes]
@@ -79,7 +79,7 @@ repos:
         files: ^(nx_cugraph|docs)/
         args: ["-L thirdparty,coo,COO,numer"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.3
+    rev: v0.7.4
     hooks:
       - id: ruff
         # Don't have strict linting for miscellaneous code
