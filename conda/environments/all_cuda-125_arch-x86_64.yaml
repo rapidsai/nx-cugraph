@@ -12,7 +12,7 @@ dependencies:
 - graphviz
 - ipython
 - nbsphinx
-- networkx>=3.0
+- networkx>=3.2
 - numpy>=1.23,<3.0a0
 - numpydoc
 - pandas
