@@ -91,17 +91,14 @@ def lowest_common_ancestor(G, node1, node2, default=None):
     mask = cp.isin(G.src_indices, common_ids) & (G.src_indices != G.dst_indices)
     groups = _groupby(G.src_indices[mask], G.dst_indices[mask])
     # Walk along successors until we reach a lowest common ancestor
-    stack = sorted(groups, reverse=True)  # Sort for consistency
+    node_index = next(iter(groups))  # Choose arbitrary element
     seen = set()
-    while stack:
-        node_index = stack.pop()
+    while True:
         if node_index in seen:
-            continue
-        seen.add(node_index)
-        successors = groups[node_index]
-        lower_ancestors = successors[cp.isin(successors, common_ids)]
+            raise nx.NetworkXError("LCA only defined on directed acyclic graphs.")
+        lower_ancestors = cp.intersect1d(groups[node_index], common_ids)
         if lower_ancestors.size == 0:
-            return node_index if G.key_to_id is None else G.id_to_key[node_index]
-        stack.extend(sorted(lower_ancestors.tolist(), reverse=True))
-
-    raise nx.NetworkXError("LCA only defined on directed acyclic graphs.")
+            break
+        seen.add(node_index)
+        node_index = lower_ancestors[0].tolist()  # Arbitrary element
+    return node_index if G.key_to_id is None else G.id_to_key[node_index]
