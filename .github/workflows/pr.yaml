@@ -14,6 +14,7 @@ jobs:
     needs:
       - changed-files
       - checks
+      - devcontainer
       - conda-python-build
       - conda-python-tests
       - wheel-build-nx-cugraph
@@ -30,13 +31,25 @@ jobs:
       files_yaml: |
         test_notebooks:
           - '**'
+          - '!.devcontainer/**'
           - '!README.md'
           - '!docs/**'
         test_python:
           - '**'
+          - '!.devcontainer/**'
           - '!README.md'
           - '!docs/**'
           - '!notebooks/**'
+  devcontainer:
+    secrets: inherit
+    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@branch-24.12
+    with:
+      arch: '["amd64"]'
+      cuda: '["12.5"]'
+      build_command: |
+        sccache -z;
+        build-all --verbose -j$(nproc --ignore=1);
+        sccache -s;
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-25.02
