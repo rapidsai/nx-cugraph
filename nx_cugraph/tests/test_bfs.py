@@ -11,12 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import networkx as nx
-import pytest
-
-from nx_cugraph import _nxver
-
-if _nxver < (3, 2):
-    pytest.skip("Need NetworkX >=3.2 to test clustering", allow_module_level=True)
 
 
 def test_generic_bfs_edges():
