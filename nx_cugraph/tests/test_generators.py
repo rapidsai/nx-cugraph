@@ -19,9 +19,6 @@ from nx_cugraph import _nxver
 
 from .testing_utils import assert_graphs_equal
 
-if _nxver < (3, 2):
-    pytest.skip("Need NetworkX >=3.2 to test generators", allow_module_level=True)
-
 
 def compare(name, create_using, *args, is_vanilla=False):
     exc1 = exc2 = None

@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import os
-import sys
 
 import networkx as nx
 
@@ -24,19 +23,10 @@ from nx_cugraph import _nxver
 class BackendInterface:
     # Required conversions
     @staticmethod
-    def convert_from_nx(graph, *args, edge_attrs=None, weight=None, **kwargs):
-        if weight is not None:
-            # MAINT: networkx 3.0, 3.1
-            # For networkx 3.0 and 3.1 compatibility
-            if edge_attrs is not None:
-                raise TypeError(
-                    "edge_attrs and weight arguments should not both be given"
-                )
-            edge_attrs = {weight: 1}
+    def convert_from_nx(graph, *args, **kwargs):
         return nxcg.from_networkx(
             graph,
             *args,
-            edge_attrs=edge_attrs,
             use_compat_graph=_nxver < (3, 3)
             or nx.config.backends.cugraph.use_compat_graphs,
             **kwargs,
@@ -77,13 +67,11 @@ class BackendInterface:
         fallback = use_compat_graph or nx.utils.backends._dispatchable._fallback_to_nx
 
         # Reasons for xfailing
-        # For nx version <= 3.1
-        no_weights = "weighted implementation not currently supported"
-        no_multigraph = "multigraphs not currently supported"
         # For nx version <= 3.2
         nx_cugraph_in_test_setup = (
             "nx-cugraph Graph is incompatible in test setup in nx versions < 3.3"
         )
+        different_iteration_order = "Different graph data iteration order"
         # For all versions
         louvain_different = "Louvain may be different due to RNG"
         sssp_path_different = "sssp may choose a different valid path"
@@ -262,166 +250,55 @@ class BackendInterface:
                     key(
                         "test_vf2pp_helpers.py:TestDiGraphTinoutUpdating.test_restoring"
                     ): nx_cugraph_in_test_setup,
-                }
-            )
-
-        if _nxver < (3, 2):
-            # MAINT: networkx 3.0, 3.1
-            # NetworkX 3.2 added the ability to "fallback to nx" if backend algorithms
-            # raise NotImplementedError or `can_run` returns False. The tests below
-            # exercise behavior we have not implemented yet, so we mark them as xfail
-            # for previous versions of NX.
-            xfail.update(
-                {
+                    # Different iteration
                     key(
-                        "test_agraph.py:TestAGraph.test_no_warnings_raised"
-                    ): "pytest.warn(None) deprecated",
+                        "test_cycles.py:TestMinimumCycleBasis."
+                        "test_gh6787_and_edge_attribute_names"
+                    ): different_iteration_order,
                     key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_K5"
-                    ): no_weights,
+                        "test_euler.py:TestEulerianCircuit."
+                        "test_eulerian_circuit_cycle"
+                    ): different_iteration_order,
                     key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_P3_normalized"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_P3"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_krackhardt_kite_graph"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality."
-                        "test_krackhardt_kite_graph_normalized"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality."
-                        "test_florentine_families_graph"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_les_miserables_graph"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_ladder_graph"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_G"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_G2"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_G3"
-                    ): no_multigraph,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedBetweennessCentrality.test_G4"
-                    ): no_multigraph,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality.test_K5"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality.test_C4"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality.test_P4"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality.test_balanced_tree"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality.test_weighted_graph"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality."
-                        "test_normalized_weighted_graph"
-                    ): no_weights,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality.test_weighted_multigraph"
-                    ): no_multigraph,
-                    key(
-                        "test_betweenness_centrality.py:"
-                        "TestWeightedEdgeBetweennessCentrality."
-                        "test_normalized_weighted_multigraph"
-                    ): no_multigraph,
+                        "test_gml.py:TestGraph.test_special_float_label"
+                    ): different_iteration_order,
                 }
             )
         else:
             xfail.update(
                 {
-                    key(
-                        "test_louvain.py:test_karate_club_partition"
-                    ): louvain_different,
-                    key("test_louvain.py:test_none_weight_param"): louvain_different,
-                    key("test_louvain.py:test_multigraph"): louvain_different,
-                    # See networkx#6630
-                    key(
-                        "test_louvain.py:test_undirected_selfloops"
-                    ): "self-loops not handled in Louvain",
+                    key("test_louvain.py:test_max_level"): louvain_different,
                 }
             )
-            if sys.version_info[:2] == (3, 9):
-                # This test is sensitive to RNG, which depends on Python version
-                xfail[key("test_louvain.py:test_threshold")] = (
-                    "Louvain does not support seed parameter"
-                )
-            if _nxver >= (3, 2):
-                if not fallback:
-                    xfail.update(
-                        {
-                            key(
-                                "test_convert_pandas.py:TestConvertPandas."
-                                "test_from_edgelist_multi_attr_incl_target"
-                            ): no_string_dtype,
-                            key(
-                                "test_convert_pandas.py:TestConvertPandas."
-                                "test_from_edgelist_multidigraph_and_edge_attr"
-                            ): no_string_dtype,
-                            key(
-                                "test_convert_pandas.py:TestConvertPandas."
-                                "test_from_edgelist_int_attr_name"
-                            ): no_string_dtype,
-                        }
-                    )
-                if _nxver[1] == 2:
-                    different_iteration_order = "Different graph data iteration order"
-                    xfail.update(
-                        {
-                            key(
-                                "test_cycles.py:TestMinimumCycleBasis."
-                                "test_gh6787_and_edge_attribute_names"
-                            ): different_iteration_order,
-                            key(
-                                "test_euler.py:TestEulerianCircuit."
-                                "test_eulerian_circuit_cycle"
-                            ): different_iteration_order,
-                            key(
-                                "test_gml.py:TestGraph.test_special_float_label"
-                            ): different_iteration_order,
-                        }
-                    )
-                elif _nxver[1] >= 3:
-                    xfail.update(
-                        {
-                            key("test_louvain.py:test_max_level"): louvain_different,
-                        }
-                    )
+
+        xfail.update(
+            {
+                key("test_louvain.py:test_karate_club_partition"): louvain_different,
+                key("test_louvain.py:test_none_weight_param"): louvain_different,
+                key("test_louvain.py:test_multigraph"): louvain_different,
+                # See networkx#6630
+                key(
+                    "test_louvain.py:test_undirected_selfloops"
+                ): "self-loops not handled in Louvain",
+            }
+        )
+        if not fallback:
+            xfail.update(
+                {
+                    key(
+                        "test_convert_pandas.py:TestConvertPandas."
+                        "test_from_edgelist_multi_attr_incl_target"
+                    ): no_string_dtype,
+                    key(
+                        "test_convert_pandas.py:TestConvertPandas."
+                        "test_from_edgelist_multidigraph_and_edge_attr"
+                    ): no_string_dtype,
+                    key(
+                        "test_convert_pandas.py:TestConvertPandas."
+                        "test_from_edgelist_int_attr_name"
+                    ): no_string_dtype,
+                }
+            )
 
         if _nxver == (3, 4, 2):
             xfail[key("test_pylab.py:test_return_types")] = "Ephemeral NetworkX bug"
@@ -479,11 +356,9 @@ class BackendInterface:
     @classmethod
     def can_run(cls, name, args, kwargs):
         """Can this backend run the specified algorithms with the given arguments?"""
-        # TODO: drop hasattr when networkx 3.0 support is dropped
-        return hasattr(cls, name) and getattr(cls, name).can_run(*args, **kwargs)
+        return getattr(cls, name).can_run(*args, **kwargs)
 
     @classmethod
     def should_run(cls, name, args, kwargs):
         """Should this backend run the specified algorithms with the given arguments?"""
-        # TODO: drop hasattr when networkx 3.0 support is dropped
-        return hasattr(cls, name) and getattr(cls, name).should_run(*args, **kwargs)
+        return getattr(cls, name).should_run(*args, **kwargs)
