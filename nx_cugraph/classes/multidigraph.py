@@ -23,6 +23,7 @@ from .multigraph import CudaMultiGraph, MultiGraph
 __all__ = ["CudaMultiDiGraph", "MultiDiGraph"]
 
 networkx_api = nxcg.utils.decorators.networkx_class(nx.MultiDiGraph)
+gpu_cpu_api = nxcg.utils.decorators._gpu_cpu_api(nx.MultiDiGraph, __name__)
 
 
 class MultiDiGraph(nx.MultiDiGraph, MultiGraph, DiGraph):
@@ -49,6 +50,26 @@ class MultiDiGraph(nx.MultiDiGraph, MultiGraph, DiGraph):
     @classmethod
     def to_networkx_class(cls) -> type[nx.MultiDiGraph]:
         return nx.MultiDiGraph
+
+    ##########################
+    # Networkx graph methods #
+    ##########################
+
+    # Dispatch to nx.MultiDiGraph or CudaMultiDiGraph
+    __contains__ = gpu_cpu_api("__contains__")
+    __len__ = gpu_cpu_api("__len__")
+    __iter__ = gpu_cpu_api("__iter__")
+    clear = DiGraph.clear
+    clear_edges = DiGraph.clear_edges
+    get_edge_data = gpu_cpu_api("get_edge_data", edge_data=True)
+    has_edge = gpu_cpu_api("has_edge")
+    neighbors = gpu_cpu_api("neighbors")
+    has_node = gpu_cpu_api("has_node")
+    nbunch_iter = gpu_cpu_api("nbunch_iter")
+    number_of_edges = MultiGraph.number_of_edges
+    number_of_nodes = gpu_cpu_api("number_of_nodes")
+    order = gpu_cpu_api("order")
+    successors = gpu_cpu_api("successors")
 
 
 class CudaMultiDiGraph(CudaMultiGraph, CudaDiGraph):
