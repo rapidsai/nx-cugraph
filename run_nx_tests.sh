@@ -2,10 +2,6 @@
 #
 # Copyright (c) 2023-2024, NVIDIA CORPORATION.
 #
-# NETWORKX_GRAPH_CONVERT=cugraph
-#   Used by networkx versions 3.0 and 3.1
-#   Must be set to "cugraph" to test the nx-cugraph backend.
-#
 # NETWORKX_TEST_BACKEND=cugraph
 #   Replaces NETWORKX_GRAPH_CONVERT for networkx versions >=3.2
 #   Must be set to "cugraph" to test the nx-cugraph backend.
@@ -29,7 +25,6 @@
 # so be mindful of its contents and the CWD when running.
 # FIXME: should something be added to detect/prevent the above?
 set -e
-NETWORKX_GRAPH_CONVERT=cugraph \
 NETWORKX_TEST_BACKEND=cugraph \
 NETWORKX_FALLBACK_TO_NX=True \
     pytest \
