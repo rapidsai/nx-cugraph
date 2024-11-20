@@ -39,13 +39,11 @@ def lowest_common_ancestor(G, node1, node2, default=None):
     if G._N == 0:
         raise nx.NetworkXPointlessConcept("LCA meaningless on null graphs.")
     if node1 not in G:
-        raise nx.NodeNotFound(
-            f"Node(s) { {node1} } from pair {(node1, node2)} not in G."
-        )
+        nodes = {node1}
+        raise nx.NodeNotFound(f"Node(s) {nodes} from pair {(node1, node2)} not in G.")
     if node2 not in G:
-        raise nx.NodeNotFound(
-            f"Node(s) { {node2} } from pair {(node1, node2)} not in G."
-        )
+        nodes = {node2}
+        raise nx.NodeNotFound(f"Node(s) {nodes} from pair {(node1, node2)} not in G.")
 
     # Ancestor BFS from node1
     node1_index = node1 if G.key_to_id is None else G.key_to_id[node1]
