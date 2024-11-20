@@ -18,9 +18,6 @@ from nx_cugraph import _nxver
 
 from .testing_utils import assert_graphs_equal
 
-if _nxver < (3, 2):
-    pytest.skip("Need NetworkX >=3.2 to test ego_graph", allow_module_level=True)
-
 
 @pytest.mark.parametrize(
     "create_using", [nx.Graph, nx.DiGraph, nx.MultiGraph, nx.MultiDiGraph]
