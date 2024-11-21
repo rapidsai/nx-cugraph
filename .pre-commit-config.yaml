@@ -27,7 +27,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.22
+    rev: v0.23
     hooks:
       - id: validate-pyproject
         name: Validate pyproject.toml
@@ -51,7 +51,7 @@ repos:
       - id: black
       # - id: black-jupyter  # Consider adding this
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.3
+    rev: v0.7.4
     hooks:
       - id: ruff
         args: [--fix-only, --show-fixes]  # --unsafe-fixes]
@@ -79,7 +79,7 @@ repos:
         files: ^(nx_cugraph|docs)/
         args: ["-L thirdparty,coo,COO,numer"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.3
+    rev: v0.7.4
     hooks:
       - id: ruff
         # Don't have strict linting for miscellaneous code
@@ -109,6 +109,17 @@ repos:
         language: python
         pass_filenames: false
         additional_dependencies: ["networkx>=3.4"]
+  - repo: local
+    hooks:
+      - id: disallow-improper-nxver-comparison
+        name: disallow improper comparison to `_nxver`
+        language: pygrep
+        # We expect bug-fix releases to be the same, so these rules avoid cases like:
+        # >>> (X, Y, 1) <= (X, Y)
+        # False
+        entry: "_nxver > |_nxver <= | < _nxver| >= _nxver"
+        # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
+        exclude: .pre-commit-config.yaml
   - repo: https://github.com/sphinx-contrib/sphinx-lint
     rev: v1.0.0
     hooks:
