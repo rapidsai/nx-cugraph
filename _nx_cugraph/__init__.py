@@ -343,16 +343,21 @@ def get_info():
     return d
 
 
-def _check_networkx_version() -> tuple[int, int] | tuple[int, int, int]:
+def _check_networkx_version(nx_version=None) -> tuple[int, int] | tuple[int, int, int]:
     """Check the version of networkx and return ``(major, minor)`` version tuple."""
     import re
     import warnings
 
     import networkx as nx
 
-    version_major, version_minor, *version_bug = nx.__version__.split(".")[:3]
+    if nx_version is None:
+        nx_version = nx.__version__
+    version_major, version_minor, *version_bug = nx_version.split(".")[:3]
     if has_bug := bool(version_bug):
         version_bug = version_bug[0]
+        if "dev" in version_bug:
+            # For example: "3.5rc0.dev0" should give (3, 5)
+            has_bug = False
     if version_major != "3":
         warnings.warn(
             f"nx-cugraph version {__version__} is only known to work with networkx "
