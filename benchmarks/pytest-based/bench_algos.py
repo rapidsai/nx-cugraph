@@ -225,15 +225,17 @@ def build_personalization_dict(pagerank_dict):
 
     return pers_dict
 
+
 # Used to return a function that calls the original function inside a try-except block
-# which is Useful to still save pytest-benchmark numbers if failure is correct behavior for
-# the function being tested. 
+# which is Useful to still save pytest-benchmark numbers if failure is correct behavior
+# for the function being tested.
 def possible_to_fail(exception, function):
     def nested_func(*args, **kwargs):
         try:
             return function(*args, **kwargs)
         except exception:
             pass
+
     return nested_func
 
 
@@ -379,8 +381,7 @@ def bench_katz_centrality(benchmark, graph_obj, backend_wrapper, normalized):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
         target=possible_to_fail(
-            nx.PowerIterationFailedConvergence,
-            backend_wrapper(nx.katz_centrality)
+            nx.PowerIterationFailedConvergence, backend_wrapper(nx.katz_centrality)
         ),
         args=(G,),
         kwargs=dict(
@@ -705,6 +706,7 @@ def bench_descendants_at_distance(benchmark, graph_obj, backend_wrapper):
         warmup_rounds=warmup_rounds,
     )
     assert type(result) is set
+
 
 @pytest.mark.skip(reason="benchmark not implemented")
 def bench_is_bipartite(benchmark, graph_obj, backend_wrapper):
