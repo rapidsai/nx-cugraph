@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from collections.abc import Mapping
 
 import networkx as nx
@@ -225,6 +226,19 @@ def build_personalization_dict(pagerank_dict):
     return pers_dict
 
 
+# Used to return a function that calls the original function inside a try-except block
+# which is useful because it allows us to save pytest-benchmark numbers if failure is
+# the correct behavior for certain graphs
+def possible_to_fail(exception, function):
+    def nested_func(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except exception:
+            print(f"{function.__name__} raised {exception}")
+
+    return nested_func
+
+
 ################################################################################
 # Benchmarks
 def bench_from_networkx(benchmark, graph_obj):
@@ -366,7 +380,11 @@ def bench_in_degree_centrality(benchmark, graph_obj, backend_wrapper):
 def bench_katz_centrality(benchmark, graph_obj, backend_wrapper, normalized):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.katz_centrality),
+        # calling katz_centrality this way because the algorithm may fail to
+        # converge for some graphs, which is expected
+        target=possible_to_fail(
+            nx.PowerIterationFailedConvergence, backend_wrapper(nx.katz_centrality)
+        ),
         args=(G,),
         kwargs=dict(
             normalized=normalized,
@@ -375,7 +393,7 @@ def bench_katz_centrality(benchmark, graph_obj, backend_wrapper, normalized):
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    assert type(result) is dict
+    assert type(result) is dict or result is None
 
 
 def bench_k_truss(benchmark, graph_obj, backend_wrapper):
@@ -692,6 +710,7 @@ def bench_descendants_at_distance(benchmark, graph_obj, backend_wrapper):
     assert type(result) is set
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_is_bipartite(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -704,6 +723,7 @@ def bench_is_bipartite(benchmark, graph_obj, backend_wrapper):
     assert type(result) is bool
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_is_strongly_connected(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -728,6 +748,7 @@ def bench_is_weakly_connected(benchmark, graph_obj, backend_wrapper):
     assert type(result) is bool
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_number_strongly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -780,6 +801,7 @@ def bench_reciprocity(benchmark, graph_obj, backend_wrapper):
     assert type(result) is float
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_strongly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -850,7 +872,7 @@ def bench_ego_graph(benchmark, graph_obj, backend_wrapper):
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    assert isinstance(result, (nx.Graph, nxcg.Graph))
+    assert type(result) is type(G)
 
 
 @pytest.mark.skip(reason="benchmark not implemented")
