@@ -884,6 +884,27 @@ def bench_lowest_common_ancestor(benchmark, graph_obj, backend_wrapper):
     assert result is None or result in G
 
 
+def bench_bipartite_BC_n1000_m3000_k100000(benchmark, backend_wrapper):
+    # Example how to run:
+    # $ pytest -sv -k "bench_bipartite_BC" \
+    #   --benchmark-json="logs/None__bipartite_BC__None.json" \
+    #   bench_algos.py
+    n = 1000
+    m = 3000
+    k = 100000
+    graph_obj = nx.bipartite.generators.gnmk_random_graph(n, m, k)
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    nodes = list(range(n))
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.bipartite.betweenness_centrality),
+        args=(G, nodes),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is dict
+
+
 @pytest.mark.skip(reason="benchmark not implemented")
 def bench_complete_bipartite_graph(benchmark, graph_obj, backend_wrapper):
     pass
