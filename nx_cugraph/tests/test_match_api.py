@@ -52,7 +52,10 @@ def test_match_signature_and_names():
                     if name not in extra_params
                 ]
             ), name
-        if func.can_run is not nxcg.utils.decorators._default_can_run:
+        if (
+            func.can_run is not nxcg.utils.decorators._default_can_run
+            and func.create_using_arg is None
+        ):
             assert func_sig == inspect.signature(func.can_run), name
         if func.should_run is not nxcg.utils.decorators._default_should_run:
             assert func_sig == inspect.signature(func.should_run), name
@@ -102,3 +105,12 @@ def test_match_signature_and_names():
                 raise AssertionError(
                     f"{mod_name} exists in {nx_path}, but not in {nxcg_path}"
                 )
+
+        # Check `create_using`
+        if "create_using" in func_sig.parameters:
+            assert func.create_using_arg is not None, name
+            params = list(func_sig.parameters)
+            assert params[func.create_using_arg] == "create_using", name
+            assert func.can_run is not nxcg.utils.decorators._default_can_run, name
+        else:
+            assert func.create_using_arg is None, name

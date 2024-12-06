@@ -19,6 +19,7 @@ import networkx as nx
 from networkx import NetworkXError
 from networkx.utils.decorators import nodes_or_number, not_implemented_for
 
+import nx_cugraph as nxcg
 from nx_cugraph import _nxver
 from nx_cugraph.interface import BackendInterface
 
@@ -65,6 +66,8 @@ class networkx_algorithm:
         is_incomplete: bool = False,  # See self.extra_doc for details if True
         is_different: bool = False,  # See self.extra_doc for details if True
         fallback: bool = False,  # Change non-nx exceptions to NotImplementedError
+        # The position of `create_using` arg; sets `can_run` to check `create_using`
+        create_using_arg: int | None = None,
         _plc: str | set[str] | None = None,  # Hidden from user, may be removed someday
     ):
         if func is None:
@@ -77,6 +80,7 @@ class networkx_algorithm:
                 is_incomplete=is_incomplete,
                 is_different=is_different,
                 fallback=fallback,
+                create_using_arg=create_using_arg,
                 _plc=_plc,
             )
         instance = object.__new__(cls)
@@ -108,6 +112,7 @@ class networkx_algorithm:
         instance.is_incomplete = is_incomplete
         instance.is_different = is_different
         instance.fallback = fallback
+        instance.create_using_arg = create_using_arg
         # The docstring on our function is added to the NetworkX docstring.
         instance.extra_doc = (
             dedent(func.__doc__.lstrip("\n").rstrip()) if func.__doc__ else None
@@ -115,7 +120,10 @@ class networkx_algorithm:
         # Copy __doc__ from NetworkX
         if instance.name in _registered_algorithms:
             instance.__doc__ = _registered_algorithms[instance.name].__doc__
-        instance.can_run = _default_can_run
+        if instance.create_using_arg is None:
+            instance.can_run = _default_can_run
+        else:
+            instance.can_run = instance._check_create_using_can_run
         instance.should_run = _default_should_run
         setattr(BackendInterface, instance.name, instance)
         # Set methods so they are in __dict__
@@ -155,6 +163,27 @@ class networkx_algorithm:
 
     def __reduce__(self):
         return _restore_networkx_dispatched, (self.name,)
+
+    def _check_create_using_can_run(self, *args, **kwargs):
+        """``can_run`` function to check whether ``create_using`` argument is valid."""
+        if self.create_using_arg < len(args):
+            create_using = args[self.create_using_arg]
+        else:
+            create_using = kwargs.get("create_using")
+        if (
+            create_using is None
+            or isinstance(create_using, (nxcg.Graph, nxcg.CudaGraph))
+            or isinstance(create_using, type)
+            and (
+                issubclass(create_using, (nxcg.Graph, nxcg.CudaGraph))
+                or create_using
+                in {nx.Graph, nx.DiGraph, nx.MultiGraph, nx.MultiDiGraph}
+            )
+        ):
+            return True
+        if isinstance(create_using, nx.Graph):
+            return "`create_using=G` with instance of `nx.Graph` is not supported"
+        return "Invalid `create_using=` argument"
 
 
 def _default_can_run(*args, **kwargs):
