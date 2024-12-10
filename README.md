@@ -94,7 +94,7 @@ nx.betweenness_centrality(nxcg_G, k=1000)  # nxcg Graph type causes cugraph back
 ## Supported Algorithms
 
 The nx-cugraph backend to NetworkX connects
-[pylibcugraph](../../readme_pages/pylibcugraph.md) (cuGraph's low-level python
+[pylibcugraph](https://github.com/rapidsai/cugraph/blob/-/readme_pages/pylibcugraph.md) (cuGraph's low-level python
 interface to its CUDA-based graph analytics library) and
 [CuPy](https://cupy.dev/) (a GPU-accelerated array library) to NetworkX's
 familiar and easy-to-use API.
@@ -105,6 +105,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 
 <pre>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite">bipartite</a>
+ ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite.centrality">centrality</a>
+ │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.centrality.betweenness_centrality.html#networkx.algorithms.bipartite.centrality.betweenness_centrality">betweenness_centrality</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite.generators">generators</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.generators.complete_bipartite_graph.html#networkx.algorithms.bipartite.generators.complete_bipartite_graph">complete_bipartite_graph</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/centrality.html#module-networkx.algorithms.centrality">centrality</a>
@@ -275,4 +277,4 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 </pre>
 
 To request nx-cugraph backend support for a NetworkX API that is not listed
-above, visit the [cuGraph GitHub repo](https://github.com/rapidsai/cugraph).
+above, visit the [nx-cugraph GitHub repo](https://github.com/rapidsai/nx-cugraph).

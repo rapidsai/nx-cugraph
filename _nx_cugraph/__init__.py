@@ -60,6 +60,7 @@ _info = {
         "bfs_successors",
         "bfs_tree",
         "bidirectional_shortest_path",
+        "bipartite_betweenness_centrality",
         "bull_graph",
         "caveman_graph",
         "chvatal_graph",
