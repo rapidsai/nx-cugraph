@@ -31,6 +31,19 @@ from _nx_cugraph._version import __version__
 # always be in <major>.<minor>.<build> format.
 (_version_major, _version_minor) = __version__.split(".")[:2]
 
+
+def dispatch_hook_impl(hook_name, hook_token, **kwargs):
+    import time
+
+    if hook_name == "on_call_with_backend_begin":
+        hook_token["cugraph"]["t0"] = time.time()
+    elif hook_name == "on_call_with_backend_end":
+        t = time.time() - hook_token["cugraph"]["t0"]
+        backend_name = kwargs["backend_name"]
+        dispatch_name = hook_token.dispatchable.name
+        print(f"{backend_name!r} backend ran {dispatch_name} in {t:.3g} seconds")
+
+
 # Entries between BEGIN and END are automatically generated
 _info = {
     "backend_name": "cugraph",
@@ -38,6 +51,7 @@ _info = {
     "package": "nx_cugraph",
     "url": "https://rapids.ai/nx-cugraph",
     "short_summary": "GPU-accelerated backend.",
+    "dispatch_hook_impl": dispatch_hook_impl,
     # "description": "TODO",
     "functions": {
         # BEGIN: functions

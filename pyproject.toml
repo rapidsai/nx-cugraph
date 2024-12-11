@@ -242,7 +242,7 @@ ignore = [
 "__init__.py" = ["F401"]  # Allow unused imports (w/o defining `__all__`)
 # Allow assert, print, RNG, and no docstring
 "nx_cugraph/**/tests/*py" = ["S101", "S311", "T201", "D103", "D100"]
-"_nx_cugraph/__init__.py" = ["E501"]
+"_nx_cugraph/__init__.py" = ["E501", "T201"]
 "nx_cugraph/__init__.py" = ["E402"]  # Allow module level import not at top of file
 "nx_cugraph/algorithms/**/*py" = ["D205", "D401"]  # Allow flexible docstrings for algorithms
 "nx_cugraph/generators/**/*py" = ["D205", "D401"]  # Allow flexible docstrings for generators
