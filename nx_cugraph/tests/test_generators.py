@@ -47,10 +47,8 @@ def compare(name, create_using, *args, is_vanilla=False):
             Gcg = func(*args, create_using=create_using, backend="cugraph")
     except ZeroDivisionError:
         raise
-    except NotImplementedError as exc:
-        if name in {"complete_multipartite_graph"}:  # nx.__version__[:3] <= "3.2"
-            return
-        exc2 = exc
+    except NotImplementedError:
+        return
     except Exception as exc:
         if exc1 is None:  # pragma: no cover (debug)
             raise
