@@ -40,5 +40,3 @@
 - Adding a `dependencies.yaml` file ([#9](https://github.com/rapidsai/nx-cugraph/pull/9)) [@nv-rliu](https://github.com/nv-rliu)
 - [CI] Adding CI Workflows: checks, changed-files, builds ([#6](https://github.com/rapidsai/nx-cugraph/pull/6)) [@nv-rliu](https://github.com/nv-rliu)
 - Setting Up New Repo, Adding Files, etc. ([#5](https://github.com/rapidsai/nx-cugraph/pull/5)) [@nv-rliu](https://github.com/nv-rliu)
-
-
