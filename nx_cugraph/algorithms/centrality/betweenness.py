@@ -83,27 +83,31 @@ def edge_betweenness_centrality(G, k=None, normalized=True, weight=None, seed=No
     )
     if not G.is_directed():
         if nodes is not None:
-            # Why is this necessary? What is going on?!
             # For undirected graphs, PLC only gives us data for one direction of the
-            # edge (such as (0, 1), but not (1, 0)), but we don't know which one.
+            # edge (such as (i, j), but not (j, i)), but we don't know which one.
+            # That is, only data from node i to j gets added when going from node i.
+            # So, the cupy gymnastics below add (i, j) and (j, i) edges together.
             dst_src = cp.hstack(
                 (cp.vstack((dst_ids, src_ids)), cp.vstack((src_ids, dst_ids)))
             )
             indices = cp.lexsort(dst_src)
             dst_src = dst_src[:, indices][:, ::2]
-            src_ids = dst_src[1]
             dst_ids = dst_src[0]
+            src_ids = dst_src[1]
             values = values[indices % values.size].reshape(values.size, 2).sum(axis=-1)
         mask = src_ids <= dst_ids
         src_ids = src_ids[mask]
         dst_ids = dst_ids[mask]
         if nodes is not None:
-            # Why is this necessary?
+            # NetworkX doesn't scale the same when using k. Which is more "correct"?
+            # No need to x2 like we do below when using the mask, b/c this already
+            # includes contributions from both edge directions.
             values = (k / G._N) * values[mask]
         else:
+            # We discarded half the values with the mask so x2 to compensate.
             values = 2 * values[mask]
     elif nodes is not None:
-        # Why is this necessary? Is plc or networkx "correct"?
+        # NetworkX doesn't scale the same when using k. Which is more "correct"?
         values *= k / G._N
     return G._edgearrays_to_dict(src_ids, dst_ids, values)
 
