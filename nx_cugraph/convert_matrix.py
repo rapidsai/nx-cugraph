@@ -26,7 +26,9 @@ __all__ = [
 
 
 # Value columns with string dtype is not supported
-@networkx_algorithm(is_incomplete=True, version_added="23.12", fallback=True)
+@networkx_algorithm(
+    is_incomplete=True, version_added="23.12", fallback=True, create_using_arg=4
+)
 def from_pandas_edgelist(
     df,
     source="source",
@@ -163,7 +165,7 @@ def from_pandas_edgelist(
     return G
 
 
-@networkx_algorithm(version_added="23.12", fallback=True)
+@networkx_algorithm(version_added="23.12", fallback=True, create_using_arg=2)
 def from_scipy_sparse_array(
     A, parallel_edges=False, create_using=None, edge_attribute="weight"
 ):

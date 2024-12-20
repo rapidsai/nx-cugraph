@@ -780,7 +780,7 @@ def _to_undirected_graph(
     raise TypeError
 
 
-@networkx_algorithm(version_added="24.08", fallback=True)
+@networkx_algorithm(version_added="24.08", fallback=True, create_using_arg=1)
 def from_dict_of_lists(d, create_using=None):
     from .generators._utils import _create_using_class
 
