@@ -28,9 +28,9 @@ dependencies:
 - recommonmark
 - scipy
 - setuptools>=61.0.0
+- sphinx
 - sphinx-copybutton
 - sphinx-markdown-tables
-- sphinx<6
 - sphinxcontrib-websupport
 - wheel
 name: all_cuda-118_arch-x86_64
