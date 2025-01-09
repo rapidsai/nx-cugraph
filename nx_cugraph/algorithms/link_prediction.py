@@ -1,5 +1,3 @@
-import cupy as cp
-
 # Copyright (c) 2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +10,7 @@ import cupy as cp
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import cupy as cp
 import networkx as nx
 import pylibcugraph as plc
 
@@ -27,32 +26,6 @@ __all__ = [
 @not_implemented_for("multigraph")
 @networkx_algorithm(version_added="25.02", _plc="jaccard_coefficients")
 def jaccard_coefficient(G, ebunch=None):
-    """
-    Parameters
-    ----------
-    G : graph
-        A NetworkX or nx-cugraph undirected graph.
-
-    ebunch : iterable of node pairs, optional (default = None)
-        Jaccard coefficient will be computed for each pair of nodes
-        given in the iterable. The pairs must be given as 2-tuples
-        (u, v) where u and v are nodes in the graph. If ebunch is None
-        then all nonexistent edges in the graph will be used.
-
-    Returns
-    -------
-    piter : iterator
-        An iterator of 3-tuples in the form (u, v, p) where (u, v) is a
-        pair of nodes and p is their Jaccard coefficient.
-
-    Raises
-    ------
-    NetworkXNotImplemented
-        If `G` is a `DiGraph`, a `Multigraph` or a `MultiDiGraph`.
-
-    NodeNotFound
-        If `ebunch` has a node that is not in `G`.
-    """
     if ebunch is None:
         # FIXME: is there a more efficient way to do this (on GPU or
         # otherwise)?
@@ -75,6 +48,8 @@ def jaccard_coefficient(G, ebunch=None):
     else:
         # If G was not renumbered, then the ebunch nodes must be explicitly
         # checked.
+        # FIXME: Is there a more efficient way to do this? Should this be a
+        # utility (or is it already)?
         if not hasattr(G, "key_to_id") or G.key_to_id is None:
             ebunch_nodes = cp.unique(cp.concatenate([u, v]))
             graph_nodes = cp.unique(cp.concatenate([G.src_indices, G.dst_indices]))
