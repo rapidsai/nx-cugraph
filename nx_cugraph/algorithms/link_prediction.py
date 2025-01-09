@@ -38,7 +38,7 @@ def jaccard_coefficient(G, ebunch=None):
     (u, v) = zip(*ebunch)
     try:
         # Convert the ebunch lists to cupy arrays for passing to PLC, possibly
-        # mapping to integers if the Graph was renumbered on creation.
+        # mapping to integers if the Graph was renumbered.
         # Allow the Graph renumber lookup (if renumbering was done) to check
         # for invalid node IDs in ebunch.
         u = G._list_to_nodearray(u)
@@ -47,13 +47,22 @@ def jaccard_coefficient(G, ebunch=None):
         raise nx.NodeNotFound(f"Node {n} not in G.")
     else:
         # If G was not renumbered, then the ebunch nodes must be explicitly
-        # checked.
-        # FIXME: Is there a more efficient way to do this? Should this be a
-        # utility (or is it already)?
+        # checked. Note: ebunch can be very large.
+        # FIXME: Is there a better way to do this? Should this be a utility (or
+        # is it already)?
         if not hasattr(G, "key_to_id") or G.key_to_id is None:
             ebunch_nodes = cp.unique(cp.concatenate([u, v]))
-            graph_nodes = cp.unique(cp.concatenate([G.src_indices, G.dst_indices]))
-            if invalid := cp.setdiff1d(ebunch_nodes, graph_nodes, assume_unique=True):
+            graph_nodes = cp.unique(
+                cp.concatenate(
+                    [
+                        G.src_indices,
+                        G.dst_indices,
+                        G._node_ids if G._node_ids is not None else cp.ndarray(0),
+                    ]
+                )
+            )
+            invalid = cp.setdiff1d(ebunch_nodes, graph_nodes, assume_unique=True)
+            if len(invalid) > 0:
                 raise nx.NodeNotFound(f"Node {invalid.tolist()[0]} not in G.")
 
     # Note that Jaccard similarity must run on a symmetric graph.
