@@ -47,7 +47,7 @@ def jaccard_coefficient(G, ebunch=None):
         raise nx.NodeNotFound(f"Node {n} not in G.")
     else:
         # If G was not renumbered, then the ebunch nodes must be explicitly
-        # checked (note: ebunch can be very large).  plc.jaccard_coefficient()
+        # checked (note: ebunch can be very large).  plc.jaccard_coefficients()
         # will accept node IDs that are not in the graph and return a
         # coefficient of 0 for them.
         #
