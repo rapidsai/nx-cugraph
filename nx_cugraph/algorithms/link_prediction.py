@@ -35,7 +35,10 @@ def jaccard_coefficient(G, ebunch=None):
 
     G = _to_undirected_graph(G)
 
+    # FIXME: this zip() call appears to be the performance bottleneck for this
+    # function. Is there a better way?
     (u, v) = zip(*ebunch)
+
     try:
         # Convert the ebunch lists to cupy arrays for passing to PLC, possibly
         # mapping to integers if the Graph was renumbered.
@@ -47,12 +50,12 @@ def jaccard_coefficient(G, ebunch=None):
         raise nx.NodeNotFound(f"Node {n} not in G.")
     else:
         # If G was not renumbered, then the ebunch nodes must be explicitly
-        # checked (note: ebunch can be very large).  plc.jaccard_coefficients()
-        # will accept node IDs that are not in the graph and return a
-        # coefficient of 0 for them.
+        # checked (note: ebunch can be very large). If not done,
+        # plc.jaccard_coefficients() will accept node IDs not in the graph and
+        # return a coefficient of 0 for them, which is not compatible with NX.
         #
-        # FIXME: Is there a better way to do this?  Should this be a utility
-        # (or is it already)?
+        # FIXME: Is there a better way to do this?  Is there a utility to check
+        # if a node ID is valid for the graph?
         if not hasattr(G, "key_to_id") or G.key_to_id is None:
             ebunch_nodes = cp.unique(cp.concatenate([u, v]))
             graph_nodes = cp.unique(
@@ -70,8 +73,9 @@ def jaccard_coefficient(G, ebunch=None):
 
     # Note that Jaccard similarity must run on a symmetric graph.
     # FIXME: PLC will symmetrize the graph if told to, but the symmetrize flag
-    # to _get_plc_graph() does other things (cast to 64bit, etc.). Can we let
-    # PLC do the symmetrization if the symmetrize flag is set instead?
+    # to _get_plc_graph() appears to symmetrize using cupy and does other
+    # things (cast to 64bit, etc.). Can we let PLC do the symmetrization if the
+    # symmetrize flag is set instead?
     (u, v, p) = plc.jaccard_coefficients(
         resource_handle=plc.ResourceHandle(),
         graph=G._get_plc_graph(symmetrize=None),
