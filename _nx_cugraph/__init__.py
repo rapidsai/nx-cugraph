@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -110,6 +110,7 @@ _info = {
         "is_tree",
         "is_weakly_connected",
         "isolates",
+        "jaccard_coefficient",
         "k_truss",
         "karate_club_graph",
         "katz_centrality",
@@ -182,6 +183,32 @@ _info = {
         "eigenvector_centrality": "`nstart` parameter is not used, but it is checked for validity.",
         "from_pandas_edgelist": "cudf.DataFrame inputs also supported; value columns with str is unsuppported.",
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",
+        "jaccard_coefficient": (
+            "Parameters\n"
+            "----------\n"
+            "G : graph\n"
+            "    A NetworkX or nx-cugraph undirected graph.\n"
+            "\n"
+            "ebunch : iterable of node pairs, optional (default = None)\n"
+            "    Jaccard coefficient will be computed for each pair of nodes\n"
+            "    given in the iterable. The pairs must be given as 2-tuples\n"
+            "    (u, v) where u and v are nodes in the graph. If ebunch is None\n"
+            "    then all nonexistent edges in the graph will be used.\n"
+            "\n"
+            "Returns\n"
+            "-------\n"
+            "piter : iterator\n"
+            "    An iterator of 3-tuples in the form (u, v, p) where (u, v) is a\n"
+            "    pair of nodes and p is their Jaccard coefficient.\n"
+            "\n"
+            "Raises\n"
+            "------\n"
+            "NetworkXNotImplemented\n"
+            "    If `G` is a `DiGraph`, a `Multigraph` or a `MultiDiGraph`.\n"
+            "\n"
+            "NodeNotFound\n"
+            "    If `ebunch` has a node that is not in `G`."
+        ),
         "katz_centrality": "`nstart` isn't used (but is checked), and `normalized=False` is not supported.",
         "louvain_communities": "`seed` parameter is currently ignored, and self-loops are not yet supported.",
         "pagerank": "`dangling` parameter is not supported, but it is checked for validity.",
