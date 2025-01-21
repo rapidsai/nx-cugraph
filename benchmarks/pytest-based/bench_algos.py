@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -39,6 +39,8 @@ dataset_param_values = [
     pytest.param(
         datasets.email_Eu_core, marks=[pytest.mark.small, pytest.mark.directed]
     ),
+    # name: amazon0302, nodes: 262111, edges: 1234877
+    pytest.param(datasets.amazon0302, marks=[pytest.mark.medium, pytest.mark.directed]),
     # name: cit-Patents, nodes: 3774768, edges: 16518948
     pytest.param(
         datasets.cit_patents, marks=[pytest.mark.medium, pytest.mark.directed]
