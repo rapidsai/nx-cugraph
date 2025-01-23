@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -1009,6 +1009,11 @@ class CudaGraph:
         dst_indices = self.dst_indices
         if switch_indices:
             src_indices, dst_indices = dst_indices, src_indices
+
+        # FIXME: the SGGraph constructor arg "symmetrize" will perform all
+        # symmetrization steps required by libcugraph. The edge_array check
+        # should be kept, but all other code in this `if` block should be
+        # removed if possible.
         if symmetrize is not None:
             if edge_array is not None:
                 raise NotImplementedError(
