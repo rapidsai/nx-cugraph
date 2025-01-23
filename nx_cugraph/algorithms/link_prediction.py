@@ -66,7 +66,7 @@ def jaccard_coefficient(G, ebunch=None):
 
     (u, v, p) = plc.jaccard_coefficients(
         resource_handle=plc.ResourceHandle(),
-        graph=G._get_plc_graph(symmetrize=None),
+        graph=G._get_plc_graph(),
         first=u_indices,
         second=v_indices,
         use_weight=False,
