@@ -319,6 +319,27 @@ def bench_louvain_communities(benchmark, graph_obj, backend_wrapper):
     assert type(result) is list
 
 
+@pytest.mark.skipif("not hasattr(nx.community, 'leiden_communities')")
+def bench_leiden_communities(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    # DiGraphs are not supported
+    if G.is_directed():
+        G = G.to_undirected()
+    if G.__networkx_backend__ not in nx.community.leiden_communities.backends:
+        pytest.skip(
+            reason=f"leiden_communities not implemented by {G.__networkx_backend__!r}"
+        )
+        return
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.community.leiden_communities),
+        args=(G,),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is list
+
+
 def bench_degree_centrality(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
