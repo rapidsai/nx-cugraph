@@ -116,6 +116,7 @@ _info = {
         "katz_centrality",
         "krackhardt_kite_graph",
         "ladder_graph",
+        "leiden_communities",
         "les_miserables_graph",
         "lollipop_graph",
         "louvain_communities",
@@ -234,6 +235,9 @@ _info = {
             'weight : string or None, optional (default="weight")': "The edge attribute to use as the edge weight.",
         },
         "katz_centrality": {
+            "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+        },
+        "leiden_communities": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
         "louvain_communities": {
