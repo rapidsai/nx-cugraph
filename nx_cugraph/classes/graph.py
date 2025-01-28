@@ -1152,6 +1152,10 @@ class CudaGraph:
     def _list_to_nodearray(self, nodes: list[NodeKey]) -> cp.ndarray[IndexValue]:
         if (key_to_id := self.key_to_id) is not None:
             nodes = [key_to_id[node] for node in nodes]
+        else:
+            valids = [isinstance(n, int) and n >= 0 and n < self._N for n in nodes]
+            if not all(valids):
+                raise ValueError(nodes[valids.index(False)])
         return cp.array(nodes, dtype=index_dtype)
 
     def _nodearray_to_set(self, node_ids: cp.ndarray[IndexValue]) -> set[NodeKey]:

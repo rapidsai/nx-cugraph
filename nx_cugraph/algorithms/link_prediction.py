@@ -49,19 +49,7 @@ def jaccard_coefficient(G, ebunch=None):
             # for invalid node IDs in ebunch.
             u_indices = G._list_to_nodearray(u)
             v_indices = G._list_to_nodearray(v)
-        except KeyError as n:
-            raise nx.NodeNotFound(f"Node {n} not in G.")
-
-        # If G was not renumbered, then the ebunch nodes must be explicitly
-        # checked. If not done, plc.jaccard_coefficients() will accept node IDs
-        # not in the graph and return a coefficient of 0 for them, which is not
-        # compatible with NX.
-        if (not hasattr(G, "key_to_id") or G.key_to_id is None) and (
-            (n := u_indices.max()) >= G._N
-            or (n := v_indices.max()) >= G._N
-            or (n := u_indices.min()) < 0
-            or (n := v_indices.min()) < 0
-        ):
+        except (KeyError, ValueError) as n:
             raise nx.NodeNotFound(f"Node {n} not in G.")
 
     (u, v, p) = plc.jaccard_coefficients(
