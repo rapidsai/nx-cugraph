@@ -37,7 +37,7 @@ def test_node_not_found_in_ebunch():
     Ensure function raises NodeNotFound for invalid nodes in ebunch.
     """
     G = nx.Graph([(0, 1), (1, 2)])
-    with pytest.raises(nx.NodeNotFound, match="Node A not in G."):
+    with pytest.raises(nx.NodeNotFound, match="Node [']*A[']* not in G."):
         nx.jaccard_coefficient(G, [("A", 1)])
     with pytest.raises(nx.NodeNotFound, match=r"Node \(1,\) not in G."):
         nx.jaccard_coefficient(G, [(0, (1,))])
