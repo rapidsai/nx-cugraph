@@ -110,6 +110,7 @@ _info = {
         "is_tree",
         "is_weakly_connected",
         "isolates",
+        "jaccard_coefficient",
         "k_truss",
         "karate_club_graph",
         "katz_centrality",
