@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -1009,6 +1009,11 @@ class CudaGraph:
         dst_indices = self.dst_indices
         if switch_indices:
             src_indices, dst_indices = dst_indices, src_indices
+
+        # FIXME: the SGGraph constructor arg "symmetrize" will perform all
+        # symmetrization steps required by libcugraph. The edge_array check
+        # should be kept, but all other code in this `if` block should be
+        # removed if possible.
         if symmetrize is not None:
             if edge_array is not None:
                 raise NotImplementedError(
@@ -1147,6 +1152,15 @@ class CudaGraph:
     def _list_to_nodearray(self, nodes: list[NodeKey]) -> cp.ndarray[IndexValue]:
         if (key_to_id := self.key_to_id) is not None:
             nodes = [key_to_id[node] for node in nodes]
+        else:
+            N = self._N
+            for node in nodes:
+                try:
+                    n = int(node)
+                except (TypeError, ValueError):
+                    raise KeyError(node) from None
+                if n != node or n < 0 or n >= N:
+                    raise KeyError(node)
         return cp.array(nodes, dtype=index_dtype)
 
     def _nodearray_to_set(self, node_ids: cp.ndarray[IndexValue]) -> set[NodeKey]:
