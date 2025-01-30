@@ -197,7 +197,11 @@ def get_graph_obj_for_benchmark(graph_obj, backend_wrapper):
     """
     G = graph_obj
     if backend_wrapper.backend_name == "cugraph-preconverted":
-        G = nxcg.from_networkx(G, preserve_all_attrs=True)
+        G = nxcg.from_networkx(
+            G,
+            preserve_all_attrs=True,
+            use_compat_graph=True,
+        )
     return G
 
 
@@ -917,6 +921,35 @@ def bench_bipartite_BC_n1000_m3000_k100000(benchmark, backend_wrapper):
         warmup_rounds=warmup_rounds,
     )
     assert type(result) is dict
+
+
+def bench_jaccard(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+
+    # ebunch is a list of node pairs to limit the jaccard run.
+    nodes = list(G.nodes)
+    start = nodes[0]
+    ebunch = [(start, n) for n in nodes[1:]]
+    start = nodes[1]
+    ebunch += [(start, n) for n in nodes[2:]]
+    start = nodes[2]
+    ebunch += [(start, n) for n in nodes[3:]]
+
+    # DiGraphs are not supported
+    if G.is_directed():
+        G = G.to_undirected()
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.jaccard_coefficient, force_unlazy_eval=True),
+        args=(G,),
+        kwargs=dict(
+            ebunch=ebunch,
+        ),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is list
 
 
 @pytest.mark.skip(reason="benchmark not implemented")
