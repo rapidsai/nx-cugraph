@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# Copyright (c) 2024-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -58,8 +58,8 @@ fi
 
 for algo in $algos; do
     for dataset in $datasets; do
-	# this script can be used to download benchmarking datasets by name via cugraph.datasets
-    	python get_graph_bench_dataset.py $dataset
+        # this script can be used to download benchmarking datasets by name via cugraph.datasets
+        python get_graph_bench_dataset.py $dataset
         for backend in $backends; do
             name="${backend}__${algo}__${dataset}"
             echo "Running: $backend, $dataset, bench_$algo"
