@@ -154,6 +154,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
  │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.link_analysis.hits_alg.hits.html#networkx.algorithms.link_analysis.hits_alg.hits">hits</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/link_analysis.html#module-networkx.algorithms.link_analysis.pagerank_alg">pagerank_alg</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html#networkx.algorithms.link_analysis.pagerank_alg.pagerank">pagerank</a>
+<a href="https://networkx.org/documentation/stable/reference/algorithms/link_prediction.html#module-networkx.algorithms.link_prediction">link_prediction</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.link_prediction.jaccard_coefficient.html#networkx.algorithms.link_prediction.jaccard_coefficient">jaccard_coefficient</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/lowest_common_ancestors.html#module-networkx.algorithms.lowest_common_ancestors">lowest_common_ancestors</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.lowest_common_ancestors.lowest_common_ancestor.html#networkx.algorithms.lowest_common_ancestors.lowest_common_ancestor">lowest_common_ancestor</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/operators.html">operators</a>
