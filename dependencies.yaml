@@ -169,7 +169,7 @@ dependencies:
           - notebook>=0.5.0
   test_python_common:
     common:
-      - output_types: [conda, pyproject]
+      - output_types: [conda, pyproject, requirements]
         packages:
           - pandas
           - pytest
@@ -179,13 +179,13 @@ dependencies:
           - scipy
   python_run_nx_cugraph:
     common:
-      - output_types: [conda, pyproject]
+      - output_types: [conda, pyproject, requirements]
         packages:
           - networkx>=3.2
           - &numpy numpy>=1.23,<3.0a0
   test_python_nx_cugraph:
     common:
-      - output_types: [conda, pyproject]
+      - output_types: [conda, pyproject, requirements]
         packages:
             # not needed by nx-cugraph tests, but is required for running networkx tests
           - pytest-mpl
@@ -198,7 +198,7 @@ dependencies:
     #       other packages with -cu{nn}x suffixes in this file.
     #       All RAPIDS wheel builds (including in devcontainers) expect cupy to be suffixed.
     specific:
-      - output_types: [requirements, pyproject]
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix: {cuda: "12.*"}
             packages:
@@ -218,7 +218,7 @@ dependencies:
           - --extra-index-url=https://pypi.nvidia.com
           - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
     specific:
-      - output_types: [requirements, pyproject]
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix:
               cuda: "12.*"
@@ -242,7 +242,7 @@ dependencies:
           - --extra-index-url=https://pypi.nvidia.com
           - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
     specific:
-      - output_types: [requirements, pyproject]
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix:
               cuda: "12.*"
