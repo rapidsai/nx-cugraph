@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -26,7 +26,9 @@ __all__ = [
 
 
 # Value columns with string dtype is not supported
-@networkx_algorithm(is_incomplete=True, version_added="23.12", fallback=True)
+@networkx_algorithm(
+    is_incomplete=True, version_added="23.12", fallback=True, create_using_arg=4
+)
 def from_pandas_edgelist(
     df,
     source="source",
@@ -163,7 +165,7 @@ def from_pandas_edgelist(
     return G
 
 
-@networkx_algorithm(version_added="23.12", fallback=True)
+@networkx_algorithm(version_added="23.12", fallback=True, create_using_arg=2)
 def from_scipy_sparse_array(
     A, parallel_edges=False, create_using=None, edge_attribute="weight"
 ):

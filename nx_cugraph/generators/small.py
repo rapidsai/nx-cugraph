@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -44,7 +44,7 @@ __all__ = [
 ]
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def bull_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -57,7 +57,7 @@ def bull_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def chvatal_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -86,7 +86,7 @@ def chvatal_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def cubical_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -106,7 +106,7 @@ def cubical_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def desargues_graph(create_using=None):
     # This can also be defined w.r.t. LCF_graph
     graph_class, inplace = _create_using_class(create_using)
@@ -147,7 +147,7 @@ def desargues_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def diamond_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -160,7 +160,7 @@ def diamond_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def dodecahedral_graph(create_using=None):
     # This can also be defined w.r.t. LCF_graph
     graph_class, inplace = _create_using_class(create_using)
@@ -201,7 +201,7 @@ def dodecahedral_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def frucht_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -236,7 +236,7 @@ def frucht_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def heawood_graph(create_using=None):
     # This can also be defined w.r.t. LCF_graph
     graph_class, inplace = _create_using_class(create_using)
@@ -275,7 +275,7 @@ def heawood_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def house_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -288,7 +288,7 @@ def house_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def house_x_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -307,7 +307,7 @@ def house_x_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def icosahedral_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -338,7 +338,7 @@ def icosahedral_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def krackhardt_kite_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -367,7 +367,7 @@ def krackhardt_kite_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def moebius_kantor_graph(create_using=None):
     # This can also be defined w.r.t. LCF_graph
     graph_class, inplace = _create_using_class(create_using)
@@ -408,7 +408,7 @@ def moebius_kantor_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def octahedral_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -460,7 +460,7 @@ def pappus_graph():
     )
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def petersen_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -487,7 +487,7 @@ def petersen_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def sedgewick_maze_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -508,7 +508,7 @@ def sedgewick_maze_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def tetrahedral_graph(create_using=None):
     # This can also be defined w.r.t. complete_graph
     graph_class, inplace = _create_using_class(create_using)
@@ -525,7 +525,7 @@ def tetrahedral_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def truncated_cube_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -556,7 +556,7 @@ def truncated_cube_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def truncated_tetrahedron_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
@@ -591,7 +591,7 @@ def truncated_tetrahedron_graph(create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def tutte_graph(create_using=None):
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():

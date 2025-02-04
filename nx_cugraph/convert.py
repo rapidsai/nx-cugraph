@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -780,7 +780,7 @@ def _to_undirected_graph(
     raise TypeError
 
 
-@networkx_algorithm(version_added="24.08", fallback=True)
+@networkx_algorithm(version_added="24.08", fallback=True, create_using_arg=1)
 def from_dict_of_lists(d, create_using=None):
     from .generators._utils import _create_using_class
 

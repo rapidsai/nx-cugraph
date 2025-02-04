@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -47,10 +47,8 @@ def compare(name, create_using, *args, is_vanilla=False):
             Gcg = func(*args, create_using=create_using, backend="cugraph")
     except ZeroDivisionError:
         raise
-    except NotImplementedError as exc:
-        if name in {"complete_multipartite_graph"}:  # nx.__version__[:3] <= "3.2"
-            return
-        exc2 = exc
+    except NotImplementedError:
+        return
     except Exception as exc:
         if exc1 is None:  # pragma: no cover (debug)
             raise
