@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import random
 from collections.abc import Mapping
 
 import networkx as nx
@@ -900,6 +900,36 @@ def bench_ego_graph(benchmark, graph_obj, backend_wrapper):
         warmup_rounds=warmup_rounds,
     )
     assert type(result) is type(G)
+
+
+def bench_lowest_common_ancestor(benchmark, graph_obj, backend_wrapper):
+    # Must be DAG
+    if not nx.is_directed_acyclic_graph(graph_obj):
+        new_graph_obj = nx.DiGraph()
+        new_graph_obj.add_nodes_from(graph_obj.nodes(data=True))
+        new_graph_obj.add_edges_from(
+            (src, dst, *rest)
+            for src, dst, *rest in graph_obj.edges(data=True)
+            if src < dst
+        )
+        new_graph_obj.graph.update(graph_obj.graph)
+        print(
+            f"WARNING: graph was changed and now had {new_graph_obj.number_of_nodes()} "
+            "nodes and {new_graph_obj.number_of_edges()} edges."
+        )
+        graph_obj = new_graph_obj
+
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    r = random.Random(42)
+    node1, node2 = r.sample(sorted(G), 2)
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.lowest_common_ancestor),
+        args=(G, node1, node2),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert result is None or result in G
 
 
 def bench_bipartite_BC_n1000_m3000_k100000(benchmark, backend_wrapper):
