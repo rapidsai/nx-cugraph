@@ -18,6 +18,7 @@ from . import (
     components,
     link_analysis,
     link_prediction,
+    lowest_common_ancestors,
     operators,
     shortest_paths,
     traversal,
@@ -32,6 +33,7 @@ from .dag import *
 from .isolate import *
 from .link_analysis import *
 from .link_prediction import *
+from .lowest_common_ancestors import *
 from .operators import *
 from .reciprocity import *
 from .shortest_paths import *
