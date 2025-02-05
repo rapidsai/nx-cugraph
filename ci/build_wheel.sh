@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 
 set -euo pipefail
 
@@ -14,7 +14,7 @@ rapids-generate-version > ./VERSION
 
 cd "${package_dir}"
 
-python -m pip wheel \
+rapids-pip-retry wheel \
     -w dist \
     -v \
     --no-deps \
