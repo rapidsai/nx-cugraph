@@ -8,7 +8,7 @@ package_dir=$2
 
 source rapids-date-string
 
-RAPIDS_PY_CUDA_SUFFIX="$(rapids-wheel-ctk-name-gen ${RAPIDS_CUDA_VERSION})"
+RAPIDS_PY_CUDA_SUFFIX="$(rapids-wheel-ctk-name-gen "${RAPIDS_CUDA_VERSION}")"
 
 rapids-generate-version > ./VERSION
 

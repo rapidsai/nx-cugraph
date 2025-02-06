@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2022-2024, NVIDIA CORPORATION.
+# Copyright (c) 2022-2025, NVIDIA CORPORATION.
 
 set -euo pipefail
 
@@ -39,14 +39,6 @@ rapids-mamba-retry install \
 rapids-logger "Check GPU usage"
 nvidia-smi
 
-# export LD_PRELOAD="${CONDA_PREFIX}/lib/libgomp.so.1"
-
-# RAPIDS_DATASET_ROOT_DIR is used by test scripts
-# export RAPIDS_DATASET_ROOT_DIR="$(realpath datasets)"
-# pushd "${RAPIDS_DATASET_ROOT_DIR}"
-# ./get_test_data.sh --benchmark
-# popd
-
 EXITCODE=0
 trap "EXITCODE=1" ERR
 set +e
@@ -68,7 +60,7 @@ pushd nx_cugraph
 _coverage=$(coverage report | grep "^TOTAL")
 
 echo "nx-cugraph coverage from networkx tests: $_coverage"
-echo $_coverage | awk '{ if ($NF == "0.0%") exit 1 }'
+echo "$_coverage" | awk '{ if ($NF == "0.0%") exit 1 }'
 
 # Ensure all algorithms were called by comparing covered lines to function lines.
 # Run our tests again (they're fast enough) to add their coverage, then create coverage.json
