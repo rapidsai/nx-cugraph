@@ -184,6 +184,8 @@ ignore = [
     # "TRY004",  # Prefer `TypeError` exception for invalid type (Note: good advice, but not worth the nuisance)
     "B020",  # Found for loop that reassigns the iterable it is iterating with each iterable value (too strict)
     "B904",  # Bare `raise` inside exception clause (like TRY200; sometimes okay)
+    "RUF021",  # parenthesize-chained-operators (Note: use our judgement for what is more clear)
+    "RUF022",  # unsorted-dunder-all (Note: probably okay, but noisy)
     "S310",  # Audit URL open for permitted schemes (Note: we don't download URLs in normal usage)
 
     # Intentionally ignored

@@ -37,21 +37,21 @@ repos:
       - id: autoflake
         args: [--in-place]
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.0
     hooks:
       - id: isort
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.0
+    rev: v3.19.1
     hooks:
       - id: pyupgrade
         args: [--py310-plus]
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
       - id: black
       # - id: black-jupyter  # Consider adding this
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.4
+    rev: v0.9.6
     hooks:
       - id: ruff
         args: [--fix-only, --show-fixes]  # --unsafe-fixes]
@@ -63,7 +63,7 @@ repos:
         additional_dependencies: &flake8_dependencies
           # These versions need updated manually
           - flake8==7.1.1
-          - flake8-bugbear==24.10.31
+          - flake8-bugbear==24.12.12
           - flake8-simplify==0.21.0
   - repo: https://github.com/asottile/yesqa
     rev: v1.5.0
@@ -71,7 +71,7 @@ repos:
       - id: yesqa
         additional_dependencies: *flake8_dependencies
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
       - id: codespell
         types_or: [python, rst, markdown]
@@ -79,13 +79,13 @@ repos:
         files: ^(nx_cugraph|docs)/
         args: ["-L thirdparty,coo,COO,numer"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.4
+    rev: v0.9.6
     hooks:
       - id: ruff
         # Don't have strict linting for miscellaneous code
         args: [--extend-exclude, "benchmarks/,ci/,docs/,notebooks/"]
   - repo: https://github.com/rapidsai/dependency-file-generator
-    rev: v1.17.0
+    rev: v1.17.1
     hooks:
         - id: rapids-dependency-file-generator
           args: ["--clean"]
@@ -126,7 +126,7 @@ repos:
       - id: sphinx-lint
         args: ["--enable=all", "--disable=line-too-long"]
   - repo: https://github.com/rapidsai/pre-commit-hooks
-    rev: v0.4.0
+    rev: v0.6.0
     hooks:
       - id: verify-copyright
         files: |
