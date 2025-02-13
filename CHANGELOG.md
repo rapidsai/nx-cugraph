@@ -1,3 +1,31 @@
+# nx-cugraph 25.02.00 (13 Feb 2025)
+
+## 🐛 Bug Fixes
+
+- Update BC to use random nodes to match nx given `k` ([#59](https://github.com/rapidsai/nx-cugraph/pull/59)) [@eriknw](https://github.com/eriknw)
+- Updates to Benchmark Script ([#51](https://github.com/rapidsai/nx-cugraph/pull/51)) [@nv-rliu](https://github.com/nv-rliu)
+
+## 📖 Documentation
+
+- Adds notebook for Jaccard Similarity ([#71](https://github.com/rapidsai/nx-cugraph/pull/71)) [@rlratzel](https://github.com/rlratzel)
+- Fix links in README ([#54](https://github.com/rapidsai/nx-cugraph/pull/54)) [@eriknw](https://github.com/eriknw)
+
+## 🛠️ Improvements
+
+- Use `rapids-pip-retry` in CI jobs that might need retries ([#80](https://github.com/rapidsai/nx-cugraph/pull/80)) [@gforsyth](https://github.com/gforsyth)
+- Revert CUDA 12.8 shared workflow branch changes ([#74](https://github.com/rapidsai/nx-cugraph/pull/74)) [@vyasr](https://github.com/vyasr)
+- Add benchmark for `leiden_communities` ([#67](https://github.com/rapidsai/nx-cugraph/pull/67)) [@eriknw](https://github.com/eriknw)
+- Build and test with CUDA 12.8.0 ([#66](https://github.com/rapidsai/nx-cugraph/pull/66)) [@bdice](https://github.com/bdice)
+- update pip devcontainers to UCX 1.18, other small packaging changes ([#65](https://github.com/rapidsai/nx-cugraph/pull/65)) [@jameslamb](https://github.com/jameslamb)
+- Adds support for `jaccard_coefficient` ([#62](https://github.com/rapidsai/nx-cugraph/pull/62)) [@rlratzel](https://github.com/rlratzel)
+- Add `amazon0302` Dataset to nx-cugraph Bench Algos ([#61](https://github.com/rapidsai/nx-cugraph/pull/61)) [@nv-rliu](https://github.com/nv-rliu)
+- Remove sphinx pinning ([#60](https://github.com/rapidsai/nx-cugraph/pull/60)) [@vyasr](https://github.com/vyasr)
+- Add `can_run` that checks `create_using` argument ([#56](https://github.com/rapidsai/nx-cugraph/pull/56)) [@eriknw](https://github.com/eriknw)
+- prefer system install of UCX in devcontainers, update outdated RAPIDS references ([#53](https://github.com/rapidsai/nx-cugraph/pull/53)) [@jameslamb](https://github.com/jameslamb)
+- Require approval to run CI on draft PRs ([#52](https://github.com/rapidsai/nx-cugraph/pull/52)) [@bdice](https://github.com/bdice)
+- Add experimental version of `leiden_communities` ([#50](https://github.com/rapidsai/nx-cugraph/pull/50)) [@eriknw](https://github.com/eriknw)
+- Add `lowest_common_ancestor` algorithm ([#35](https://github.com/rapidsai/nx-cugraph/pull/35)) [@eriknw](https://github.com/eriknw)
+
 # nx-cugraph 24.12.00 (11 Dec 2024)
 
 ## 🚨 Breaking Changes
