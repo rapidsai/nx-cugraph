@@ -45,6 +45,7 @@ NEXT_SHORT_TAG_PEP440=$(python -c "from packaging.version import Version; print(
 DEPENDENCIES=(
   cudf
   cugraph
+  nx-cugraph
   pylibcugraph
 )
 for FILE in dependencies.yaml conda/environments/*.yaml conda/recipes/**/meta.yaml; do
