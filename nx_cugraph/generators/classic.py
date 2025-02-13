@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -52,7 +52,7 @@ __all__ = [
 concat = itertools.chain.from_iterable
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=2)
 def barbell_graph(m1, m2, create_using=None):
     # Like two complete graphs and a path_graph
     m1 = _ensure_nonnegative_int(m1)
@@ -82,12 +82,12 @@ def barbell_graph(m1, m2, create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=1)
 def circular_ladder_graph(n, create_using=None):
     return _ladder_graph(n, create_using, is_circular=True)
 
 
-@networkx_algorithm(nodes_or_number=0, version_added="23.12")
+@networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def complete_graph(n, create_using=None):
     n, nodes = _number_and_nodes(n)
     if n < 3:
@@ -147,7 +147,7 @@ def complete_multipartite_graph(*subset_sizes):
     )
 
 
-@networkx_algorithm(nodes_or_number=0, version_added="23.12")
+@networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def cycle_graph(n, create_using=None):
     n, nodes = _number_and_nodes(n)
     graph_class, inplace = _create_using_class(create_using)
@@ -177,7 +177,7 @@ def cycle_graph(n, create_using=None):
     return G
 
 
-@networkx_algorithm(nodes_or_number=0, version_added="23.12")
+@networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def empty_graph(n=0, create_using=None, default=nx.Graph):
     n, nodes = _number_and_nodes(n)
     graph_class, inplace = _create_using_class(create_using, default=default)
@@ -239,12 +239,12 @@ def _ladder_graph(n, create_using, *, is_circular=False):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=1)
 def ladder_graph(n, create_using=None):
     return _ladder_graph(n, create_using)
 
 
-@networkx_algorithm(nodes_or_number=[0, 1], version_added="23.12")
+@networkx_algorithm(nodes_or_number=[0, 1], version_added="23.12", create_using_arg=2)
 def lollipop_graph(m, n, create_using=None):
     # Like complete_graph then path_graph
     orig_m, unused_nodes_m = m
@@ -279,12 +279,12 @@ def lollipop_graph(m, n, create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def null_graph(create_using=None):
     return _common_small_graph(0, None, create_using)
 
 
-@networkx_algorithm(nodes_or_number=0, version_added="23.12")
+@networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def path_graph(n, create_using=None):
     n, nodes = _number_and_nodes(n)
     graph_class, inplace = _create_using_class(create_using)
@@ -304,7 +304,7 @@ def path_graph(n, create_using=None):
     return G
 
 
-@networkx_algorithm(nodes_or_number=0, version_added="23.12")
+@networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def star_graph(n, create_using=None):
     orig_n, orig_nodes = n
     n, nodes = _number_and_nodes(n)
@@ -328,7 +328,7 @@ def star_graph(n, create_using=None):
     return G
 
 
-@networkx_algorithm(nodes_or_number=[0, 1], version_added="23.12")
+@networkx_algorithm(nodes_or_number=[0, 1], version_added="23.12", create_using_arg=2)
 def tadpole_graph(m, n, create_using=None):
     orig_m, unused_nodes_m = m
     orig_n, unused_nodes_n = n
@@ -366,7 +366,7 @@ def tadpole_graph(m, n, create_using=None):
     return G
 
 
-@networkx_algorithm(version_added="23.12")
+@networkx_algorithm(version_added="23.12", create_using_arg=0)
 def trivial_graph(create_using=None):
     return _common_small_graph(1, None, create_using)
 
@@ -380,7 +380,7 @@ def turan_graph(n, r):
     return complete_multipartite_graph(*partitions)
 
 
-@networkx_algorithm(nodes_or_number=0, version_added="23.12")
+@networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def wheel_graph(n, create_using=None):
     n, nodes = _number_and_nodes(n)
     graph_class, inplace = _create_using_class(create_using)

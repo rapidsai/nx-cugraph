@@ -94,7 +94,7 @@ nx.betweenness_centrality(nxcg_G, k=1000)  # nxcg Graph type causes cugraph back
 ## Supported Algorithms
 
 The nx-cugraph backend to NetworkX connects
-[pylibcugraph](../../readme_pages/pylibcugraph.md) (cuGraph's low-level python
+[pylibcugraph](https://github.com/rapidsai/cugraph/blob/-/readme_pages/pylibcugraph.md) (cuGraph's low-level python
 interface to its CUDA-based graph analytics library) and
 [CuPy](https://cupy.dev/) (a GPU-accelerated array library) to NetworkX's
 familiar and easy-to-use API.
@@ -154,6 +154,10 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
  │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.link_analysis.hits_alg.hits.html#networkx.algorithms.link_analysis.hits_alg.hits">hits</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/link_analysis.html#module-networkx.algorithms.link_analysis.pagerank_alg">pagerank_alg</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html#networkx.algorithms.link_analysis.pagerank_alg.pagerank">pagerank</a>
+<a href="https://networkx.org/documentation/stable/reference/algorithms/link_prediction.html#module-networkx.algorithms.link_prediction">link_prediction</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.link_prediction.jaccard_coefficient.html#networkx.algorithms.link_prediction.jaccard_coefficient">jaccard_coefficient</a>
+<a href="https://networkx.org/documentation/stable/reference/algorithms/lowest_common_ancestors.html#module-networkx.algorithms.lowest_common_ancestors">lowest_common_ancestors</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.lowest_common_ancestors.lowest_common_ancestor.html#networkx.algorithms.lowest_common_ancestors.lowest_common_ancestor">lowest_common_ancestor</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/operators.html">operators</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/operators.html#module-networkx.algorithms.operators.unary">unary</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.operators.unary.complement.html#networkx.algorithms.operators.unary.complement">complement</a>
@@ -277,4 +281,4 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 </pre>
 
 To request nx-cugraph backend support for a NetworkX API that is not listed
-above, visit the [cuGraph GitHub repo](https://github.com/rapidsai/cugraph).
+above, visit the [nx-cugraph GitHub repo](https://github.com/rapidsai/nx-cugraph).

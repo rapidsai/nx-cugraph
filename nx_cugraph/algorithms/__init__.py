@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,6 +17,8 @@ from . import (
     community,
     components,
     link_analysis,
+    link_prediction,
+    lowest_common_ancestors,
     operators,
     shortest_paths,
     traversal,
@@ -30,6 +32,8 @@ from .core import *
 from .dag import *
 from .isolate import *
 from .link_analysis import *
+from .link_prediction import *
+from .lowest_common_ancestors import *
 from .operators import *
 from .reciprocity import *
 from .shortest_paths import *

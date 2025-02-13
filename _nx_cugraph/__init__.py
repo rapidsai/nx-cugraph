@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -110,14 +110,17 @@ _info = {
         "is_tree",
         "is_weakly_connected",
         "isolates",
+        "jaccard_coefficient",
         "k_truss",
         "karate_club_graph",
         "katz_centrality",
         "krackhardt_kite_graph",
         "ladder_graph",
+        "leiden_communities",
         "les_miserables_graph",
         "lollipop_graph",
         "louvain_communities",
+        "lowest_common_ancestor",
         "moebius_kantor_graph",
         "node_connected_component",
         "null_graph",
@@ -184,6 +187,7 @@ _info = {
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",
         "katz_centrality": "`nstart` isn't used (but is checked), and `normalized=False` is not supported.",
         "louvain_communities": "`seed` parameter is currently ignored, and self-loops are not yet supported.",
+        "lowest_common_ancestor": "May not always raise NetworkXError for graphs that are not DAGs.",
         "pagerank": "`dangling` parameter is not supported, but it is checked for validity.",
         "shortest_path": "Negative weights are not yet supported.",
         "shortest_path_length": "Negative weights are not yet supported.",
@@ -233,6 +237,9 @@ _info = {
             'weight : string or None, optional (default="weight")': "The edge attribute to use as the edge weight.",
         },
         "katz_centrality": {
+            "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+        },
+        "leiden_communities": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
         "louvain_communities": {

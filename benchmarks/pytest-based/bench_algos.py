@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
 from collections.abc import Mapping
 
 import networkx as nx
@@ -38,6 +39,8 @@ dataset_param_values = [
     pytest.param(
         datasets.email_Eu_core, marks=[pytest.mark.small, pytest.mark.directed]
     ),
+    # name: amazon0302, nodes: 262111, edges: 1234877
+    pytest.param(datasets.amazon0302, marks=[pytest.mark.medium, pytest.mark.directed]),
     # name: cit-Patents, nodes: 3774768, edges: 16518948
     pytest.param(
         datasets.cit_patents, marks=[pytest.mark.medium, pytest.mark.directed]
@@ -194,7 +197,11 @@ def get_graph_obj_for_benchmark(graph_obj, backend_wrapper):
     """
     G = graph_obj
     if backend_wrapper.backend_name == "cugraph-preconverted":
-        G = nxcg.from_networkx(G, preserve_all_attrs=True)
+        G = nxcg.from_networkx(
+            G,
+            preserve_all_attrs=True,
+            use_compat_graph=True,
+        )
     return G
 
 
@@ -223,6 +230,19 @@ def build_personalization_dict(pagerank_dict):
     pers_dict.update({B_half_items[i][0]: A_half_items[i][1] for i in range(num_half)})
 
     return pers_dict
+
+
+# Used to return a function that calls the original function inside a try-except block
+# which is useful because it allows us to save pytest-benchmark numbers if failure is
+# the correct behavior for certain graphs
+def possible_to_fail(exception, function):
+    def nested_func(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except exception:
+            print(f"{function.__name__} raised {exception}")
+
+    return nested_func
 
 
 ################################################################################
@@ -303,6 +323,27 @@ def bench_louvain_communities(benchmark, graph_obj, backend_wrapper):
     assert type(result) is list
 
 
+@pytest.mark.skipif("not hasattr(nx.community, 'leiden_communities')")
+def bench_leiden_communities(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    # DiGraphs are not supported
+    if G.is_directed():
+        G = G.to_undirected()
+    if G.__networkx_backend__ not in nx.community.leiden_communities.backends:
+        pytest.skip(
+            reason=f"leiden_communities not implemented by {G.__networkx_backend__!r}"
+        )
+        return
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.community.leiden_communities),
+        args=(G,),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is list
+
+
 def bench_degree_centrality(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -366,7 +407,11 @@ def bench_in_degree_centrality(benchmark, graph_obj, backend_wrapper):
 def bench_katz_centrality(benchmark, graph_obj, backend_wrapper, normalized):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
-        target=backend_wrapper(nx.katz_centrality),
+        # calling katz_centrality this way because the algorithm may fail to
+        # converge for some graphs, which is expected
+        target=possible_to_fail(
+            nx.PowerIterationFailedConvergence, backend_wrapper(nx.katz_centrality)
+        ),
         args=(G,),
         kwargs=dict(
             normalized=normalized,
@@ -375,7 +420,7 @@ def bench_katz_centrality(benchmark, graph_obj, backend_wrapper, normalized):
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    assert type(result) is dict
+    assert type(result) is dict or result is None
 
 
 def bench_k_truss(benchmark, graph_obj, backend_wrapper):
@@ -692,6 +737,7 @@ def bench_descendants_at_distance(benchmark, graph_obj, backend_wrapper):
     assert type(result) is set
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_is_bipartite(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -704,6 +750,7 @@ def bench_is_bipartite(benchmark, graph_obj, backend_wrapper):
     assert type(result) is bool
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_is_strongly_connected(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -728,6 +775,7 @@ def bench_is_weakly_connected(benchmark, graph_obj, backend_wrapper):
     assert type(result) is bool
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_number_strongly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -780,6 +828,7 @@ def bench_reciprocity(benchmark, graph_obj, backend_wrapper):
     assert type(result) is float
 
 
+@pytest.mark.skip(reason="benchmark not implemented")
 def bench_strongly_connected_components(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     result = benchmark.pedantic(
@@ -850,7 +899,37 @@ def bench_ego_graph(benchmark, graph_obj, backend_wrapper):
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    assert isinstance(result, (nx.Graph, nxcg.Graph))
+    assert type(result) is type(G)
+
+
+def bench_lowest_common_ancestor(benchmark, graph_obj, backend_wrapper):
+    # Must be DAG
+    if not nx.is_directed_acyclic_graph(graph_obj):
+        new_graph_obj = nx.DiGraph()
+        new_graph_obj.add_nodes_from(graph_obj.nodes(data=True))
+        new_graph_obj.add_edges_from(
+            (src, dst, *rest)
+            for src, dst, *rest in graph_obj.edges(data=True)
+            if src < dst
+        )
+        new_graph_obj.graph.update(graph_obj.graph)
+        print(
+            f"WARNING: graph was changed and now had {new_graph_obj.number_of_nodes()} "
+            "nodes and {new_graph_obj.number_of_edges()} edges."
+        )
+        graph_obj = new_graph_obj
+
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    r = random.Random(42)
+    node1, node2 = r.sample(sorted(G), 2)
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.lowest_common_ancestor),
+        args=(G, node1, node2),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert result is None or result in G
 
 
 def bench_bipartite_BC_n1000_m3000_k100000(benchmark, backend_wrapper):
@@ -872,6 +951,35 @@ def bench_bipartite_BC_n1000_m3000_k100000(benchmark, backend_wrapper):
         warmup_rounds=warmup_rounds,
     )
     assert type(result) is dict
+
+
+def bench_jaccard(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+
+    # ebunch is a list of node pairs to limit the jaccard run.
+    nodes = list(G.nodes)
+    start = nodes[0]
+    ebunch = [(start, n) for n in nodes[1:]]
+    start = nodes[1]
+    ebunch += [(start, n) for n in nodes[2:]]
+    start = nodes[2]
+    ebunch += [(start, n) for n in nodes[3:]]
+
+    # DiGraphs are not supported
+    if G.is_directed():
+        G = G.to_undirected()
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.jaccard_coefficient, force_unlazy_eval=True),
+        args=(G,),
+        kwargs=dict(
+            ebunch=ebunch,
+        ),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is list
 
 
 @pytest.mark.skip(reason="benchmark not implemented")

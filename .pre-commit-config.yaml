@@ -85,7 +85,7 @@ repos:
         # Don't have strict linting for miscellaneous code
         args: [--extend-exclude, "benchmarks/,ci/,docs/,notebooks/"]
   - repo: https://github.com/rapidsai/dependency-file-generator
-    rev: v1.16.0
+    rev: v1.17.0
     hooks:
         - id: rapids-dependency-file-generator
           args: ["--clean"]
