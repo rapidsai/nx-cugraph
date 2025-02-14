@@ -291,18 +291,6 @@ class Graph(nx.Graph):
     def to_undirected_class(cls) -> type[Graph]:
         return Graph
 
-    @networkx_algorithm(name="graph__new__", version_added="25.04")
-    def __new__(cls, incoming_graph_data=None, **attr):
-        return object.__new__(Graph)
-
-    @__new__._can_run
-    def _(cls, incoming_graph_data=None, **attr):  # noqa: N805
-        if cls not in {nx.Graph, Graph}:
-            return "Unknown subclasses of nx.Graph are not supported."
-        return True
-
-    del _
-
     def __init__(self, incoming_graph_data=None, **attr):
         super().__init__(incoming_graph_data, **attr)
         self.__networkx_cache__ = _GraphCache(self)
@@ -1245,3 +1233,15 @@ class CudaGraph:
         if dtype is None:
             return cp.array(list(val_iter))
         return cp.fromiter(val_iter, dtype)
+
+
+@networkx_algorithm(version_added="25.04")
+def graph__new__(cls, incoming_graph_data=None, **attr):
+    return object.__new__(Graph)
+
+
+@graph__new__._can_run
+def _(cls, incoming_graph_data=None, **attr):
+    if cls not in {nx.Graph, Graph}:
+        return "Unknown subclasses of nx.Graph are not supported."
+    return True

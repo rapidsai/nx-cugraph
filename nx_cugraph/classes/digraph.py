@@ -106,18 +106,6 @@ class DiGraph(nx.DiGraph, Graph):
     def to_networkx_class(cls) -> type[nx.DiGraph]:
         return nx.DiGraph
 
-    @networkx_algorithm(name="digraph__new__", version_added="25.04")
-    def __new__(cls, incoming_graph_data=None, **attr):
-        return object.__new__(DiGraph)
-
-    @__new__._can_run
-    def _(cls, incoming_graph_data=None, **attr):  # noqa: N805
-        if cls not in {nx.DiGraph, DiGraph}:
-            return "Unknown subclasses of nx.DiGraph are not supported."
-        return True
-
-    del _
-
     def __init__(self, incoming_graph_data=None, **attr):
         super().__init__(incoming_graph_data, **attr)
         self.__networkx_cache__ = _GraphCache(self)
@@ -322,3 +310,15 @@ class CudaDiGraph(CudaGraph):
         if src_indices.size == 0:
             return cp.zeros(self._N, dtype=np.int64)
         return cp.bincount(src_indices, minlength=self._N)
+
+
+@networkx_algorithm(version_added="25.04")
+def digraph__new__(cls, incoming_graph_data=None, **attr):
+    return object.__new__(DiGraph)
+
+
+@digraph__new__._can_run
+def _(cls, incoming_graph_data=None, **attr):
+    if cls not in {nx.DiGraph, DiGraph}:
+        return "Unknown subclasses of nx.DiGraph are not supported."
+    return True

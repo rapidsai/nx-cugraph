@@ -52,18 +52,6 @@ class MultiDiGraph(nx.MultiDiGraph, MultiGraph, DiGraph):
     def to_networkx_class(cls) -> type[nx.MultiDiGraph]:
         return nx.MultiDiGraph
 
-    @networkx_algorithm(name="multidigraph__new__", version_added="25.04")
-    def __new__(cls, incoming_graph_data=None, multigraph_input=None, **attr):
-        return object.__new__(MultiDiGraph)
-
-    @__new__._can_run
-    def _(cls, incoming_graph_data=None, multigraph_input=None, **attr):  # noqa: N805
-        if cls not in {nx.MultiDiGraph, MultiDiGraph}:
-            return "Unknown subclasses of nx.MultiDiGraph are not supported."
-        return True
-
-    del _
-
     def __init__(self, incoming_graph_data=None, multigraph_input=None, **attr):
         super().__init__(incoming_graph_data, multigraph_input, **attr)
         self.__networkx_cache__ = _GraphCache(self)
@@ -106,3 +94,15 @@ class CudaMultiDiGraph(CudaMultiGraph, CudaDiGraph):
     @networkx_api
     def to_undirected(self, reciprocal=False, as_view=False):
         raise NotImplementedError
+
+
+@networkx_algorithm(version_added="25.04")
+def multidigraph__new__(cls, incoming_graph_data=None, multigraph_input=None, **attr):
+    return object.__new__(MultiDiGraph)
+
+
+@multidigraph__new__._can_run
+def _(cls, incoming_graph_data=None, multigraph_input=None, **attr):
+    if cls not in {nx.MultiDiGraph, MultiDiGraph}:
+        return "Unknown subclasses of nx.MultiDiGraph are not supported."
+    return True
