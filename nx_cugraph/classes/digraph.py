@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -25,8 +25,8 @@ from networkx.classes.digraph import (
 
 import nx_cugraph as nxcg
 
-from ..utils import index_dtype
-from .graph import CudaGraph, Graph
+from ..utils import index_dtype, networkx_algorithm
+from .graph import CudaGraph, Graph, _GraphCache
 
 if TYPE_CHECKING:  # pragma: no cover
     from nx_cugraph.typing import AttrKey
@@ -105,6 +105,22 @@ class DiGraph(nx.DiGraph, Graph):
     @classmethod
     def to_networkx_class(cls) -> type[nx.DiGraph]:
         return nx.DiGraph
+
+    @networkx_algorithm(name="digraph__new__", version_added="25.04")
+    def __new__(cls, incoming_graph_data=None, **attr):
+        return object.__new__(DiGraph)
+
+    @__new__._can_run
+    def _(cls, incoming_graph_data=None, **attr):  # noqa: N805
+        if cls not in {nx.DiGraph, DiGraph}:
+            return "Unknown subclasses of nx.DiGraph are not supported."
+        return True
+
+    del _
+
+    def __init__(self, incoming_graph_data=None, **attr):
+        super().__init__(incoming_graph_data, **attr)
+        self.__networkx_cache__ = _GraphCache(self)
 
     ##########################
     # Networkx graph methods #
