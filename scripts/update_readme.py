@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# Copyright (c) 2024-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -111,10 +111,12 @@ def main(readme_file, objects_filename):
         path = "networkx." + info.networkx_path
         subpath, name = path.rsplit(".", 1)
         # Many objects are referred to in modules above where they are defined.
-        while subpath:
+        while True:
             path = f"{subpath}.{name}"
             if path in doc_urls:
                 return f'<a href="{doc_urls[path]}">{name}</a>'
+            if subpath == "networkx":
+                break
             subpath = subpath.rsplit(".", 1)[0]
         warn(f"Unable to find URL for {name!r}: {path}", stacklevel=0)
         return name
