@@ -1237,11 +1237,17 @@ class CudaGraph:
 
 @networkx_algorithm(version_added="25.04")
 def graph__new__(cls, incoming_graph_data=None, **attr):
-    return object.__new__(Graph)
+    # Dispatched from `nx.Graph.__new__`. See details of `object.__new__` behavior here:
+    # https://docs.python.org/3/reference/datamodel.html#object.__new__
+    if nx.config.backends.cugraph.use_compat_graphs:
+        # Because `issubclass(Graph, nx.Graph)`, Graph.__init__ will be called next
+        return object.__new__(Graph)
+    # Because `not issubclass(CudaGraph, nx.Graph)`, CudaGraph.__init__ WON'T be called
+    return CudaGraph(incoming_graph_data=incoming_graph_data, **attr)
 
 
 @graph__new__._can_run
 def _(cls, incoming_graph_data=None, **attr):
-    if cls not in {nx.Graph, Graph}:
+    if cls is not nx.Graph:
         return "Unknown subclasses of nx.Graph are not supported."
     return True

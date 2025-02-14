@@ -98,11 +98,17 @@ class CudaMultiDiGraph(CudaMultiGraph, CudaDiGraph):
 
 @networkx_algorithm(version_added="25.04")
 def multidigraph__new__(cls, incoming_graph_data=None, multigraph_input=None, **attr):
-    return object.__new__(MultiDiGraph)
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(MultiDiGraph)
+    return CudaMultiDiGraph(
+        incoming_graph_data=incoming_graph_data,
+        multigraph_input=multigraph_input,
+        **attr,
+    )
 
 
 @multidigraph__new__._can_run
 def _(cls, incoming_graph_data=None, multigraph_input=None, **attr):
-    if cls not in {nx.MultiDiGraph, MultiDiGraph}:
+    if cls is not nx.MultiDiGraph:
         return "Unknown subclasses of nx.MultiDiGraph are not supported."
     return True

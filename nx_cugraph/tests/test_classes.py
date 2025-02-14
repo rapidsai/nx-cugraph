@@ -84,11 +84,16 @@ def test_class_to_class():
 @pytest.mark.parametrize(
     "nxcg_class", [nxcg.Graph, nxcg.DiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph]
 )
-def test_dispatch_graph_classes(nxcg_class):
+@pytest.mark.parametrize("use_compat_graphs", [True, False])
+def test_dispatch_graph_classes(nxcg_class, use_compat_graphs):
     if _nxver < (3, 5):
         pytest.skip(reason="Dispatching graph classes requires nx >=3.5")
     nx_class = nxcg_class.to_networkx_class()
     assert nx_class is not nxcg_class
+    cuda_class = nxcg_class.to_cudagraph_class()
+    assert cuda_class is not nxcg_class
+
+    expected_nxcg_class = nxcg_class if use_compat_graphs else cuda_class
 
     class NxGraphSubclass(nx_class):
         pass
@@ -96,11 +101,14 @@ def test_dispatch_graph_classes(nxcg_class):
     class NxcgGraphSubclass(nxcg_class):
         pass
 
-    with nx.config.backend_priority(classes=[]):
+    with (
+        nx.config.backend_priority(classes=[]),
+        nx.config.backends.cugraph(use_compat_graphs=use_compat_graphs),
+    ):
         G = nx_class()
         assert type(G) is nx_class
         G = nx_class(backend="cugraph")
-        assert type(G) is nxcg_class
+        assert type(G) is expected_nxcg_class
         G = NxGraphSubclass()
         assert type(G) is NxGraphSubclass
         with pytest.raises(NotImplementedError, match="not implemented by 'cugraph'"):
@@ -111,9 +119,12 @@ def test_dispatch_graph_classes(nxcg_class):
         with pytest.raises(NotImplementedError, match="not implemented by 'cugraph'"):
             NxcgGraphSubclass(backend="cugraph")
 
-    with nx.config.backend_priority(classes=["cugraph"]):
+    with (
+        nx.config.backend_priority(classes=["cugraph"]),
+        nx.config.backends.cugraph(use_compat_graphs=use_compat_graphs),
+    ):
         G = nx_class()
-        assert type(G) is nxcg_class
+        assert type(G) is expected_nxcg_class
         G = nx_class(backend="networkx")
         assert type(G) is nx_class
 

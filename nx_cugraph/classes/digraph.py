@@ -314,11 +314,13 @@ class CudaDiGraph(CudaGraph):
 
 @networkx_algorithm(version_added="25.04")
 def digraph__new__(cls, incoming_graph_data=None, **attr):
-    return object.__new__(DiGraph)
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(DiGraph)
+    return CudaDiGraph(incoming_graph_data=incoming_graph_data, **attr)
 
 
 @digraph__new__._can_run
 def _(cls, incoming_graph_data=None, **attr):
-    if cls not in {nx.DiGraph, DiGraph}:
+    if cls is not nx.DiGraph:
         return "Unknown subclasses of nx.DiGraph are not supported."
     return True
