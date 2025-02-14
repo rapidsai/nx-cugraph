@@ -1,4 +1,4 @@
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# Copyright (c) 2024-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -10,7 +10,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import pytest
+
 import nx_cugraph as nxcg
+from nx_cugraph.classes.graph import _GraphCache
 
 
 def test_class_to_class():
@@ -75,3 +78,11 @@ def test_class_to_class():
                 assert val.to_cudagraph_class() is cls
                 assert cls.is_directed() == G.is_directed() == val.is_directed()
                 assert cls.is_multigraph() == G.is_multigraph() == val.is_multigraph()
+
+
+@pytest.mark.parametrize(
+    "graph_class", [nxcg.Graph, nxcg.DiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph]
+)
+def test_cache_type(graph_class):
+    G = graph_class()
+    assert isinstance(G.__networkx_cache__, _GraphCache)
