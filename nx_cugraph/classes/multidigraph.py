@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,8 +16,9 @@ import networkx as nx
 
 import nx_cugraph as nxcg
 
+from ..utils import networkx_algorithm
 from .digraph import CudaDiGraph, DiGraph
-from .graph import Graph
+from .graph import Graph, _GraphCache
 from .multigraph import CudaMultiGraph, MultiGraph
 
 __all__ = ["CudaMultiDiGraph", "MultiDiGraph"]
@@ -50,6 +51,10 @@ class MultiDiGraph(nx.MultiDiGraph, MultiGraph, DiGraph):
     @classmethod
     def to_networkx_class(cls) -> type[nx.MultiDiGraph]:
         return nx.MultiDiGraph
+
+    def __init__(self, incoming_graph_data=None, multigraph_input=None, **attr):
+        super().__init__(incoming_graph_data, multigraph_input, **attr)
+        self.__networkx_cache__ = _GraphCache(self)
 
     ##########################
     # Networkx graph methods #
@@ -89,3 +94,21 @@ class CudaMultiDiGraph(CudaMultiGraph, CudaDiGraph):
     @networkx_api
     def to_undirected(self, reciprocal=False, as_view=False):
         raise NotImplementedError
+
+
+@networkx_algorithm(version_added="25.04")
+def multidigraph__new__(cls, incoming_graph_data=None, multigraph_input=None, **attr):
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(MultiDiGraph)
+    return CudaMultiDiGraph(
+        incoming_graph_data=incoming_graph_data,
+        multigraph_input=multigraph_input,
+        **attr,
+    )
+
+
+@multidigraph__new__._can_run
+def _(cls, incoming_graph_data=None, multigraph_input=None, **attr):
+    if cls is not nx.MultiDiGraph:
+        return "Unknown subclasses of nx.MultiDiGraph are not supported."
+    return True
