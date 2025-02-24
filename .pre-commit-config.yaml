@@ -76,14 +76,14 @@ repos:
       - id: codespell
         types_or: [python, rst, markdown]
         additional_dependencies: [tomli]
-        files: ^(nx_cugraph|docs)/
+        files: ^(nx_cugraph)/
         args: ["-L thirdparty,coo,COO,numer"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.6
     hooks:
       - id: ruff
         # Don't have strict linting for miscellaneous code
-        args: [--extend-exclude, "benchmarks/,ci/,docs/,notebooks/"]
+        args: [--extend-exclude, "benchmarks/,ci/,notebooks/"]
   - repo: https://github.com/rapidsai/dependency-file-generator
     rev: v1.17.1
     hooks:
