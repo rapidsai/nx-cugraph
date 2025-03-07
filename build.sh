@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2019-2024, NVIDIA CORPORATION.
+# Copyright (c) 2019-2025, NVIDIA CORPORATION.
 
 # nx-cugraph build script
 
@@ -25,7 +25,6 @@ VALIDARGS="
    clean
    uninstall
    nx-cugraph
-   docs
    all
    -v
    -g
@@ -41,7 +40,6 @@ HELP="$0 [<target> ...] [<flag> ...]
    clean                      - remove all existing build artifacts and configuration (start over)
    uninstall                  - uninstall nx-cugraph from a prior build/install (see also -n)
    nx-cugraph                 - build the nx-cugraph Python package
-   docs                       - build the docs
    all                        - build everything
  and <flag> is:
    -v                         - verbose build mode

@@ -33,12 +33,10 @@ jobs:
           - '**'
           - '!.devcontainer/**'
           - '!README.md'
-          - '!docs/**'
         test_python:
           - '**'
           - '!.devcontainer/**'
           - '!README.md'
-          - '!docs/**'
           - '!notebooks/**'
   devcontainer:
     secrets: inherit

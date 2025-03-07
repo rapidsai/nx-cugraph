@@ -15,6 +15,7 @@ import pytest
 
 import nx_cugraph as nxcg
 from nx_cugraph import _nxver
+from nx_cugraph.classes.graph import _GraphCache
 
 
 def test_class_to_class():
@@ -138,3 +139,11 @@ def test_dispatch_graph_classes(nxcg_class, use_compat_graphs):
         assert type(G) is NxcgGraphSubclass
         G = NxcgGraphSubclass(backend="networkx")
         assert type(G) is NxcgGraphSubclass  # Perhaps odd, but the correct behavior
+
+
+@pytest.mark.parametrize(
+    "graph_class", [nxcg.Graph, nxcg.DiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph]
+)
+def test_cache_type(graph_class):
+    G = graph_class()
+    assert isinstance(G.__networkx_cache__, _GraphCache)

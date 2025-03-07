@@ -114,10 +114,12 @@ def main(readme_file, objects_filename):
             # Don't include e.g. Graph.__new__
             return None
         # Many objects are referred to in modules above where they are defined.
-        while subpath:
+        while True:
             path = f"{subpath}.{name}"
             if path in doc_urls:
                 return f'<a href="{doc_urls[path]}">{name}</a>'
+            if subpath == "networkx":
+                break
             subpath = subpath.rsplit(".", 1)[0]
         warn(f"Unable to find URL for {name!r}: {path}", stacklevel=0)
         return name

@@ -8,7 +8,6 @@ files:
     includes:
       - checks
       - cuda_version
-      - docs
       - python_build_rapids
       - python_build_wheel
       - test_python_common
@@ -21,12 +20,6 @@ files:
     output: none
     includes:
       - checks
-      - py_version
-  docs:
-    output: none
-    includes:
-      - cuda_version
-      - docs
       - py_version
   test_notebooks:
     output: none
@@ -123,20 +116,6 @@ dependencies:
       - output_types: conda
         packages:
           - nx-cugraph==25.4.*,>=0.0.0a0
-  docs:
-    common:
-      - output_types: [conda]
-        packages:
-          - graphviz
-          - ipython
-          - nbsphinx
-          - numpydoc
-          - pydata-sphinx-theme
-          - recommonmark
-          - sphinx-copybutton
-          - sphinx-markdown-tables
-          - sphinx
-          - sphinxcontrib-websupport
   py_version:
     specific:
       - output_types: [conda]
