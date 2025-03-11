@@ -982,9 +982,9 @@ def bench_jaccard(benchmark, graph_obj, backend_wrapper):
     assert type(result) is list
 
 
-# TODO IMPLEMENT
+#TODO IMPLEMENT
 def bench_jaccard(benchmark, graph_obj, backend_wrapper):
-    pass
+	pass
 
 
 @pytest.mark.skip(reason="benchmark not implemented")

@@ -13,11 +13,11 @@
 
 
 # FIXME: might not be the correct function
+from cugraph.layout import force_atlas2_wrapper
 
 __all__ = [
     "forceatlas2_layout",
 ]
-
 
 # FIXME: check _plc name
 # networkx function url: https://github.com/networkx/networkx/blob/44aab23f18f635153c63486e5ba821a8cbba835f/networkx/drawing/layout.py#L1456
@@ -41,4 +41,4 @@ def forceatlas2_layout(
     dim=2,
     store_pos_as=None,
 ):
-    pass
+	pass
