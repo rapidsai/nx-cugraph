@@ -18,6 +18,8 @@
  * **Python Version:** 3.10, 3.11, or 3.12
  * **NetworkX Version:** minimum 3.2 (version 3.4 or higher recommended)
 
+Note: nx-cugraph is supported only on Linux, and with Python versions 3.10 and later.
+
 See [RAPIDS System Requirements](https://docs.rapids.ai/install#system-req) for detailed information on OS and Versions.
 
 
