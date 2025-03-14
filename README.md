@@ -1,8 +1,4 @@
-<p align="center">
-  <img height="200" src="./static/banner.png" />
-</p>
-
-# nx-cugraph
+# <div align="left"><img src="img/rapids_logo.png" width="90px"/>&nbsp;nx-cugraph - GPU Backend for NetworkX</div>
 
 ## Description
 [RAPIDS](https://rapids.ai) nx-cugraph is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run supported algorithms with GPU acceleration.
