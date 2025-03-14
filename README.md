@@ -39,8 +39,7 @@ conda install -c rapidsai -c conda-forge -c nvidia nx-cugraph
 ```
 ### pip
 
-nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index. Be sure to select the appropriate nx-cugraph package depending on the ajor version of CUDA available in your environment:
-
+nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index. B
 
 #### For CUDA 11.x:
 
