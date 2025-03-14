@@ -1,18 +1,30 @@
+<p align="center">
+  <img height="200" src="./static/banner.png" />
+</p>
+
 # nx-cugraph
 
 ## Description
-[RAPIDS](https://rapids.ai) nx-cugraph is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html)
-to run supported algorithms with GPU acceleration.
+[RAPIDS](https://rapids.ai) nx-cugraph is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run supported algorithms with GPU acceleration.
+
+- [System Requirements](#system-requirements)
+- [Installation](#installation)
+- [Enabling nx-cugraph](#enabling-nx-cugraph)
+- [Supported Algorithms](#supported-algorithms)
+
+---
 
 ## System Requirements
 
-nx-cugraph requires the following:
- * NVIDIA GPU, Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
- * CUDA 11.4-11.8 or 12.0-12.5
- * Python version 3.10, 3.11, or 3.12
- * NetworkX >= version 3.2 (version 3.4 or higher recommended)
+ * **GPU:** NVIDIA Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
+   * Pascal GPU support was [removed in 24.02](https://docs.rapids.ai/notices/rsn0034/). Compute capability 7.0+ is required for RAPIDS 24.02 and later.
+ * **CUDA Version:** 11.4 - 11.8 or 12.0 - 12.5
+ * **Python Version:** 3.10, 3.11, or 3.12
+ * **NetworkX Version:** minimum 3.2 (version 3.4 or higher recommended)
 
 More details about system requirements can be found in the [RAPIDS System Requirements documentation](https://docs.rapids.ai/install#system-req).
+
+---
 
 ## Installation
 
@@ -281,4 +293,4 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 </pre>
 
 To request nx-cugraph backend support for a NetworkX API that is not listed
-above, visit the [nx-cugraph GitHub repo](https://github.com/rapidsai/nx-cugraph).
+above, [file an issue](https://github.com/rapidsai/nx-cugraph/issues/new/choose).
