@@ -30,15 +30,15 @@ nx-cugraph can be installed using either conda or pip with the following command
 ### conda
 
 nx-cugraph can be installed with conda (via [Miniforge](https://github.com/conda-forge/miniforge)) from the `rapidsai` channel.
-
-Latest nightly version
-```
-conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
-```
-Latest stable version
 ```
 conda install -c rapidsai -c conda-forge -c nvidia nx-cugraph
 ```
+
+We also provide [nightly Conda packages](https://anaconda.org/rapidsai-nightly/nx-cugraph) built from the HEAD of our latest development branch.
+```
+conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
+```
+
 ### pip
 
 nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index.
