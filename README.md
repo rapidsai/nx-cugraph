@@ -1,7 +1,7 @@
 # <div align="left"><img src="img/rapids_logo.png" width="90px"/>&nbsp;nx-cugraph - GPU Backend for NetworkX</div>
 
 ## Description
-[RAPIDS](https://rapids.ai) nx-cugraph is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run supported algorithms with GPU acceleration.
+[nx-cugraph](https://rapids.ai/nx-cugraph) is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run algorithms with zero code change GPU acceleration.
 
 - [System Requirements](#system-requirements)
 - [Installation](#installation)
@@ -18,35 +18,44 @@
  * **Python Version:** 3.10, 3.11, or 3.12
  * **NetworkX Version:** minimum 3.2 (version 3.4 or higher recommended)
 
-More details about system requirements can be found in the [RAPIDS System Requirements documentation](https://docs.rapids.ai/install#system-req).
+See [RAPIDS System Requirements](https://docs.rapids.ai/install#system-req) for detailed information on OS and Versions.
 
----
 
 ## Installation
 
-nx-cugraph can be installed using either conda or pip.
+nx-cugraph can be installed using either conda or pip with the following commands.
 
 ### conda
-#### latest nightly version
+
+nx-cugraph can be installed with conda (via [Miniforge](https://github.com/conda-forge/miniforge)) from the `rapidsai` channel.
+
+Latest nightly version
 ```
 conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
 ```
-#### latest stable version
+Latest stable version
 ```
 conda install -c rapidsai -c conda-forge -c nvidia nx-cugraph
 ```
 ### pip
-#### latest nightly version
+
+nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index. Be sure to select the appropriate nx-cugraph package depending on the ajor version of CUDA available in your environment:
+
+
+#### For CUDA 11.x:
+
+Latest nightly version
 ```
 python -m pip install nx-cugraph-cu11 --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
 ```
-#### latest stable version
+
+Latest stable version
 ```
 python -m pip install nx-cugraph-cu11 --extra-index-url https://pypi.nvidia.com
 ```
 Notes:
  * The pip example above installs for CUDA 11. To install for CUDA 12, replace `-cu11` with `-cu12`
- * Additional information relevant to installing any RAPIDS package can be found [here](https://rapids.ai/#quick-start).
+ * Try out the [RAPIDS Install Selector Tool](https://docs.rapids.ai/install/#install-rapids) to install other RAPIDS packages.
 
 ## Enabling nx-cugraph
 
