@@ -987,7 +987,7 @@ def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
 
     result = benchmark.pedantic(
         target=backend_wrapper(nx.forceatlas2_layout),
-        args=(G),
+        args=(G,),
         rounds=rounds,
         iterations=iterations,
         warmup_rounds=warmup_rounds,
