@@ -16,7 +16,7 @@ from . import (
     cluster,
     community,
     components,
-	drawing,
+    drawing,
     link_analysis,
     link_prediction,
     lowest_common_ancestors,
