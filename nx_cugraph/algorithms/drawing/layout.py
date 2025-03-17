@@ -85,15 +85,18 @@ def forceatlas2_layout(
         mass[idx] = node_mass.get(node, G.degree(node) + 1)
         size[idx] = node_size.get(node, 1)
 
-    gravities = cp.zeros((N, dim))
-    attraction = cp.zeros((N, dim))
-    repulsion = cp.zeros((N, dim))
-    # cugraph doesn't have a to_cupy
-    # should this be converted like this?
-    A = cp.array(cugraph.to_numpy_array(G))
-
-    # When do I call this..? How do I know where to just hand off to PLC
+    # TODO: figure out if this is correct
+    # missing args:
+    # distributed_action
+    # weight
+    # dissuade_hubs
+    # store_pos_as
     res = plc.force_atlas2(
-        G,
-        max_iter,
+        graph=G,
+        max_iter=max_iter,
+        jitter_tolerance=jitter_tolerance,
+        lin_log_mode=linlog,
+        strong_gravity_mode=strong_gravity,
+        gravity=gravity,
+        scaling_ratio=scaling_ratio,
     )
