@@ -15,7 +15,7 @@ import cugraph
 import cupy as cp
 import pylibcugraph as plc
 
-from nx_cugraph.utils import networkx_algorithm
+from nx_cugraph.utils import _seed_to_int, networkx_algorithm
 
 __all__ = [
     "forceatlas2_layout",
@@ -45,7 +45,7 @@ def forceatlas2_layout(
     if (N := len(G)) == 0:
         return {}
 
-    rs = cp.random.RandomState(seed)
+    seed = _seed_to_int(seed)
     # parse optional pos positions
     if pos is None:
         # from nx.random_layout._process_params
@@ -53,7 +53,7 @@ def forceatlas2_layout(
         # broadcasting zeros onto an array is pointless in this alg
         # Then why does NetworkX do it?
         # pos = seed.rand(N, dim) + center
-        pos_arr = rs.rand(N, dim) + center
+        pos_arr = seed.rand(N, dim) + center
     elif len(pos) == N:
         # same as nx just use cp?
         pos_arr = cp.array([pos[node].copy() for node in G])
@@ -63,7 +63,7 @@ def forceatlas2_layout(
         max_pos = pos_init.max(axis=0)
         min_pos = pos_init.min(axis=0)
         dim = max_pos.size
-        pos_arr = min_pos + rs.ran(N, dim) * (max_pos - min_pos)
+        pos_arr = min_pos + seed.ran(N, dim) * (max_pos - min_pos)
         for idx, node in enumerate(G):
             if node in pos:
                 pos_arr[idx] = pos[node].copy()
