@@ -11,11 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cugraph
 import cupy as cp
+import networkx as nx
 import pylibcugraph as plc
 
-from nx_cugraph.utils import _seed_to_int, networkx_algorithm
+from nx_cugraph.utils import networkx_algorithm
 
 __all__ = [
     "forceatlas2_layout",
@@ -43,42 +43,53 @@ def forceatlas2_layout(
     store_pos_as=None,
 ):
     """
-    `seed`, `distributed_action`, `weight`, `store_pos_as`, `node_mass`,
-    `node_size` parameter is currently ignored.
+    `seed`, `distributed_action`, `weight`, `node_mass`, `node_size` parameter is
+    currently ignored.
+
     Only `dim=2` is supported.
     """
-    if (N := len(G)) == 0:
+    if len(G) == 0:
         return {}
 
-    # pos -> n_start and y_start
-    if isinstance(pos, dict):
-        ...
+    # Split dict into cupy arrays of XY coords for PLC
+    if pos is not None:
+        if not isinstance(pos, dict):
+            raise TypeError(f"pos must be dict or None; got {type(pos)}")
+        start_pos_arr = cp.array(list(pos.values()))
+        x_start = start_pos_arr[:, 0]
+        y_start = start_pos_arr[:, 1]
 
-    # FIXME: MISSING ARGS:
-    
+    # NOTE: MISSING ARGS:
     # distributed_action : bool (default: False)
     #     Distributes the attraction force evenly among nodes.
-    
     # weight?
-    
     # store_pos_as : str, default None
     #     If non-None, the position of each node will be stored on the graph as
     #     an attribute with this string as its name, which can be accessed with
     #     ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
-    
     # node_mass : dict or None, optional
     #     Maps nodes to their masses, influencing the attraction to other nodes.
-    
     # node_size : dict or None, optional
     #     Maps nodes to their sizes, preventing crowding by creating a halo effect.
 
-    (x_axis, y_axis) = plc.force_atlas2(
+    # returns two cupy arrays
+    x_axis, y_axis = plc.force_atlas2(
         graph=G,
         max_iter=max_iter,
+        x_start=x_start,
+        y_start=y_start,
         lin_log_mode=linlog,
-        prevent_overlapping=dissuade_hubs, # this might not be right
+        prevent_overlapping=dissuade_hubs,  # this might not be the right usage
         jitter_tolerance=jitter_tolerance,
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
     )
+
+    pos_arr = cp.hstack((x_axis, y_axis), dtype="float32")
+    # NOTE do we need to do a conversion back to a Nx graph here..?
+    pos = dict(zip, G, pos_arr)
+    if store_pos_as is not None:
+        nx.set_node_attributes(G, pos, store_pos_as)
+
+    return pos
