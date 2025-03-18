@@ -42,61 +42,43 @@ def forceatlas2_layout(
     dim=2,
     store_pos_as=None,
 ):
+    """
+    `seed`, `distributed_action`, `weight`, `store_pos_as`, `node_mass`,
+    `node_size` parameter is currently ignored.
+    Only `dim=2` is supported.
+    """
     if (N := len(G)) == 0:
         return {}
 
-    seed = _seed_to_int(seed)
-    # parse optional pos positions
-    if pos is None:
-        # from nx.random_layout._process_params
-        center = cp.zeros(dim)  # don't think we need center ever..?
-        # broadcasting zeros onto an array is pointless in this alg
-        # Then why does NetworkX do it?
-        # pos = seed.rand(N, dim) + center
-        pos_arr = seed.rand(N, dim) + center
-    elif len(pos) == N:
-        # same as nx just use cp?
-        pos_arr = cp.array([pos[node].copy() for node in G])
-    else:
-        # set random node pos within the initial pos values
-        pos_init = cp.array(list(pos.values()))
-        max_pos = pos_init.max(axis=0)
-        min_pos = pos_init.min(axis=0)
-        dim = max_pos.size
-        pos_arr = min_pos + seed.ran(N, dim) * (max_pos - min_pos)
-        for idx, node in enumerate(G):
-            if node in pos:
-                pos_arr[idx] = pos[node].copy()
+    # pos -> n_start and y_start
+    if isinstance(pos, dict):
+        ...
 
-    mass = cp.zeros(N)
-    size = cp.zeros(N)
+    # FIXME: MISSING ARGS:
+    
+    # distributed_action : bool (default: False)
+    #     Distributes the attraction force evenly among nodes.
+    
+    # weight?
+    
+    # store_pos_as : str, default None
+    #     If non-None, the position of each node will be stored on the graph as
+    #     an attribute with this string as its name, which can be accessed with
+    #     ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
+    
+    # node_mass : dict or None, optional
+    #     Maps nodes to their masses, influencing the attraction to other nodes.
+    
+    # node_size : dict or None, optional
+    #     Maps nodes to their sizes, preventing crowding by creating a halo effect.
 
-    # Only adjust for size when the users specifies size other than default
-    adjust_sizes = False
-    if node_size is None:
-        node_size = {}
-    else:
-        adjust_sizes = True
-
-    if node_mass is None:
-        node_mass = {}
-
-    for idx, node in enumerate(G):
-        mass[idx] = node_mass.get(node, G.degree(node) + 1)
-        size[idx] = node_size.get(node, 1)
-
-    # TODO: figure out if this is correct
-    # missing args:
-    # distributed_action
-    # weight
-    # dissuade_hubs
-    # store_pos_as
-    res = plc.force_atlas2(
+    (x_axis, y_axis) = plc.force_atlas2(
         graph=G,
         max_iter=max_iter,
-        jitter_tolerance=jitter_tolerance,
         lin_log_mode=linlog,
+        prevent_overlapping=dissuade_hubs, # this might not be right
+        jitter_tolerance=jitter_tolerance,
+        scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
-        scaling_ratio=scaling_ratio,
     )
