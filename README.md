@@ -304,4 +304,3 @@ above, [file an issue](https://github.com/rapidsai/nx-cugraph/issues/new/choose)
 ## Contributing
 
 If you would like to contribute to nx-cugraph, refer to the [Contributing Guide](./CONTRIBUTING.md)
-
