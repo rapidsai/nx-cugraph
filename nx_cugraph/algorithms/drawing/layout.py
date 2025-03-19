@@ -73,7 +73,7 @@ def forceatlas2_layout(
     #     Maps nodes to their sizes, preventing crowding by creating a halo effect.
 
     # returns two cupy arrays
-    x_axis, y_axis = plc.force_atlas2(
+    vertices, x_axis, y_axis = plc.force_atlas2(
         graph=G,
         max_iter=max_iter,
         x_start=x_start,
@@ -86,9 +86,9 @@ def forceatlas2_layout(
         gravity=gravity,
     )
 
-    pos_arr = cp.hstack((x_axis, y_axis), dtype="float32")
-    # NOTE do we need to do a conversion back to a Nx graph here..?
-    pos = dict(zip, G, pos_arr)
+    pos_arr = cp.vstack((x_axis, y_axis)).T
+    pos = {int(vertices[i]): pos_arr[i].tolist() for i in range(vertices.shape[0])}
+
     if store_pos_as is not None:
         nx.set_node_attributes(G, pos, store_pos_as)
 
