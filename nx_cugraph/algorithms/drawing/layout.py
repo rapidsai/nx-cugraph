@@ -59,20 +59,6 @@ def forceatlas2_layout(
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
 
-    # NOTE: MISSING ARGS:
-    # distributed_action : bool (default: False)
-    #     Distributes the attraction force evenly among nodes.
-    # weight?
-    # store_pos_as : str, default None
-    #     If non-None, the position of each node will be stored on the graph as
-    #     an attribute with this string as its name, which can be accessed with
-    #     ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
-    # node_mass : dict or None, optional
-    #     Maps nodes to their masses, influencing the attraction to other nodes.
-    # node_size : dict or None, optional
-    #     Maps nodes to their sizes, preventing crowding by creating a halo effect.
-
-    # returns two cupy arrays
     vertices, x_axis, y_axis = plc.force_atlas2(
         graph=G,
         max_iter=max_iter,
