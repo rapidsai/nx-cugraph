@@ -282,3 +282,7 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 
 To request nx-cugraph backend support for a NetworkX API that is not listed
 above, visit the [nx-cugraph GitHub repo](https://github.com/rapidsai/nx-cugraph).
+
+## Contributing
+
+If you would like to contribute to nx-cugraph, refer to the [Contributing Guide](./CONTRIBUTING.md)

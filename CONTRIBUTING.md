@@ -38,7 +38,7 @@ into three categories:
 Remember, if you are unsure about anything, don't hesitate to comment on issues and ask for clarifications!
 
 
-## Building From Source
+## Building and Installing From Source
 These instructions are tested on supported versions/distributions of Linux,
 CUDA, and Python - See [RAPIDS Getting Started](https://rapids.ai/start.html)
 for the list of supported environments.  Other environments _might be_
@@ -52,6 +52,40 @@ __CUDA:__
 Further details and download links for these prerequisites are available on the
 [RAPIDS System Requirements page](https://docs.rapids.ai/install#system-req).
 
+### Create the build environment
+- Clone the repository:
+
+```bash
+git clone https://github.com/rapidsai/nx-cugraph.git
+cd nx-cugraph
+```
+
+#### Create conda environment and install dependencies
+
+```bash
+# for CUDA 12 environments
+conda env create --name nxcg-dev --file conda/environments/all_cuda-128_arch-x86_64.yaml
+# activate the environment
+conda activate nxcg-dev
+```
+
+- **Note**: the conda environment files are updated frequently, so the
+  development environment may also need to be updated if dependency versions or
+  pinnings are changed.
+
+#### Build nx-cugraph from source
+
+```bash
+# for details and usage, run with the --help flag
+./build.sh
+```
+
+- **Note**: if Python files (`*.py`) have changed, the build must be rerun.
+
+To verify your install with tests, run
+```bash
+pytest -v python/nx_cugraph/tests
+```
 
 ## Code Formatting
 
@@ -70,11 +104,11 @@ unnecessary CI iterations.
 To use `pre-commit`, install the tool via `conda` or `pip` into your development
 environment:
 
-```console
+```bash
 conda install -c conda-forge pre-commit
 ```
 Alternatively:
-```console
+```bash
 pip install pre-commit
 ```
 
@@ -83,7 +117,7 @@ run automatically before creating a git commit. In this way, it is less likely
 that style checks will fail as part of CI checks. To install pre-commit hooks,
 simply run the following command within the repository root directory:
 
-```console
+```bash
 pre-commit install
 ```
 
