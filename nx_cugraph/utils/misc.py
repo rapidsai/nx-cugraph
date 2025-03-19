@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -45,6 +45,7 @@ __all__ = [
     "_get_int_dtype",
     "_get_float_dtype",
     "_dtype_param",
+    "outbound_attraction_distribution",
     "_cp_iscopied_asarray",
 ]
 
@@ -56,6 +57,12 @@ _dtype_param = {
     "dtype : dtype or None, optional": (
         "The data type (np.float32, np.float64, or None) to use for the edge weights "
         "in the algorithm. If None, then dtype is determined by the edge values."
+    ),
+}
+outbound_attraction_distribution = {
+    "bool": (
+        "Distributes attraction along outbound edges"
+        "Hubs attract less and thus are pushed to the borders."
     ),
 }
 
