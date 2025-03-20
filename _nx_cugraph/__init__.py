@@ -239,7 +239,7 @@ _info = {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
         "forceatlas2_layout": {
-            "outbound_attraction_distribution : bool, default ": "Distributes attraction along outbound edges. Hubs attract less and thus are pushed to the borders.",
+            "outbound_attraction_distribution : bool, default True": "Distributes attraction along outbound edges. Hubs attract less and thus are pushed to the borders.",
         },
         "hits": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
