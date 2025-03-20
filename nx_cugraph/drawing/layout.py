@@ -15,11 +15,18 @@ import cupy as cp
 import networkx as nx
 import pylibcugraph as plc
 
-from nx_cugraph.utils import networkx_algorithm, outbound_attraction_distribution
+from nx_cugraph.utils import networkx_algorithm
 
 __all__ = [
     "forceatlas2_layout",
 ]
+
+outbound_attraction_distribution = {
+    "outbound_attraction_distribution : bool, default ": (
+        "Distributes attraction along outbound edges."
+        "Hubs attract less and thus are pushed to the borders."
+    ),
+}
 
 
 @networkx_algorithm(
@@ -45,12 +52,13 @@ def forceatlas2_layout(
     seed=None,
     dim=2,
     store_pos_as=None,
+    outbound_attraction_distribution=True,
 ):
     """
     `seed`, `distributed_action`, `weight`, `node_mass`, `node_size` parameter is
-    currently ignored. Only `dim=2` is supported.
+    currently ignored. Only `dim=2` is supported. `outbound_attraction_distribution` is
+    a backend-only argument.
     """
-
     if len(G) == 0:
         return {}
 
@@ -62,19 +70,13 @@ def forceatlas2_layout(
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
 
-    # Q: is this the right way to set additional arg if it's passed by user?
-    # the default behavior should be True
-    outbound = True
-    if outbound_attraction_distribution is not None:
-        outbound = outbound_attraction_distribution
-
     vertices, x_axis, y_axis = plc.force_atlas2(
         plc.ResourceHandle(),
         graph=G,
         max_iter=max_iter,
         x_start=x_start,
         y_start=y_start,
-        outbound_attraction_distribution=outbound,
+        outbound_attraction_distribution=outbound_attraction_distribution,
         lin_log_mode=linlog,
         prevent_overlapping=dissuade_hubs,  # this might not be the right usage
         jitter_tolerance=jitter_tolerance,
@@ -90,3 +92,29 @@ def forceatlas2_layout(
         nx.set_node_attributes(G, pos, store_pos_as)
 
     return pos
+
+
+@forceatlas2_layout._can_run
+def _(
+    G,
+    pos=None,
+    *,
+    max_iter=100,
+    jitter_tolerance=1.0,
+    scaling_ratio=2.0,
+    gravity=1.0,
+    distributed_action=False,
+    strong_gravity=False,
+    node_mass=None,
+    node_size=None,
+    weight=None,
+    dissuade_hubs=False,
+    linlog=False,
+    seed=None,
+    dim=2,
+    store_pos_as=None,
+    outbound_attraction_distribution=True,
+):
+    if dim != 2:
+        return f"dim={dim} not supported; only dim=2 is currently supported"
+    return True

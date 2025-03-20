@@ -186,7 +186,8 @@ _info = {
         "eigenvector_centrality": "`nstart` parameter is not used, but it is checked for validity.",
         "forceatlas2_layout": (
             "`seed`, `distributed_action`, `weight`, `node_mass`, `node_size` parameter is\n"
-            "currently ignored. Only `dim=2` is supported."
+            "currently ignored. Only `dim=2` is supported. `outbound_attraction_distribution` is\n"
+            "a backend-only argument."
         ),
         "from_pandas_edgelist": "cudf.DataFrame inputs also supported; value columns with str is unsuppported.",
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",
@@ -238,7 +239,7 @@ _info = {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
         "forceatlas2_layout": {
-            "bool": "Distributes attraction along outbound edges. Hubs attract less and thus are pushed to the borders.",
+            "outbound_attraction_distribution : bool, default ": "Distributes attraction along outbound edges.Hubs attract less and thus are pushed to the borders.",
         },
         "hits": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
