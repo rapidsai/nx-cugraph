@@ -17,10 +17,14 @@
 
 import cupy as cp
 import networkx as nx
+import numpy as np
 import pylibcugraph as plc
 
 from nx_cugraph.convert import _to_graph
-from nx_cugraph.utils import networkx_algorithm
+from nx_cugraph.utils import (
+    _seed_to_int,
+    networkx_algorithm,
+)
 
 __all__ = [
     "forceatlas2_layout",
@@ -61,8 +65,8 @@ def forceatlas2_layout(
     outbound_attraction_distribution=True,
 ):
     """
-    `seed`, `distributed_action`, `weight`, `node_mass`, `node_size` parameter is
-    currently ignored. Only `dim=2` is supported. `outbound_attraction_distribution` is
+    `distributed_action`, `node_mass`, `node_size` parameter is currently ignored.
+    Only `dim=2` is supported. `outbound_attraction_distribution` is
     a backend-only argument.
     """
     if len(G) == 0:
@@ -84,11 +88,19 @@ def forceatlas2_layout(
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
 
-    G = _to_graph(G)
+    if weight is not None:
+        G = _to_graph(G, weight, 1, np.float32)
+        G_plc = G._get_plc_graph(weight, 1, np.float32)
+    else:
+        G = _to_graph(G)
+        G_plc = G._get_plc_graph()
+
+    seed = _seed_to_int(seed)
 
     vertices, x_axis, y_axis = plc.force_atlas2(
         plc.ResourceHandle(),
-        graph=G._get_plc_graph(),
+        random_state=seed,
+        graph=G_plc,
         max_iter=max_iter,
         x_start=x_start,
         y_start=y_start,
