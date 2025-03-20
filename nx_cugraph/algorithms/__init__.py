@@ -16,7 +16,6 @@ from . import (
     cluster,
     community,
     components,
-    drawing,
     link_analysis,
     link_prediction,
     lowest_common_ancestors,
@@ -31,7 +30,6 @@ from .cluster import *
 from .components import *
 from .core import *
 from .dag import *
-from .drawing import *
 from .isolate import *
 from .link_analysis import *
 from .link_prediction import *

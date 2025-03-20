@@ -48,10 +48,9 @@ def forceatlas2_layout(
 ):
     """
     `seed`, `distributed_action`, `weight`, `node_mass`, `node_size` parameter is
-    currently ignored.
-
-    Only `dim=2` is supported.
+    currently ignored. Only `dim=2` is supported.
     """
+
     if len(G) == 0:
         return {}
 

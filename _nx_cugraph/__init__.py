@@ -186,9 +186,7 @@ _info = {
         "eigenvector_centrality": "`nstart` parameter is not used, but it is checked for validity.",
         "forceatlas2_layout": (
             "`seed`, `distributed_action`, `weight`, `node_mass`, `node_size` parameter is\n"
-            "currently ignored.\n"
-            "\n"
-            "Only `dim=2` is supported."
+            "currently ignored. Only `dim=2` is supported."
         ),
         "from_pandas_edgelist": "cudf.DataFrame inputs also supported; value columns with str is unsuppported.",
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",
