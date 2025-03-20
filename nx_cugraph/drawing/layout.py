@@ -54,6 +54,7 @@ def forceatlas2_layout(
     seed=None,
     dim=2,
     store_pos_as=None,
+    # nx_cugraph-only argument
     outbound_attraction_distribution=True,
 ):
     """
