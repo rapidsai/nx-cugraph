@@ -17,11 +17,12 @@
 
 import cupy as cp
 import networkx as nx
-import numpy as np
 import pylibcugraph as plc
 
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import (
+    _dtype_param,
+    _get_float_dtype,
     _seed_to_int,
     networkx_algorithm,
 )
@@ -30,16 +31,15 @@ __all__ = [
     "forceatlas2_layout",
 ]
 
-outbound_attraction_distribution = {
-    "outbound_attraction_distribution : bool, default True": (
-        "Distributes attraction along outbound edges. "
-        "Hubs attract less and thus are pushed to the borders."
-    ),
-}
-
 
 @networkx_algorithm(
-    extra_params=outbound_attraction_distribution,
+    extra_params={
+        "outbound_attraction_distribution : bool, default True": (
+            "Distributes attraction along outbound edges. "
+            "Hubs attract less and thus are pushed to the borders."
+        ),
+        **_dtype_param,
+    },
     version_added="25.04",
     _plc="forceatlas2_layout",
 )
@@ -63,6 +63,7 @@ def forceatlas2_layout(
     store_pos_as=None,
     # nx_cugraph-only argument
     outbound_attraction_distribution=True,
+    dtype=None,
 ):
     """
     `distributed_action`, `node_mass`, `node_size` parameter is currently ignored.
@@ -88,9 +89,12 @@ def forceatlas2_layout(
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
 
+    # match the float dtype on input graph's edgelist
+    dtype = _get_float_dtype(dtype, graph=G, weight=weight)
+
     if weight is not None:
-        G = _to_graph(G, weight, 1, np.float32)
-        G_plc = G._get_plc_graph(weight, 1, np.float32)
+        G = _to_graph(G, weight, 1, dtype)
+        G_plc = G._get_plc_graph(weight, 1, dtype)
     else:
         G = _to_graph(G)
         G_plc = G._get_plc_graph()
