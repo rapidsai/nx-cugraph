@@ -24,7 +24,7 @@ __all__ = [
 ]
 
 outbound_attraction_distribution = {
-    "outbound_attraction_distribution : bool, default ": (
+    "outbound_attraction_distribution : bool, default True": (
         "Distributes attraction along outbound edges. "
         "Hubs attract less and thus are pushed to the borders."
     ),
