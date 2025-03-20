@@ -30,4 +30,4 @@ def test_forceatlas2(get_graph):
     res_cg = nxcg.forceatlas2_layout(Gcg)
 
     assert len(res_nx) == len(res_cg)
-    # for each pos element in res_nx assert that it's equal to res_cg
+    assert res_nx.keys() == res_cg.keys()
