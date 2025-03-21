@@ -89,11 +89,10 @@ def forceatlas2_layout(
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
 
-    # match the float dtype on input graph's edgelist
-    dtype = _get_float_dtype(dtype, graph=G, weight=weight)
-
     if weight is not None:
-        G = _to_graph(G, weight, 1, dtype)
+        # match the float dtype on input graph's edgelist, default to float32
+        G = _to_graph(G, weight, 1, _get_float_dtype(dtype))
+        dtype = _get_float_dtype(dtype, graph=G, weight=weight)
         G_plc = G._get_plc_graph(weight, 1, dtype)
     else:
         G = _to_graph(G)
