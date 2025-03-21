@@ -982,6 +982,20 @@ def bench_jaccard(benchmark, graph_obj, backend_wrapper):
     assert type(result) is list
 
 
+def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.forceatlas2_layout),
+        args=(G,),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+
+    assert type(result) is dict
+
+
 @pytest.mark.skip(reason="benchmark not implemented")
 def bench_complete_bipartite_graph(benchmark, graph_obj, backend_wrapper):
     pass
