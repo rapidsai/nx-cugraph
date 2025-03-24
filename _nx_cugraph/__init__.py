@@ -185,9 +185,8 @@ _info = {
         "ego_graph": "Weighted ego_graph with negative cycles is not yet supported. `NotImplementedError` will be raised if there are negative `distance` edge weights.",
         "eigenvector_centrality": "`nstart` parameter is not used, but it is checked for validity.",
         "forceatlas2_layout": (
-            "`distributed_action`, `node_mass`, `node_size` parameter is currently ignored.\n"
-            "Only `dim=2` is supported. `outbound_attraction_distribution` is\n"
-            "a backend-only argument."
+            "`distributed_action`, `node_mass`, and `node_size` parameters are currently ignored.\n"
+            "Only `dim=2` is supported."
         ),
         "from_pandas_edgelist": "cudf.DataFrame inputs also supported; value columns with str is unsuppported.",
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",

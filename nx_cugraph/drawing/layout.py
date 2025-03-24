@@ -79,9 +79,6 @@ def forceatlas2_layout(
 
     # Split dict into cupy arrays of XY coords for PLC
     if pos is not None:
-        if not isinstance(pos, dict):
-            raise TypeError(f"pos must be dict or None; got {type(pos)}")
-
         # NOTE currently only x & y (dim=2) coordinated are supported by PLC
         #   greater dimensions should be supported in the future to align with nx
         start_pos_arr = cp.array(list(pos.values()))
