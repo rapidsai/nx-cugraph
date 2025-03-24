@@ -115,7 +115,7 @@ def forceatlas2_layout(
         gravity=gravity,
     )
 
-    pos_arr = cp.vstack((x_axis, y_axis)).T
+    pos_arr = cp.column_stack((x_axis, y_axis))
     pos = {int(vertices[i]): cp.asnumpy(pos_arr[i]) for i in range(vertices.shape[0])}
 
     if store_pos_as is not None:
