@@ -66,9 +66,8 @@ def forceatlas2_layout(
     dtype=None,
 ):
     """
-    `distributed_action`, `node_mass`, `node_size` parameter is currently ignored.
-    Only `dim=2` is supported. `outbound_attraction_distribution` is
-    a backend-only argument.
+    `distributed_action`, `node_mass`, and `node_size` parameters are currently ignored.
+    Only `dim=2` is supported.
     """
     if len(G) == 0:
         return {}
