@@ -1169,8 +1169,10 @@ class CudaGraph:
         return set(self._nodeiter_to_iter(node_ids.tolist()))
 
     def _nodearray_to_dict(
-        self, values: cp.ndarray[NodeValue]
+        self,
+        values: cp.ndarray[NodeValue],
     ) -> dict[NodeKey, NodeValue]:
+        # values_as_arrays: bool | None = None,
         it = enumerate(values.tolist())
         if (id_to_key := self.id_to_key) is not None:
             return {id_to_key[key]: val for key, val in it}

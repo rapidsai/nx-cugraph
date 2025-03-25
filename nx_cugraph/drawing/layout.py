@@ -25,6 +25,7 @@ from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import (
     _dtype_param,
     _get_float_dtype,
+    _seed_to_int,
     networkx_algorithm,
 )
 
@@ -92,7 +93,7 @@ def forceatlas2_layout(
         # NOTE currently only x & y (dim=2) coordinated are supported by PLC
         #   greater dimensions should be supported in the future to align with nx
         start_pos_arr = G._dict_to_nodearray(
-            pos, default=[np.nan] * 2, dtype=np.dtype(np.float32, dim)
+            pos, default=[np.nan] * dim, dtype=np.dtype((np.float32, 2))
         )
 
         # find, if there exists, the missing position values
@@ -103,11 +104,13 @@ def forceatlas2_layout(
         if num_missing:
             xy_min = cp.nanmin(start_pos_arr, axis=0)
             xy_max = cp.nanmax(start_pos_arr, axis=0)
+            # random state from seed to fill missing coords is different from random
+            # state used for PLC
             seed = create_random_state(seed)
 
             # fill missing gaps with valid random coords
             start_pos_arr[missing_vals] = xy_min + cp.asarray(
-                seed.rand(num_missing, 2), dtype=np.float32
+                seed.rand(num_missing, dim), dtype=np.float32
             ) * (xy_max - xy_min)
 
         x_start = start_pos_arr[:, 0]
@@ -115,6 +118,8 @@ def forceatlas2_layout(
     else:
         x_start = None
         y_start = None
+
+    seed = _seed_to_int(seed)
 
     vertices, x_axis, y_axis = plc.force_atlas2(
         plc.ResourceHandle(),
@@ -126,10 +131,15 @@ def forceatlas2_layout(
         outbound_attraction_distribution=outbound_attraction_distribution,
         lin_log_mode=linlog,
         prevent_overlapping=dissuade_hubs,  # this might not be the right usage
+        edge_weight_influence=1,  # default
         jitter_tolerance=jitter_tolerance,
+        barnes_hut_optimize=False,  # default
+        barnes_hut_theta=0,  # default ?
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
+        verbose=False,  # default
+        do_expensive_check=False,  # default
     )
 
     pos_arr = cp.column_stack((x_axis, y_axis))
