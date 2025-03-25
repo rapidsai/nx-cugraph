@@ -21,6 +21,7 @@ import numpy as np
 import pylibcugraph as plc
 from networkx.utils import create_random_state
 
+import nx_cugraph as nxcg
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import (
     _dtype_param,
@@ -73,6 +74,8 @@ def forceatlas2_layout(
     """
     if len(G) == 0:
         return {}
+
+    G_orig = G
 
     if dim != 2:
         raise NotImplementedError(
@@ -131,23 +134,29 @@ def forceatlas2_layout(
         outbound_attraction_distribution=outbound_attraction_distribution,
         lin_log_mode=linlog,
         prevent_overlapping=dissuade_hubs,  # this might not be the right usage
-        edge_weight_influence=1,  # default
+        edge_weight_influence=1,
         jitter_tolerance=jitter_tolerance,
-        barnes_hut_optimize=False,  # default
-        barnes_hut_theta=0,  # default ?
+        barnes_hut_optimize=False,
+        barnes_hut_theta=0,
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
-        verbose=False,  # default
-        do_expensive_check=False,  # default
+        verbose=False,
+        do_expensive_check=False,
     )
 
     pos_arr = cp.column_stack((x_axis, y_axis))
-    pos = {int(vertices[i]): cp.asnumpy(pos_arr[i]) for i in range(vertices.shape[0])}
+    pos = G._nodearrays_to_dict(
+        node_ids=vertices, values=pos_arr, values_as_arrays=True
+    )
 
     if store_pos_as is not None:
-        # TODO
-        nx.set_node_attributes(G, pos, store_pos_as)
+        if isinstance(G_orig, nx.Graph):
+            nx.set_node_attributes(G_orig, pos, store_pos_as)
+        elif isinstance(G_orig, nxcg.CudaGraph):
+            # ensure vertices are in order with their positions
+            pos_arr[vertices] = pos_arr
+            G_orig.node_values[store_pos_as] = pos_arr
 
     return pos
 
