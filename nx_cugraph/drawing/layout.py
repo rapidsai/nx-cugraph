@@ -95,17 +95,17 @@ def forceatlas2_layout(
             pos, default=[np.nan] * 2, dtype=np.dtype(np.float32, dim)
         )
 
+        # find, if there exists, the missing position values
         missing_vals = cp.isnan(start_pos_arr).all(axis=1)
         num_missing = int(cp.count_nonzero(missing_vals))
 
+        # fill in with valid random range
         if num_missing:
-            # get the min & max for X and Y
             xy_min = cp.nanmin(start_pos_arr, axis=0)
             xy_max = cp.nanmax(start_pos_arr, axis=0)
-
-            # fill in missing default values with random initial positions
             seed = create_random_state(seed)
 
+            # fill missing gaps with valid random coords
             start_pos_arr[missing_vals] = xy_min + cp.asarray(
                 seed.rand(num_missing, 2), dtype=np.float32
             ) * (xy_max - xy_min)
