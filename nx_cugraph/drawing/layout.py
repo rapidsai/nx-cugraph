@@ -17,13 +17,14 @@
 
 import cupy as cp
 import networkx as nx
+import numpy as np
 import pylibcugraph as plc
+from networkx.utils import create_random_state
 
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import (
     _dtype_param,
     _get_float_dtype,
-    _seed_to_int,
     networkx_algorithm,
 )
 
@@ -77,14 +78,6 @@ def forceatlas2_layout(
             f"dim={dim} not supported; only dim=2 is currently supported"
         )
 
-    # Split dict into cupy arrays of XY coords for PLC
-    if pos is not None:
-        # NOTE currently only x & y (dim=2) coordinated are supported by PLC
-        #   greater dimensions should be supported in the future to align with nx
-        start_pos_arr = cp.array(list(pos.values()))
-        x_start = start_pos_arr[:, 0]
-        y_start = start_pos_arr[:, 1]
-
     if weight is not None:
         # match the float dtype on input graph's edgelist, default to float32
         G = _to_graph(G, weight, 1, _get_float_dtype(dtype))
@@ -94,7 +87,34 @@ def forceatlas2_layout(
         G = _to_graph(G)
         G_plc = G._get_plc_graph()
 
-    seed = _seed_to_int(seed)
+    # Split dict into cupy arrays of XY coords for PLC
+    if pos is not None:
+        # NOTE currently only x & y (dim=2) coordinated are supported by PLC
+        #   greater dimensions should be supported in the future to align with nx
+        start_pos_arr = G._dict_to_nodearray(
+            pos, default=[np.nan] * 2, dtype=np.dtype(np.float32, dim)
+        )
+
+        missing_vals = cp.isnan(start_pos_arr).all(axis=1)
+        num_missing = int(cp.count_nonzero(missing_vals))
+
+        if num_missing:
+            # get the min & max for X and Y
+            xy_min = cp.nanmin(start_pos_arr, axis=0)
+            xy_max = cp.nanmax(start_pos_arr, axis=0)
+
+            # fill in missing default values with random initial positions
+            seed = create_random_state(seed)
+
+            start_pos_arr[missing_vals] = xy_min + cp.asarray(
+                seed.rand(num_missing, 2), dtype=np.float32
+            ) * (xy_max - xy_min)
+
+        x_start = start_pos_arr[:, 0]
+        y_start = start_pos_arr[:, 1]
+    else:
+        x_start = None
+        y_start = None
 
     vertices, x_axis, y_axis = plc.force_atlas2(
         plc.ResourceHandle(),
@@ -116,6 +136,7 @@ def forceatlas2_layout(
     pos = {int(vertices[i]): cp.asnumpy(pos_arr[i]) for i in range(vertices.shape[0])}
 
     if store_pos_as is not None:
+        # TODO
         nx.set_node_attributes(G, pos, store_pos_as)
 
     return pos
