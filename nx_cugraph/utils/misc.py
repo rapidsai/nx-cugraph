@@ -20,7 +20,6 @@ from typing import TYPE_CHECKING, SupportsIndex
 
 import cupy as cp
 import numpy as np
-from numpy.random import RandomState
 
 if TYPE_CHECKING:
     import nx_cugraph as nxcg
@@ -121,11 +120,11 @@ def _groupby(
     return {group: sorted_values[start:end] for group, (start, end) in it}
 
 
-def _seed_to_int(seed: int | Random | None) -> int:
+def _seed_to_int(seed: int | Random | np.random.RandomState | None) -> int:
     """Handle any valid seed argument and convert it to an int if necessary."""
     if seed is None:
         return
-    if isinstance(seed, (Random, RandomState)):
+    if isinstance(seed, (Random, np.random.RandomState)):
         return seed.randint(0, sys.maxsize)
     return op.index(seed)  # Ensure seed is integral
 
