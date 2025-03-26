@@ -150,7 +150,7 @@ def forceatlas2_layout(
     pos = G._nodearrays_to_dict(
         node_ids=vertices, values=pos_arr, values_as_arrays=True
     )
-    store_pos_as = "pos"
+
     if store_pos_as is not None:
 
         def update_cpu(graph):
