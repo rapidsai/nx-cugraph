@@ -174,7 +174,7 @@ _info = {
         "average_clustering": "Directed graphs and `weight` parameter are not yet supported.",
         "bellman_ford_path": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "bellman_ford_path_length": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
-        "betweenness_centrality": "`weight` parameter is not yet supported, and RNG with seed may be different.",
+        "betweenness_centrality": "`weight` parameter is not yet supported, and RNG with seed may be different. Normalization matches NetworkX version 3.5, which fixed normalization when using k (see https://github.com/networkx/networkx/pull/7908 for details).",
         "bfs_edges": "`sort_neighbors` parameter is not yet supported.",
         "bfs_predecessors": "`sort_neighbors` parameter is not yet supported.",
         "bfs_successors": "`sort_neighbors` parameter is not yet supported.",
