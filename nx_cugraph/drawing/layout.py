@@ -43,6 +43,7 @@ __all__ = [
         ),
         **_dtype_param,
     },
+    is_incomplete=True,  # dim=2-only; no distributed_action, node_mass, or node_size
     version_added="25.04",
     _plc="forceatlas2_layout",
 )
