@@ -13,6 +13,8 @@
 import networkx as nx
 import pytest
 
+from nx_cugraph import _nxver
+
 
 def test_bc():
     G = nx.karate_club_graph()
@@ -21,6 +23,8 @@ def test_bc():
     assert pytest.approx(bc_nx) == bc_cg
 
 
+@pytest.mark.skipif(_nxver < (3, 5),
+                    reason="Test only supported for BC normalization used in NX 3.5+")
 def test_bc_rng():
     G = nx.karate_club_graph()
     bc_nx = nx.betweenness_centrality(G, k=4, seed=42)
