@@ -262,7 +262,7 @@ def _update_cpu_gpu_graphs(
     update_cpu : func
         Function to modify a networkx-compatible graph in-place.
 
-    update_gpu: func
+    update_gpu : func
         Function to modify a CudaGraph graph in-place. This also
         updates the CudaGraph of an nxcg.Graph if it is on the GPU.
     """
