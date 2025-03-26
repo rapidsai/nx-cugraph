@@ -21,12 +21,12 @@ import numpy as np
 import pylibcugraph as plc
 from networkx.utils import create_random_state
 
-import nx_cugraph as nxcg
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import (
     _dtype_param,
     _get_float_dtype,
     _seed_to_int,
+    _update_cpu_gpu_graphs,
     networkx_algorithm,
 )
 
@@ -75,6 +75,7 @@ def forceatlas2_layout(
     if len(G) == 0:
         return {}
 
+    # Mutate original graph if store_pos_as is given.
     G_orig = G
 
     if dim != 2:
@@ -149,29 +150,24 @@ def forceatlas2_layout(
     pos = G._nodearrays_to_dict(
         node_ids=vertices, values=pos_arr, values_as_arrays=True
     )
-
+    store_pos_as = "pos"
     if store_pos_as is not None:
-        if isinstance(G_orig, nxcg.Graph):
-            # Could be on GPU, CPU, or both. Update both GPU and CPU (if present)
-            if G_orig._is_on_gpu:
-                cuda_graph = G_orig._cudagraph
+
+        def update_cpu(graph):
+            nx.set_node_attributes(graph, pos, store_pos_as)
+
+        update_pos_array = True
+
+        def update_gpu(cuda_graph):
+            # Ensure vertices are in order with their positions.
+            # Use nonlocal variable to do this only once to ensure idempotency.
+            nonlocal update_pos_array
+            if update_pos_array:
                 pos_arr[vertices] = pos_arr
-                cuda_graph.node_values[store_pos_as] = pos_arr
-            else:
-                cuda_graph = None
-            if G_orig._is_on_cpu:
-                # This clears the cache (including on GPU)
-                nx.set_node_attributes(G_orig, pos, store_pos_as)
-                if cuda_graph is not None:
-                    # Add back to GPU
-                    G_orig._set_cudagraph(cuda_graph, clear_cpu=False)
-        elif isinstance(G_orig, nxcg.CudaGraph):
-            # ensure vertices are in order with their positions
-            pos_arr[vertices] = pos_arr
-            G_orig.node_values[store_pos_as] = pos_arr
-        else:
-            # Default: networkx graph
-            nx.set_node_attributes(G_orig, pos, store_pos_as)
+                update_pos_array = False
+            cuda_graph.node_values[store_pos_as] = pos_arr
+
+        _update_cpu_gpu_graphs(G_orig, update_cpu=update_cpu, update_gpu=update_gpu)
 
     return pos
 

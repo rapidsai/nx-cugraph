@@ -86,6 +86,9 @@ class _GraphCache(dict):
         self._graph._reify_networkx()
         super().clear()
 
+    def _clear_no_reify_networkx(self):
+        super().clear()
+
 
 class Graph(nx.Graph):
     # Tell networkx to dispatch calls with this object to nx-cugraph
