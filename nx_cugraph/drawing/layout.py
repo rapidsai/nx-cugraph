@@ -96,7 +96,7 @@ def forceatlas2_layout(
         # NOTE currently only x & y (dim=2) coordinated are supported by PLC
         #   greater dimensions should be supported in the future to align with nx
         start_pos_arr = G._dict_to_nodearray(
-            pos, default=[np.nan] * dim, dtype=np.dtype((np.float32, 2))
+            pos, default=[np.nan] * dim, dtype=np.dtype((np.float32, dim))
         )
 
         # find, if there exists, the missing position values
@@ -151,12 +151,27 @@ def forceatlas2_layout(
     )
 
     if store_pos_as is not None:
-        if isinstance(G_orig, nx.Graph):
-            nx.set_node_attributes(G_orig, pos, store_pos_as)
+        if isinstance(G_orig, nxcg.Graph):
+            # Could be on GPU, CPU, or both. Update both GPU and CPU (if present)
+            if G_orig._is_on_gpu:
+                cuda_graph = G_orig._cudagraph
+                pos_arr[vertices] = pos_arr
+                cuda_graph.node_values[store_pos_as] = pos_arr
+            else:
+                cuda_graph = None
+            if G_orig._is_on_cpu:
+                # This clears the cache (including on GPU)
+                nx.set_node_attributes(G_orig, pos, store_pos_as)
+                if cuda_graph is not None:
+                    # Add back to GPU
+                    G_orig._set_cudagraph(cuda_graph, clear_cpu=False)
         elif isinstance(G_orig, nxcg.CudaGraph):
             # ensure vertices are in order with their positions
             pos_arr[vertices] = pos_arr
             G_orig.node_values[store_pos_as] = pos_arr
+        else:
+            # Default: networkx graph
+            nx.set_node_attributes(G_orig, pos, store_pos_as)
 
     return pos
 
