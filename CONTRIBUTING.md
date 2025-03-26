@@ -42,15 +42,7 @@ Remember, if you are unsure about anything, don't hesitate to comment on issues 
 These instructions are tested on supported versions/distributions of Linux,
 CUDA, and Python - See [RAPIDS Getting Started](https://rapids.ai/start.html)
 for the list of supported environments.  Other environments _might be_
-compatible, but are not currently tested.
-
-Prerequisites:
-__CUDA:__
-* CUDA 11.8+
-* NVIDIA GPU, Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
-
-Further details and download links for these prerequisites are available on the
-[RAPIDS System Requirements page](https://docs.rapids.ai/install#system-req).
+compatible, but are not currently tested. Further details about requirements are described in the [RAPIDS System Requirements page](https://docs.rapids.ai/install#system-req).
 
 ### Create the build environment
 - Clone the repository:
