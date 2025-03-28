@@ -126,7 +126,7 @@ To skip the checks temporarily, use `git commit --no-verify` or its short form
 _Note_: If the auto-formatters' changes affect each other, you may need to go
 through multiple iterations of `git commit` and `git add -u`.
 
-<!-- nx-cugraph also uses [codespell](https://github.com/codespell-project/codespell) to find spelling
+<!-- nx-cugraph also
 mistakes, and this check is run as part of the pre-commit hook. To apply the suggested spelling
 fixes, you can run  `codespell -i 3 -w .` from the command-line in the nx-cugraph root directory.
 This will bring up an interactive prompt to select which spelling fixes to apply.
@@ -136,7 +136,6 @@ If you want to ignore errors highlighted by codespell you can:
  * Add the word to the ignore-words-list in pyproject.toml, to exclude for all of cuML
  * Exclude the entire file from spellchecking, by adding to the `exclude` regex in .pre-commit-config.yaml
  * Ignore only specific lines as shown in https://github.com/codespell-project/codespell/issues/1212#issuecomment-654191881
-
 -->
 
 ### Summary of pre-commit hooks
@@ -144,21 +143,6 @@ If you want to ignore errors highlighted by codespell you can:
 The pre-commit hooks configured for this repository consist of a number of
 linters and auto-formatters that we summarize here. For a full and current list,
 please see the `.pre-commit-config.yaml` file.
-
-- `validate-pyproject`: Validation library for simple check on `pyproject.toml`.
-- `autoflake`: Removes unused imports and unused variables as reported by pyflakes.
-- `isort`: Sorts imports.
-- `pyupgrade`: A tool (and pre-commit hook) to automatically upgrade syntax for newer
-   versions of the language.
-- `black`: Auto-formats Python code to conform to the PEP 8 style guide.
-- `ruff-pre-commit`:  A pre-commit hook for Ruff.
-- `flake8`: Lints Python code for syntax errors and common code style issues.
-- `yesqa`: Automatically remove unnecessary `# noqa` comments.
-- `codespell`: Checks for spelling mistakes.
-- `dependency-file-generator`: Generates conda `environment.yaml` ifles and
-  `requirements.txt` files from a single YAML file named `dependencies.yaml`
-- _Copyright header checker and auto-formatter_: Ensures the copyright headers
-  of files are up-to-date and in the correct format.
 
 ### Managing PR labels
 
