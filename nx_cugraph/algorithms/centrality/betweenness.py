@@ -14,21 +14,34 @@ import cupy as cp
 import pylibcugraph as plc
 from networkx.utils import create_py_random_state
 
+from nx_cugraph import _nxver
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import index_dtype, networkx_algorithm
 
 __all__ = ["betweenness_centrality", "edge_betweenness_centrality"]
 
 
+if _nxver < (3, 5):
+    EXTRA_DOCSTRING = (
+        " Normalization matches NetworkX version 3.5, which fixed normalization when "
+        "using k (see https://github.com/networkx/networkx/pull/7908 for details)."
+    )
+else:
+    EXTRA_DOCSTRING = ""
+
+
 @networkx_algorithm(
     is_incomplete=True,  # weight not supported
     version_added="23.10",
     _plc="betweenness_centrality",
+    docstring=(
+        "`weight` parameter is not yet supported, and RNG with seed may be different."
+        f"{EXTRA_DOCSTRING}"
+    ),
 )
 def betweenness_centrality(
     G, k=None, normalized=True, weight=None, endpoints=False, seed=None
 ):
-    """`weight` parameter is not yet supported, and RNG with seed may be different."""
     if weight is not None:
         raise NotImplementedError(
             "Weighted implementation of betweenness centrality not currently supported"
