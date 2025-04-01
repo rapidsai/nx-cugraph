@@ -89,6 +89,7 @@ _info = {
         "eigenvector_centrality",
         "empty_graph",
         "florentine_families_graph",
+        "forceatlas2_layout",
         "from_dict_of_lists",
         "from_pandas_edgelist",
         "from_scipy_sparse_array",
@@ -173,7 +174,15 @@ _info = {
         "average_clustering": "Directed graphs and `weight` parameter are not yet supported.",
         "bellman_ford_path": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "bellman_ford_path_length": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
-        "betweenness_centrality": "`weight` parameter is not yet supported, and RNG with seed may be different.",
+        "betweenness_centrality": (
+            "`weight` parameter is not yet supported, and RNG with seed may be different.\n"
+            "Normalization when using k and endpoints=False does not currently match\n"
+            "NetworkX. nx-cugraph was updated in 25.04 to match\n"
+            "https://github.com/networkx/networkx/pull/7908, but does not yet match\n"
+            "https://github.com/networkx/networkx/pull/7949. These changes\n"
+            "were introduced in NetworkX 3.5. The next release of nx-cugraph, 25.06,\n"
+            "will match NetworkX 3.5."
+        ),
         "bfs_edges": "`sort_neighbors` parameter is not yet supported.",
         "bfs_predecessors": "`sort_neighbors` parameter is not yet supported.",
         "bfs_successors": "`sort_neighbors` parameter is not yet supported.",
@@ -183,6 +192,10 @@ _info = {
         "edge_betweenness_centrality": "`weight` parameter is not yet supported, and RNG with seed may be different.",
         "ego_graph": "Weighted ego_graph with negative cycles is not yet supported. `NotImplementedError` will be raised if there are negative `distance` edge weights.",
         "eigenvector_centrality": "`nstart` parameter is not used, but it is checked for validity.",
+        "forceatlas2_layout": (
+            "`distributed_action`, `node_mass`, and `node_size` parameters are currently ignored.\n"
+            "Only `dim=2` is supported."
+        ),
         "from_pandas_edgelist": "cudf.DataFrame inputs also supported; value columns with str is unsuppported.",
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",
         "katz_centrality": "`nstart` isn't used (but is checked), and `normalized=False` is not supported.",
@@ -231,6 +244,10 @@ _info = {
         },
         "eigenvector_centrality": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+        },
+        "forceatlas2_layout": {
+            "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+            "outbound_attraction_distribution : bool, default True": "Distributes attraction along outbound edges. Hubs attract less and thus are pushed to the borders.",
         },
         "hits": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",

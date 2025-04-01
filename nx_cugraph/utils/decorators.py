@@ -61,6 +61,8 @@ class networkx_algorithm:
         extra_params: dict[str, str] | str | None = None,
         # Applies `nodes_or_number` decorator compatibly across versions (3.3 changed)
         nodes_or_number: list[int] | int | None = None,
+        # Alternative way to provide the docstring to add to the networkx docstring
+        docstring: str | None = None,
         # Metadata (for introspection only)
         version_added: str,  # Required
         is_incomplete: bool = False,  # See self.extra_doc for details if True
@@ -76,6 +78,7 @@ class networkx_algorithm:
                 name=name,
                 extra_params=extra_params,
                 nodes_or_number=nodes_or_number,
+                docstring=docstring,
                 version_added=version_added,
                 is_incomplete=is_incomplete,
                 is_different=is_different,
@@ -83,6 +86,8 @@ class networkx_algorithm:
                 create_using_arg=create_using_arg,
                 _plc=_plc,
             )
+        if docstring:
+            func.__doc__ = docstring
         instance = object.__new__(cls)
         if nodes_or_number is not None and _nxver >= (3, 3):
             func = nx.utils.decorators.nodes_or_number(nodes_or_number)(func)
