@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,7 +17,7 @@ from _nx_cugraph import _check_networkx_version
 
 _nxver: tuple[int, int] | tuple[int, int, int] = _check_networkx_version()
 
-from . import utils
+from . import accel, utils
 
 from . import classes
 from .classes import *
