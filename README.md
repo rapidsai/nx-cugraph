@@ -300,3 +300,7 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 
 To request nx-cugraph backend support for a NetworkX API that is not listed
 above, [file an issue](https://github.com/rapidsai/nx-cugraph/issues/new/choose).
+
+## Contributing
+
+If you would like to contribute to nx-cugraph, refer to the [Contributing Guide](./CONTRIBUTING.md)
