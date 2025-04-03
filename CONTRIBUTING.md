@@ -76,7 +76,7 @@ conda activate nxcg-dev
 
 To verify your install with tests, run
 ```bash
-pytest -v python/nx_cugraph/tests
+pytest -v nx_cugraph/tests
 ```
 
 ## Code Formatting
