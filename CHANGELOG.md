@@ -1,3 +1,38 @@
+# nx-cugraph 25.04.00 (9 Apr 2025)
+
+## 🚨 Breaking Changes
+
+- Add ForceAtlas2 Support ([#99](https://github.com/rapidsai/nx-cugraph/pull/99)) [@nv-rliu](https://github.com/nv-rliu)
+
+## 🐛 Bug Fixes
+
+- Fix `(Multi)DiGraph.__networkx_cache__` initialization ([#91](https://github.com/rapidsai/nx-cugraph/pull/91)) [@eriknw](https://github.com/eriknw)
+
+## 📖 Documentation
+
+- [DOC] Add a Contributing Guide ([#102](https://github.com/rapidsai/nx-cugraph/pull/102)) [@nv-rliu](https://github.com/nv-rliu)
+- Update README ([#100](https://github.com/rapidsai/nx-cugraph/pull/100)) [@nv-rliu](https://github.com/nv-rliu)
+
+## 🚀 New Features
+
+- Add ForceAtlas2 Support ([#99](https://github.com/rapidsai/nx-cugraph/pull/99)) [@nv-rliu](https://github.com/nv-rliu)
+
+## 🛠️ Improvements
+
+- Update docs for BC ([#107](https://github.com/rapidsai/nx-cugraph/pull/107)) [@eriknw](https://github.com/eriknw)
+- Add Benchmarks for ForceAtlas2 ([#97](https://github.com/rapidsai/nx-cugraph/pull/97)) [@nv-rliu](https://github.com/nv-rliu)
+- Use conda-build instead of conda-mambabuild ([#95](https://github.com/rapidsai/nx-cugraph/pull/95)) [@bdice](https://github.com/bdice)
+- add cugraph-notebook-codeowners to CODEOWNERS ([#94](https://github.com/rapidsai/nx-cugraph/pull/94)) [@AyodeAwe](https://github.com/AyodeAwe)
+- remove docs dependencies ([#93](https://github.com/rapidsai/nx-cugraph/pull/93)) [@jameslamb](https://github.com/jameslamb)
+- Create Conda CI test env in one step ([#90](https://github.com/rapidsai/nx-cugraph/pull/90)) [@KyleFromNVIDIA](https://github.com/KyleFromNVIDIA)
+- Update pre-commit hooks ([#88](https://github.com/rapidsai/nx-cugraph/pull/88)) [@eriknw](https://github.com/eriknw)
+- Use shared-workflows branch-25.04 ([#85](https://github.com/rapidsai/nx-cugraph/pull/85)) [@bdice](https://github.com/bdice)
+- Add `shellcheck` to pre-commit and fix warnings ([#84](https://github.com/rapidsai/nx-cugraph/pull/84)) [@gforsyth](https://github.com/gforsyth)
+- Add build_type input field for `test.yaml` ([#82](https://github.com/rapidsai/nx-cugraph/pull/82)) [@gforsyth](https://github.com/gforsyth)
+- Forward-merge branch-25.02 to branch-25.04 ([#76](https://github.com/rapidsai/nx-cugraph/pull/76)) [@bdice](https://github.com/bdice)
+- include all pyproject dependencies in &#39;requirements&#39; output ([#75](https://github.com/rapidsai/nx-cugraph/pull/75)) [@jameslamb](https://github.com/jameslamb)
+- Migrate to NVKS for amd64 CI runners ([#72](https://github.com/rapidsai/nx-cugraph/pull/72)) [@bdice](https://github.com/bdice)
+
 # nx-cugraph 25.02.00 (13 Feb 2025)
 
 ## 🐛 Bug Fixes
