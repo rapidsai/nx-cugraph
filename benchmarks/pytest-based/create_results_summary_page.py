@@ -1,4 +1,4 @@
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# Copyright (c) 2024-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -50,8 +50,7 @@ def get_all_benchmark_info():
             name = benchmark_run["name"]
 
             algo_name = name.split("[")[0]
-            if algo_name.startswith("bench_"):
-                algo_name = algo_name[6:]
+            algo_name = algo_name.removeprefix("bench_")
             # special case for betweenness_centrality
             match = k_patt.match(name)
             if match is not None:
@@ -63,8 +62,7 @@ def get_all_benchmark_info():
                     f"benchmark name {name} in file {json_file} has an unexpected format"
                 )
             dataset = match.group(1)
-            if dataset.endswith("-backend"):
-                dataset = dataset[:-8]
+            dataset = dataset.removesuffix("-backend")
 
             match = backend_patt.match(name)
             if match is None:

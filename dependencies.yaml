@@ -8,7 +8,6 @@ files:
     includes:
       - checks
       - cuda_version
-      - docs
       - python_build_rapids
       - python_build_wheel
       - test_python_common
@@ -21,12 +20,6 @@ files:
     output: none
     includes:
       - checks
-      - py_version
-  docs:
-    output: none
-    includes:
-      - cuda_version
-      - docs
       - py_version
   test_notebooks:
     output: none
@@ -42,6 +35,7 @@ files:
       - py_version
       - test_python_common
       - test_python_nx_cugraph
+      - depends_on_nx_cugraph
   py_build_nx_cugraph:
     output: pyproject
     pyproject_dir: .
@@ -117,20 +111,11 @@ dependencies:
               cuda: "12.8"
             packages:
               - cuda-version=12.8
-  docs:
+  depends_on_nx_cugraph:
     common:
-      - output_types: [conda]
+      - output_types: conda
         packages:
-          - graphviz
-          - ipython
-          - nbsphinx
-          - numpydoc
-          - pydata-sphinx-theme
-          - recommonmark
-          - sphinx-copybutton
-          - sphinx-markdown-tables
-          - sphinx
-          - sphinxcontrib-websupport
+          - nx-cugraph==25.4.*,>=0.0.0a0
   py_version:
     specific:
       - output_types: [conda]
@@ -169,7 +154,7 @@ dependencies:
           - notebook>=0.5.0
   test_python_common:
     common:
-      - output_types: [conda, pyproject]
+      - output_types: [conda, pyproject, requirements]
         packages:
           - pandas
           - pytest
@@ -179,13 +164,13 @@ dependencies:
           - scipy
   python_run_nx_cugraph:
     common:
-      - output_types: [conda, pyproject]
+      - output_types: [conda, pyproject, requirements]
         packages:
           - networkx>=3.2
           - &numpy numpy>=1.23,<3.0a0
   test_python_nx_cugraph:
     common:
-      - output_types: [conda, pyproject]
+      - output_types: [conda, pyproject, requirements]
         packages:
             # not needed by nx-cugraph tests, but is required for running networkx tests
           - pytest-mpl
@@ -198,7 +183,7 @@ dependencies:
     #       other packages with -cu{nn}x suffixes in this file.
     #       All RAPIDS wheel builds (including in devcontainers) expect cupy to be suffixed.
     specific:
-      - output_types: [requirements, pyproject]
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix: {cuda: "12.*"}
             packages:
@@ -211,47 +196,47 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - &cudf_unsuffixed cudf==25.2.*
+          - &cudf_unsuffixed cudf==25.4.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
           - --extra-index-url=https://pypi.nvidia.com
           - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
     specific:
-      - output_types: [requirements, pyproject]
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu12==25.2.*
+              - cudf-cu12==25.4.*,>=0.0.0a0
           - matrix:
               cuda: "11.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu11==25.2.*
+              - cudf-cu11==25.4.*,>=0.0.0a0
           - {matrix: null, packages: [*cudf_unsuffixed]}
   depends_on_pylibcugraph:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==25.2.*
+          - &pylibcugraph_unsuffixed pylibcugraph==25.4.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
           - --extra-index-url=https://pypi.nvidia.com
           - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
     specific:
-      - output_types: [requirements, pyproject]
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu12==25.2.*
+              - pylibcugraph-cu12==25.4.*,>=0.0.0a0
           - matrix:
               cuda: "11.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu11==25.2.*
+              - pylibcugraph-cu11==25.4.*,>=0.0.0a0
           - {matrix: null, packages: [*pylibcugraph_unsuffixed]}

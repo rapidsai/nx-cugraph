@@ -26,3 +26,6 @@ python/            @rapidsai/nx-cugraph-python-codeowners
 /dependencies.yaml @rapidsai/packaging-codeowners
 /build.sh          @rapidsai/packaging-codeowners
 pyproject.toml     @rapidsai/packaging-codeowners
+
+# notebooks code owners
+*.ipynb @rapidsai/cugraph-notebook-codeowners

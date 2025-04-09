@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2022-2024, NVIDIA CORPORATION.
+# Copyright (c) 2022-2025, NVIDIA CORPORATION.
 
 set -euo pipefail
 
@@ -20,7 +20,7 @@ rapids-logger "Begin py build"
 # platform to ensure it is included in each set of artifacts, since test
 # scripts only install from one set of artifacts based on the CUDA version used
 # for the test run.
-RAPIDS_PACKAGE_VERSION=$(head -1 ./VERSION) rapids-conda-retry mambabuild \
+RAPIDS_PACKAGE_VERSION=$(head -1 ./VERSION) rapids-conda-retry build \
   --no-test \
   conda/recipes/nx-cugraph
 

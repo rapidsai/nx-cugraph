@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -21,8 +21,12 @@ from typing import TYPE_CHECKING, SupportsIndex
 import cupy as cp
 import numpy as np
 
+import nx_cugraph as nxcg
+
 if TYPE_CHECKING:
-    import nx_cugraph as nxcg
+    from collections.abc import Callable
+
+    import networkx as nx
 
     from ..typing import Dtype, EdgeKey
 
@@ -46,6 +50,7 @@ __all__ = [
     "_get_float_dtype",
     "_dtype_param",
     "_cp_iscopied_asarray",
+    "_update_cpu_gpu_graphs",
 ]
 
 # This may switch to np.uint32 at some point
@@ -120,11 +125,11 @@ def _groupby(
     return {group: sorted_values[start:end] for group, (start, end) in it}
 
 
-def _seed_to_int(seed: int | Random | None) -> int:
+def _seed_to_int(seed: int | Random | np.random.RandomState | None) -> int:
     """Handle any valid seed argument and convert it to an int if necessary."""
     if seed is None:
         return
-    if isinstance(seed, Random):
+    if isinstance(seed, (Random, np.random.RandomState)):
         return seed.randint(0, sys.maxsize)
     return op.index(seed)  # Ensure seed is integral
 
@@ -238,6 +243,50 @@ def _cp_iscopied_asarray(a, *args, orig_object=None, **kwargs):
     ):
         return False, arr
     return True, arr
+
+
+def _update_cpu_gpu_graphs(
+    G,
+    *,
+    update_cpu: Callable[[nx.Graph | nxcg.Graph], None],
+    update_gpu: Callable[[nxcg.CudaGraph], None],
+) -> None:
+    """Update graph in-place whether it's on CPU or GPU (or both).
+
+    This works with nx.Graph, nxcg.Graph, and nxcg.CudaGraph objects.
+    nxcg.Graph instances will update both CPU and GPU data structures
+    if applicable.
+
+    Parameters
+    ----------
+    update_cpu : func
+        Function to modify a networkx-compatible graph in-place.
+
+    update_gpu : func
+        Function to modify a CudaGraph graph in-place. This also
+        updates the CudaGraph of an nxcg.Graph if it is on the GPU.
+    """
+    if isinstance(G, nxcg.Graph):
+        # Could be on GPU, CPU, or both. Update both GPU and CPU (if present)
+        if G._is_on_gpu:
+            cuda_graph = G._cudagraph
+            update_gpu(cuda_graph)
+            # Clear anything else in the cache; cache is invalidated.
+            # We will re-add the cuda_graph below.
+            G.__networkx_cache__._clear_no_reify_networkx()
+        else:
+            cuda_graph = None
+        if G._is_on_cpu:
+            # This clears the cache (including on GPU)
+            update_cpu(G)
+        if cuda_graph is not None:
+            # Add back to GPU
+            G._set_cudagraph(cuda_graph, clear_cpu=False)
+    elif isinstance(G, nxcg.CudaGraph):
+        update_gpu(G)
+    else:
+        # Default: networkx graph
+        update_cpu(G)
 
 
 class _And_NotImplementedError(NotImplementedError):

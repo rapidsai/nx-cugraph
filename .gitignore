@@ -73,14 +73,6 @@ objects.inv
 # Jupyter Notebooks
 .ipynb_checkpoints
 
-## Doxygen and Docs
-cpp/doxygen/html
-
-# Sphinx docs & build artifacts
-docs/nx-cugraph/source/api_docs/api/*
-_html
-_text
-
 # clang tooling
 compile_commands.json
 .clangd/
