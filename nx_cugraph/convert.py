@@ -648,6 +648,10 @@ def to_networkx(
     """
     if isinstance(G, nxcg.Graph):
         # These graphs are already NetworkX graphs :)
+        if _nxver < (3, 4) or not nx.config.fallback_to_nx:
+            # Convert to nx graph (so G.__networkx_backend == "networkx") for safety
+            return G.to_networkx_class()(G)
+        # Should be fine to duck-type as networkx graph; will cleanly fall back to nx
         return G
     rv = G.to_networkx_class()()
     id_to_key = G.id_to_key
