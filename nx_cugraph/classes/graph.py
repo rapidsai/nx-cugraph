@@ -86,6 +86,9 @@ class _GraphCache(dict):
         self._graph._reify_networkx()
         super().clear()
 
+    def _clear_no_reify_networkx(self):
+        super().clear()
+
 
 class Graph(nx.Graph):
     # Tell networkx to dispatch calls with this object to nx-cugraph
@@ -1169,17 +1172,29 @@ class CudaGraph:
         return set(self._nodeiter_to_iter(node_ids.tolist()))
 
     def _nodearray_to_dict(
-        self, values: cp.ndarray[NodeValue]
+        self,
+        values: cp.ndarray[NodeValue],
+        values_as_arrays: bool = False,
     ) -> dict[NodeKey, NodeValue]:
-        it = enumerate(values.tolist())
+        if values_as_arrays:
+            it = enumerate(cp.asnumpy(values))
+        else:
+            it = enumerate(values.tolist())
         if (id_to_key := self.id_to_key) is not None:
             return {id_to_key[key]: val for key, val in it}
         return dict(it)
 
     def _nodearrays_to_dict(
-        self, node_ids: cp.ndarray[IndexValue], values: any_ndarray[NodeValue]
+        self,
+        node_ids: cp.ndarray[IndexValue],
+        values: any_ndarray[NodeValue],
+        values_as_arrays: bool = False,
     ) -> dict[NodeKey, NodeValue]:
-        it = zip(node_ids.tolist(), values.tolist())
+        if values_as_arrays:
+            vals = cp.asnumpy(values)
+        else:
+            vals = values.tolist()
+        it = zip(node_ids.tolist(), vals)
         if (id_to_key := self.id_to_key) is not None:
             return {id_to_key[key]: val for key, val in it}
         return dict(it)
