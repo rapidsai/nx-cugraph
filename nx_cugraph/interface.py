@@ -351,6 +351,22 @@ class BackendInterface:
                 "test_matching_order_all_branches"
             ): too_slow,
         }
+        # These were added in NetworkX 3.5
+        for i in range(8, 12):
+            skip[
+                key(
+                    "test_tree_isomorphism.py:"
+                    f"test_tree_isomorphism_all_non_isomorphic_pairs[{i}]"
+                )
+            ] = too_slow
+        for i in range(9, 15):
+            skip[
+                key(
+                    "test_tree_isomorphism.py:"
+                    f"test_tree_isomorphic_all_non_isomorphic_trees_relabeled[{i}]"
+                )
+            ] = too_slow
+
         if os.environ.get("PYTEST_NO_SKIP", False):
             skip.clear()
 
