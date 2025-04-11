@@ -996,6 +996,30 @@ def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
     assert type(result) is dict
 
 
+@pytest.mark.parametrize("nodes", ["default", "shuffle", "subset"])
+def bench_to_scipy_sparse_array(benchmark, graph_obj, backend_wrapper, nodes):
+    import scipy as sp
+
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    if nodes == "default":
+        nodelist = None
+    else:
+        nodelist = list(G)
+        random.seed(42)
+        random.shuffle(nodelist)
+        if nodes == "subset":
+            nodelist = nodelist[:-1]
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.to_scipy_sparse_array),
+        args=(G, nodelist),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is sp.sparse.csr_array
+
+
 @pytest.mark.skip(reason="benchmark not implemented")
 def bench_complete_bipartite_graph(benchmark, graph_obj, backend_wrapper):
     pass

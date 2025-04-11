@@ -156,6 +156,7 @@ _info = {
         "tadpole_graph",
         "tetrahedral_graph",
         "to_dict_of_lists",
+        "to_scipy_sparse_array",
         "transitivity",
         "triangles",
         "trivial_graph",
