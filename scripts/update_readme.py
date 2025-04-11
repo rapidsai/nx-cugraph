@@ -74,6 +74,10 @@ MANUAL_OBJECT_URLS = {
     "networkx.classes": (
         "https://networkx.org/documentation/stable/reference/classes/index.html"
     ),
+    # Not in online docs (why not?)
+    "networkx.algorithms.tournament.tournament_matrix": (
+        "https://networkx.org/documentation/stable/reference/algorithms/tournament.html"
+    ),
 }
 
 

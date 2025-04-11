@@ -41,6 +41,7 @@ _info = {
     # "description": "TODO",
     "functions": {
         # BEGIN: functions
+        "adjacency_matrix",
         "all_pairs_bellman_ford_path",
         "all_pairs_bellman_ford_path_length",
         "all_pairs_dijkstra",
@@ -157,6 +158,7 @@ _info = {
         "tetrahedral_graph",
         "to_dict_of_lists",
         "to_scipy_sparse_array",
+        "tournament_matrix",
         "transitivity",
         "triangles",
         "trivial_graph",
