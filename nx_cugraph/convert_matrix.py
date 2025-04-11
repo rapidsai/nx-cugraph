@@ -169,7 +169,9 @@ def from_pandas_edgelist(
 
 @networkx_algorithm(version_added="25.06")
 def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format="csr"):
-    # Future work: allow this to return a cupyx.scipy.sparse object
+    # Future work: allow this to return a cupyx.scipy.sparse object.
+    # This code is very well covered by networkx tests, and the logic
+    # for raising errors closely matches networkx.
     import scipy as sp
 
     G = _to_graph(G, weight, edge_dtype=dtype)
@@ -198,10 +200,13 @@ def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format=
             src_indices = dst_indices = edge_array = ()
         else:
             node_ids = G._nodekeys_to_nodearray(nodelist)
+
+            # Subgraph
             if nlen < G._N:
-                # Subgraph
+                # TODO: create utility funcs for renumbering/reordering node_ids.
+                # Using `mapper` like this is a useful trick that may not be obvious.
                 mapper = cp.empty(G._N, dtype=index_dtype)
-                mapper[:] = -1
+                mapper[:] = -1  # Indicate nodes to exclude
                 mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
                 src_indices = mapper[G.src_indices]
                 dst_indices = mapper[G.dst_indices]
@@ -212,8 +217,11 @@ def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format=
                     src_indices = dst_indices = edge_array = ()
                 else:
                     dst_indices = dst_indices[mask]
+
+            # All nodes, reordered
             else:
-                # All nodes, reordered
+                # TODO: create utility funcs for renumbering/reordering node_ids.
+                # Using `mapper` like this is a useful trick that may not be obvious.
                 mapper = cp.empty(G._N, dtype=index_dtype)
                 mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
                 src_indices = mapper[G.src_indices]
@@ -233,6 +241,7 @@ def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format=
         else:
             edge_array = np.repeat(1, src_indices.size)
 
+    # PERF: convert to desired sparse format on GPU before copying to CPU
     A = sp.sparse.coo_array(
         (edge_array, (src_indices, dst_indices)), shape=(nlen, nlen), dtype=dtype
     )
