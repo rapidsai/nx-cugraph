@@ -1,10 +1,9 @@
-## https://pre-commit.com/
+# https://pre-commit.com/
 #
 # Before first use: `pre-commit install`
 # To run: `pre-commit run --all-files`
 # To update: `pre-commit autoupdate`
 #  - &flake8_dependencies below needs updated manually
-exclude: '^thirdparty'
 fail_fast: false
 default_language_version:
   python: python3
@@ -119,11 +118,6 @@ repos:
         entry: "_nxver > |_nxver <= | < _nxver| >= _nxver"
         # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
         exclude: .pre-commit-config.yaml
-  - repo: https://github.com/sphinx-contrib/sphinx-lint
-    rev: v1.0.0
-    hooks:
-      - id: sphinx-lint
-        args: ["--enable=all", "--disable=line-too-long"]
   - repo: https://github.com/rapidsai/pre-commit-hooks
     rev: v0.6.0
     hooks:
@@ -147,3 +141,7 @@ repos:
       - id: shellcheck
         args: ["--severity=warning"]
         files: ^ci/
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
