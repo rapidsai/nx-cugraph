@@ -367,7 +367,7 @@ class BackendInterface:
                 )
             ] = too_slow
 
-        if os.environ.get("PYTEST_NO_SKIP", False):
+        if os.environ.get("PYTEST_NO_SKIP", ""):
             skip.clear()
 
         for item in items:
