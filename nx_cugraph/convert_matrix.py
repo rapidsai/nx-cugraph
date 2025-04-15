@@ -174,7 +174,7 @@ def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format=
     # for raising errors closely matches networkx.
     import scipy as sp
 
-    G = _to_graph(G, weight, edge_dtype=dtype)
+    G = _to_graph(G, weight, 1, dtype)
     if G._N == 0:
         raise nx.NetworkXError("Graph has no nodes or edges")
 

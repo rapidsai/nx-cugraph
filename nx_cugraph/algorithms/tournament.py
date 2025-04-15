@@ -23,4 +23,6 @@ __all__ = []
 def tournament_matrix(G):
     A = adjacency_matrix(G)
     # TODO: do this on the GPU (but cupyx.scipy.sparse is pretty limited atm)
+    # Once we are able to perform sparse array operations on the GPU, we can
+    # optimize this function and implement many others that return sparse arrays!
     return A - A.T
