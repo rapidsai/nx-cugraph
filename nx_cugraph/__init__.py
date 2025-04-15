@@ -37,6 +37,9 @@ from .generators import *
 from . import algorithms
 from .algorithms import *
 
+from . import linalg
+from .linalg import *
+
 from . import drawing
 from .drawing import *
 

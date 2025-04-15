@@ -996,6 +996,94 @@ def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
     assert type(result) is dict
 
 
+@pytest.mark.parametrize("nodes", ["default", "shuffle", "subset"])
+def bench_to_scipy_sparse_array(benchmark, graph_obj, backend_wrapper, nodes):
+    # Same as bench_adjacency_matrix
+    import scipy as sp
+
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    if nodes == "default":
+        nodelist = None
+    else:
+        nodelist = list(G)
+        random.seed(42)
+        random.shuffle(nodelist)
+        if nodes == "subset":
+            nodelist = nodelist[:-1]
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.to_scipy_sparse_array),
+        args=(G, nodelist),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is sp.sparse.csr_array
+
+
+@pytest.mark.parametrize("nodes", ["default", "shuffle", "subset"])
+def bench_adjacency_matrix(benchmark, graph_obj, backend_wrapper, nodes):
+    # Same as bench_to_scipy_sparse_array
+    import scipy as sp
+
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    if nodes == "default":
+        nodelist = None
+    else:
+        nodelist = list(G)
+        random.seed(42)
+        random.shuffle(nodelist)
+        if nodes == "subset":
+            nodelist = nodelist[:-1]
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.adjacency_matrix),
+        args=(G, nodelist),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is sp.sparse.csr_array
+
+
+def bench_biadjacency_matrix(benchmark, graph_obj, backend_wrapper):
+    # These graphs aren't bipartite, but the function works anyway
+    import scipy as sp
+
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    nodes = list(G)
+    row_order = nodes[: len(G) // 2]
+    column_order = nodes[len(G) // 2 :]
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.bipartite.biadjacency_matrix),
+        args=(G, row_order, column_order),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    assert type(result) is sp.sparse.csr_array
+
+
+def bench_from_biadjacency_matrix(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+    nodes = list(G)
+    row_order = nodes[: len(G) // 2]
+    column_order = nodes[len(G) // 2 :]
+    backend = getattr(G, "__networkx_backend__", "networkx")
+    A = nx.bipartite.biadjacency_matrix(G, row_order, column_order)
+    result = benchmark.pedantic(
+        target=nx.bipartite.from_biadjacency_matrix,
+        args=(A,),
+        kwargs={"backend": backend},
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+    nrows, ncols = A.shape
+    assert len(result) == nrows + ncols
+
+
 @pytest.mark.skip(reason="benchmark not implemented")
 def bench_complete_bipartite_graph(benchmark, graph_obj, backend_wrapper):
     pass
