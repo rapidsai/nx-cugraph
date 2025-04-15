@@ -1052,8 +1052,8 @@ def bench_biadjacency_matrix(benchmark, graph_obj, backend_wrapper):
 
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     nodes = list(G)
-    row_order = nodes[:len(G)//2]
-    column_order = nodes[len(G)//2:]
+    row_order = nodes[: len(G) // 2]
+    column_order = nodes[len(G) // 2 :]
 
     result = benchmark.pedantic(
         target=backend_wrapper(nx.bipartite.biadjacency_matrix),
@@ -1066,12 +1066,10 @@ def bench_biadjacency_matrix(benchmark, graph_obj, backend_wrapper):
 
 
 def bench_from_biadjacency_matrix(benchmark, graph_obj, backend_wrapper):
-    import scipy as sp
-
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
     nodes = list(G)
-    row_order = nodes[:len(G)//2]
-    column_order = nodes[len(G)//2:]
+    row_order = nodes[: len(G) // 2]
+    column_order = nodes[len(G) // 2 :]
     backend = getattr(G, "__networkx_backend__", "networkx")
     A = nx.bipartite.biadjacency_matrix(G, row_order, column_order)
     result = benchmark.pedantic(
