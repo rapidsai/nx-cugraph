@@ -122,6 +122,7 @@ _info = {
         "lollipop_graph",
         "louvain_communities",
         "lowest_common_ancestor",
+        "minimum_spanning_tree",
         "moebius_kantor_graph",
         "node_connected_component",
         "null_graph",
@@ -201,6 +202,40 @@ _info = {
         "katz_centrality": "`nstart` isn't used (but is checked), and `normalized=False` is not supported.",
         "louvain_communities": "`seed` parameter is currently ignored, and self-loops are not yet supported.",
         "lowest_common_ancestor": "May not always raise NetworkXError for graphs that are not DAGs.",
+        "minimum_spanning_tree": (
+            "Returns a minimum spanning tree or forest on an undirected graph `G`.\n"
+            "\n"
+            "    Parameters\n"
+            "    ----------\n"
+            "    G : undirected graph\n"
+            "        An undirected graph. If `G` is connected, then the algorithm finds a\n"
+            "        spanning tree. Otherwise, a spanning forest is found.\n"
+            "\n"
+            "    weight : str\n"
+            "       Data key to use for edge weights.\n"
+            "\n"
+            "    algorithm : string\n"
+            "       The algorithm to use when finding a minimum spanning tree. Valid\n"
+            "       choices are 'kruskal', 'prim', or 'boruvka'. The default is\n"
+            "       'kruskal'.\n"
+            "\n"
+            "    ignore_nan : bool (default: False)\n"
+            "        If a NaN is found as an edge weight normally an exception is raised.\n"
+            "        If `ignore_nan is True` then that edge is ignored instead.\n"
+            "\n"
+            "    Returns\n"
+            "    -------\n"
+            "    G : NetworkX Graph\n"
+            "       A minimum spanning tree or forest.\n"
+            "\n"
+            "    Examples\n"
+            "    --------\n"
+            "    >>> G = nx.cycle_graph(4)\n"
+            "    >>> G.add_edge(0, 3, weight=2)\n"
+            "    >>> T = nx.minimum_spanning_tree(G)\n"
+            "    >>> sorted(T.edges(data=True))\n"
+            "    [(0, 1, {}), (1, 2, {}), (2, 3, {})]"
+        ),
         "pagerank": "`dangling` parameter is not supported, but it is checked for validity.",
         "shortest_path": "Negative weights are not yet supported.",
         "shortest_path_length": "Negative weights are not yet supported.",
@@ -261,6 +296,9 @@ _info = {
         },
         "louvain_communities": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+        },
+        "minimum_spanning_tree": {
+            "name : bool, default True": (),
         },
         "pagerank": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",

@@ -222,6 +222,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.traversal.breadth_first_search.descendants_at_distance.html#networkx.algorithms.traversal.breadth_first_search.descendants_at_distance">descendants_at_distance</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.traversal.breadth_first_search.generic_bfs_edges.html#networkx.algorithms.traversal.breadth_first_search.generic_bfs_edges">generic_bfs_edges</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/tree.html">tree</a>
+ ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/tree.html#module-networkx.algorithms.tree.mst">mst</a>
+ │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tree.mst.minimum_spanning_tree.html#networkx.algorithms.tree.mst.minimum_spanning_tree">minimum_spanning_tree</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/tree.html#module-networkx.algorithms.tree.recognition">recognition</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tree.recognition.is_arborescence.html#networkx.algorithms.tree.recognition.is_arborescence">is_arborescence</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tree.recognition.is_branching.html#networkx.algorithms.tree.recognition.is_branching">is_branching</a>
