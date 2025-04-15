@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import networkx as nx
 import pytest
 
 import nx_cugraph as nxcg
-from nx_cugraph import interface
+from nx_cugraph import _nxver, interface
 
 
 @pytest.mark.parametrize(
@@ -267,3 +267,14 @@ def test_to_dict_of_lists():
     expected = nx.to_dict_of_lists(G, nodelist=[0, 3])
     result = nxcg.to_dict_of_lists(G, nodelist=[0, 3])
     assert expected == result
+
+
+@pytest.mark.skipif(_nxver < (3, 4), reason="Uses nx.config.fallback_to_nx")
+@pytest.mark.parametrize("fallback", [True, False])
+def test_convert_to_networkx_with_fallback(fallback):
+    G = nxcg.Graph()
+    G.add_edges_from([(0, 1), (1, 2)])
+    assert not hasattr(nxcg, "wiener_index")  # If fails, use a different function
+    with nx.config(fallback_to_nx=fallback):
+        # `closeness_vitality` calls `wiener_index`, which we don't yet implement
+        nx.closeness_vitality(G, backend="networkx")
