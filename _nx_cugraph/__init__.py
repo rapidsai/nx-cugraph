@@ -41,6 +41,7 @@ _info = {
     # "description": "TODO",
     "functions": {
         # BEGIN: functions
+        "adjacency_matrix",
         "all_pairs_bellman_ford_path",
         "all_pairs_bellman_ford_path_length",
         "all_pairs_dijkstra",
@@ -59,6 +60,7 @@ _info = {
         "bfs_predecessors",
         "bfs_successors",
         "bfs_tree",
+        "biadjacency_matrix",
         "bidirectional_shortest_path",
         "bipartite_betweenness_centrality",
         "bull_graph",
@@ -90,6 +92,7 @@ _info = {
         "empty_graph",
         "florentine_families_graph",
         "forceatlas2_layout",
+        "from_biadjacency_matrix",
         "from_dict_of_lists",
         "from_pandas_edgelist",
         "from_scipy_sparse_array",
@@ -156,6 +159,8 @@ _info = {
         "tadpole_graph",
         "tetrahedral_graph",
         "to_dict_of_lists",
+        "to_scipy_sparse_array",
+        "tournament_matrix",
         "transitivity",
         "triangles",
         "trivial_graph",

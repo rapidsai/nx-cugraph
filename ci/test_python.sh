@@ -49,7 +49,7 @@ rapids-logger "pytest nx-cugraph"
 rapids-logger "pytest networkx using nx-cugraph backend"
 
 pushd nx_cugraph
-../run_nx_tests.sh
+../run_nx_tests.sh --durations=10
 
 # run_nx_tests.sh outputs coverage data, so check that total coverage is >0.0%
 # in case nx-cugraph failed to load but fallback mode allowed the run to pass.
