@@ -291,6 +291,10 @@ def to_numpy_array(
     nonedge=0.0,
 ):
     """
+    Q: is the sole purpose of dispatching this (writing it in nxcg) so that we can get from GPU Graph -> np.array adj matrix 
+        without having to re-copy back to CPU (the case where this wasn't implemented in nxcg)? But it also looks like this
+        will be rewriting a lot of similar code from what NX already does
+    
     According to the NX docs: this function takes a graph's adjacency matrix and returns it as a numpy array
     for example, a graph with edges [1,2] and [2,3] would be a 3x3 array
         array([[0., 1., 0.],
@@ -300,10 +304,17 @@ def to_numpy_array(
 
     """
     print(" ==> hello!! dispatched to nxcg!")
+    G = _to_graph(G, weight, 1, _get_float_dtype(dtype))
+    
+    
+    # might not need this this time
+    # dtype = _get_float_dtype(dtype, graph=G, weight=weight)
+    # match the float dtype on input graph's edgelist, default to float32
+        
     if nodelist is None:
-        nodelist = list(
-            G
-        )  # this works when calling a fxn in nx/nxcg but im not allowed to run it in python shell
+        nodelist = list(G)  
+        # TODO: Q for Erik
+        #  > this works when calling a fxn in nx/nxcg but im not allowed to run it in python shell
     N = len(nodelist)
 
     nodelist_as_set = set(nodelist)
@@ -313,6 +324,9 @@ def to_numpy_array(
         )
     if len(nodelist_as_set) < N:
         raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
+
+    # TODO: remove me
+    # > getting past this point means that nodelist was valid as either None or a list containing a subset of nodes in the Graph  
 
     # Construct array of fill_value matching resulting shape
     A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
@@ -334,6 +348,14 @@ def to_numpy_array(
                 "To create adjacency matrices from structured dtypes, use `weight=None`."
             )
 
+    # Map nodes to row/col in matrix
+    idx = dict(zip(nodelist, range(N)))
+    if len(nodelist) < len(G):
+        G = G.subgraph(nodelist)
+        
+    # Collect all edge weights and reduce with `multigraph_weights`
+    
+    
     breakpoint()  # move me around
 
 
