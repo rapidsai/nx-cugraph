@@ -24,6 +24,8 @@ __all__ = [
     "from_pandas_edgelist",
     "from_scipy_sparse_array",
     "to_scipy_sparse_array",
+    "to_numpy_array",
+    "from_numpy_array",
 ]
 
 
@@ -276,3 +278,67 @@ def from_scipy_sparse_array(
     if inplace:
         return create_using._become(G)
     return G
+
+
+@networkx_algorithm(version_added="25.06", fallback=True)
+def to_numpy_array(
+    G,
+    nodelist=None,
+    dtype=None,
+    order=None,
+    multigraph_weight=sum,
+    weight="weight",
+    nonedge=0.0,
+):
+    """
+    According to the NX docs: this function takes a graph's adjacency matrix and returns it as a numpy array
+    for example, a graph with edges [1,2] and [2,3] would be a 3x3 array
+        array([[0., 1., 0.],
+               [1., 0., 1.],
+               [0., 1., 0.]])
+
+
+    """
+    print(" ==> hello!! dispatched to nxcg!")
+    if nodelist is None:
+        nodelist = list(
+            G
+        )  # this works when calling a fxn in nx/nxcg but im not allowed to run it in python shell
+    N = len(nodelist)
+
+    nodelist_as_set = set(nodelist)
+    if nodelist_as_set - set(G):
+        raise nx.NetworkXError(
+            f"Nodes {nodelist_as_set - set(G)} in nodelist is not in G"
+        )
+    if len(nodelist_as_set) < N:
+        raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
+
+    # Construct array of fill_value matching resulting shape
+    A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+
+    # Case: empty nodelist or graph without any edges
+    if N == 0 or G.number_of_edges() == 0:
+        return A
+
+    # If dtype is tructured and weight is None, use dtype field names as
+    # edge attribs
+    # TODO: ask Erik what this might mean
+    edge_attrs = None
+    if A.dtype.names:
+        if weight is None:
+            edge_attrs = dtype.names
+        else:
+            raise ValueError(
+                "Specifying `weight` not supported for structured dtypes\n."
+                "To create adjacency matrices from structured dtypes, use `weight=None`."
+            )
+
+    breakpoint()  # move me around
+
+
+@networkx_algorithm(version_added="25.06", fallback=True)
+def from_numpy_array(
+    A, parallel_edges=False, create_using=None, edge_attr="weight", *, nodelist=None
+):
+    pass

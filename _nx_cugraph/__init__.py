@@ -94,6 +94,7 @@ _info = {
         "forceatlas2_layout",
         "from_biadjacency_matrix",
         "from_dict_of_lists",
+        "from_numpy_array",
         "from_pandas_edgelist",
         "from_scipy_sparse_array",
         "frucht_graph",
@@ -159,6 +160,7 @@ _info = {
         "tadpole_graph",
         "tetrahedral_graph",
         "to_dict_of_lists",
+        "to_numpy_array",
         "to_scipy_sparse_array",
         "tournament_matrix",
         "transitivity",
@@ -212,6 +214,13 @@ _info = {
         "single_source_bellman_ford": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "single_source_bellman_ford_path": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "single_source_bellman_ford_path_length": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
+        "to_numpy_array": (
+            "According to the NX docs: this function takes a graph's adjacency matrix and returns it as a numpy array\n"
+            "for example, a graph with edges [1,2] and [2,3] would be a 3x3 array\n"
+            "    array([[0., 1., 0.],\n"
+            "           [1., 0., 1.],\n"
+            "           [0., 1., 0.]])"
+        ),
         "transitivity": "Directed graphs are not yet supported.",
         # END: additional_docs
     },
