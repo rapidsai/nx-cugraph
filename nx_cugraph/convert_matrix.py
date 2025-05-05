@@ -10,7 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from collections import defaultdict
 
 import cupy as cp
 import networkx as nx
@@ -321,8 +320,10 @@ def to_numpy_array(
         nodelist = list(G)
         # TODO: Q for Erik
         #  > this works when calling a fxn in nx/nxcg but im not allowed to run it in python shell
+        # probably a pdb or internal python thing
     N = len(nodelist)
 
+    # use set to check for nodes not in the graph or duplicate nodes
     nodelist_as_set = set(nodelist)
     if nodelist_as_set - set(G):
         raise nx.NetworkXError(
@@ -335,7 +336,7 @@ def to_numpy_array(
     # > getting past this point means that nodelist was valid as either None or a list containing a subset of nodes in the Graph
 
     # Construct array of fill_value matching resulting shape
-    A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+    A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
 
     # Case: empty nodelist or graph without any edges
     if N == 0 or G.number_of_edges() == 0:
@@ -343,7 +344,6 @@ def to_numpy_array(
 
     # If dtype is structured and weight is None, use dtype field names as
     # edge attribs
-    # TODO: ask Erik what this might mean
     edge_attrs = None
     if A.dtype.names:
         if weight is None:
@@ -360,31 +360,55 @@ def to_numpy_array(
         G = G.subgraph(nodelist)
 
     # Collect all edge weights and reduce with `multigraph_weights`
+    # TODO handle this case
     if G.is_multigraph():
-        #    For example if a Graph is a multigraph
-        #   G = [A, B, 'one'] # edge attrib
-        #       [A, B, 'two']
-        #
-        # numpy_array should be
-        #  [[0, 2],
-        #   [2, 0]] since there are two A->B Edges
-        #
-
         if edge_attrs:
             raise nx.NetworkXError(
                 "Structured arrays are not supported for MultiGraphs"
             )
-        d = defaultdict(list)
-
         # HELP: G.edges() isn't a nx-cugraph Graph method
         # need a way to iterate through all edges in a multigraph for nxcg
-        breakpoint()
-        # for u, v, wt in G.edges(data=weight, default=1.0):
-        #     d[(idx[u], idx[v])].append(wt)
-        # i, j = np.array(list(d.keys())).T  # indices
-        # wts = [multigraph_weight(ws) for ws in d.values()]  # reduced weights
+    else:
+        # Special case: TODO: figure out
+        if edge_attrs:
+            print("here")
 
-    breakpoint()  # move me around
+        # HELP: wait do I need to do this?
+        # mapper = cp.empty(G._N, dtype=index_dtype)
+        # node_ids = G._nodekeys_to_nodearray(nodelist)
+        # mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
+        # src_indices = mapper[G.src_indices]
+        # dst_indices = mapper[G.dst_indices]
+
+        # I'm not sure how to access the corresponding weight value
+        # for each edge (i, j)
+
+        wts = G.edge_values["weight"]
+
+        # this sets A's [i, j] index values properly but with incorrect weights
+        A[G.src_indices, G.dst_indices] = wts[G.src_indices]
+
+        # this is most likely not needed since
+        if not G.is_directed():
+            A[G.dst_indices, G.src_indices] = wts[G.src_indices]
+
+        breakpoint()
+
+    return A
+
+
+@to_numpy_array._can_run
+def _(
+    G,
+    nodelist=None,
+    dtype=None,
+    order=None,
+    multigraph_weight=sum,
+    weight="weight",
+    nonedge=0.0,
+):
+    # do not handle multigraph yet
+    return not G.is_multigraph()
 
 
 @networkx_algorithm(version_added="25.06", fallback=True)
