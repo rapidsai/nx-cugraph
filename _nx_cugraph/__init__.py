@@ -215,6 +215,10 @@ _info = {
         "single_source_bellman_ford_path": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "single_source_bellman_ford_path_length": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "to_numpy_array": (
+            "Q: is the sole purpose of dispatching this (writing it in nxcg) so that we can get from GPU Graph -> np.array adj matrix\n"
+            "    without having to re-copy back to CPU (the case where this wasn't implemented in nxcg)? But it also looks like this\n"
+            "    will be rewriting a lot of similar code from what NX already does\n"
+            "\n"
             "According to the NX docs: this function takes a graph's adjacency matrix and returns it as a numpy array\n"
             "for example, a graph with edges [1,2] and [2,3] would be a 3x3 array\n"
             "    array([[0., 1., 0.],\n"

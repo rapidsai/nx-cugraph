@@ -10,6 +10,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from collections import defaultdict
+
 import cupy as cp
 import networkx as nx
 import numpy as np
@@ -18,7 +20,12 @@ from nx_cugraph import _nxver
 
 from .convert import _to_graph
 from .generators._utils import _create_using_class
-from .utils import _cp_iscopied_asarray, index_dtype, networkx_algorithm
+from .utils import (
+    _cp_iscopied_asarray,
+    _get_float_dtype,
+    index_dtype,
+    networkx_algorithm,
+)
 
 __all__ = [
     "from_pandas_edgelist",
@@ -291,10 +298,10 @@ def to_numpy_array(
     nonedge=0.0,
 ):
     """
-    Q: is the sole purpose of dispatching this (writing it in nxcg) so that we can get from GPU Graph -> np.array adj matrix 
+    Q: is the sole purpose of dispatching this (writing it in nxcg) so that we can get from GPU Graph -> np.array adj matrix
         without having to re-copy back to CPU (the case where this wasn't implemented in nxcg)? But it also looks like this
         will be rewriting a lot of similar code from what NX already does
-    
+
     According to the NX docs: this function takes a graph's adjacency matrix and returns it as a numpy array
     for example, a graph with edges [1,2] and [2,3] would be a 3x3 array
         array([[0., 1., 0.],
@@ -305,14 +312,13 @@ def to_numpy_array(
     """
     print(" ==> hello!! dispatched to nxcg!")
     G = _to_graph(G, weight, 1, _get_float_dtype(dtype))
-    
-    
+
     # might not need this this time
     # dtype = _get_float_dtype(dtype, graph=G, weight=weight)
     # match the float dtype on input graph's edgelist, default to float32
-        
+
     if nodelist is None:
-        nodelist = list(G)  
+        nodelist = list(G)
         # TODO: Q for Erik
         #  > this works when calling a fxn in nx/nxcg but im not allowed to run it in python shell
     N = len(nodelist)
@@ -326,7 +332,7 @@ def to_numpy_array(
         raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
 
     # TODO: remove me
-    # > getting past this point means that nodelist was valid as either None or a list containing a subset of nodes in the Graph  
+    # > getting past this point means that nodelist was valid as either None or a list containing a subset of nodes in the Graph
 
     # Construct array of fill_value matching resulting shape
     A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
@@ -335,7 +341,7 @@ def to_numpy_array(
     if N == 0 or G.number_of_edges() == 0:
         return A
 
-    # If dtype is tructured and weight is None, use dtype field names as
+    # If dtype is structured and weight is None, use dtype field names as
     # edge attribs
     # TODO: ask Erik what this might mean
     edge_attrs = None
@@ -352,10 +358,32 @@ def to_numpy_array(
     idx = dict(zip(nodelist, range(N)))
     if len(nodelist) < len(G):
         G = G.subgraph(nodelist)
-        
+
     # Collect all edge weights and reduce with `multigraph_weights`
-    
-    
+    if G.is_multigraph():
+        #    For example if a Graph is a multigraph
+        #   G = [A, B, 'one'] # edge attrib
+        #       [A, B, 'two']
+        #
+        # numpy_array should be
+        #  [[0, 2],
+        #   [2, 0]] since there are two A->B Edges
+        #
+
+        if edge_attrs:
+            raise nx.NetworkXError(
+                "Structured arrays are not supported for MultiGraphs"
+            )
+        d = defaultdict(list)
+
+        # HELP: G.edges() isn't a nx-cugraph Graph method
+        # need a way to iterate through all edges in a multigraph for nxcg
+        breakpoint()
+        # for u, v, wt in G.edges(data=weight, default=1.0):
+        #     d[(idx[u], idx[v])].append(wt)
+        # i, j = np.array(list(d.keys())).T  # indices
+        # wts = [multigraph_weight(ws) for ws in d.values()]  # reduced weights
+
     breakpoint()  # move me around
 
 
