@@ -1264,7 +1264,7 @@ class CudaGraph:
         return cp.fromiter(val_iter, dtype)
 
 
-@networkx_algorithm(version_added="25.04")
+@networkx_algorithm(version_added="25.06")
 def graph__new__(cls, incoming_graph_data=None, **attr):
     # Dispatched from `nx.Graph.__new__`. See details of `object.__new__` behavior here:
     # https://docs.python.org/3/reference/datamodel.html#object.__new__
