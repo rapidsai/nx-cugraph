@@ -296,6 +296,7 @@ def to_numpy_array(
     weight="weight",
     nonedge=0.0,
 ):
+    """MultiGraphs are not yet supported"""
     # print(" ==> hello!! dispatched to nxcg!")
     G = _to_graph(G, weight, 1, _get_float_dtype(dtype))
 
