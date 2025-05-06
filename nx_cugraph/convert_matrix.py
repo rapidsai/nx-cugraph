@@ -16,12 +16,14 @@ import numpy as np
 
 from nx_cugraph import _nxver
 
+from .convert import _to_graph
 from .generators._utils import _create_using_class
 from .utils import _cp_iscopied_asarray, index_dtype, networkx_algorithm
 
 __all__ = [
     "from_pandas_edgelist",
     "from_scipy_sparse_array",
+    "to_scipy_sparse_array",
 ]
 
 
@@ -163,6 +165,90 @@ def from_pandas_edgelist(
     if inplace:
         return create_using._become(G)
     return G
+
+
+@networkx_algorithm(version_added="25.06")
+def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format="csr"):
+    # Future work: allow this to return a cupyx.scipy.sparse object.
+    # This code is very well covered by networkx tests, and the logic
+    # for raising errors closely matches networkx.
+    import scipy as sp
+
+    G = _to_graph(G, weight, 1, dtype)
+    if G._N == 0:
+        raise nx.NetworkXError("Graph has no nodes or edges")
+
+    is_empty = G.src_indices.size == 0  # Use is_empty to avoid work
+    if nodelist is None:
+        # No reordering necessary
+        nlen = G._N
+        if is_empty:
+            src_indices = dst_indices = edge_array = ()
+        else:
+            src_indices = G.src_indices
+            dst_indices = G.dst_indices
+    else:
+        nlen = len(nodelist)
+        if nlen == 0:
+            raise nx.NetworkXError("nodelist has no nodes")
+        if nlen != len(set(G.nbunch_iter(nodelist))):
+            for n in nodelist:
+                if n not in G:
+                    raise nx.NetworkXError(f"Node {n} in nodelist is not in G")
+            raise nx.NetworkXError("nodelist contains duplicates.")
+        if is_empty:
+            src_indices = dst_indices = edge_array = ()
+        else:
+            node_ids = G._nodekeys_to_nodearray(nodelist)
+
+            # Subgraph
+            if nlen < G._N:
+                # TODO: create utility funcs for renumbering/reordering node_ids.
+                # Using `mapper` like this is a useful trick that may not be obvious.
+                mapper = cp.empty(G._N, dtype=index_dtype)
+                mapper[:] = -1  # Indicate nodes to exclude
+                mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
+                src_indices = mapper[G.src_indices]
+                dst_indices = mapper[G.dst_indices]
+                mask = (src_indices != -1) & (dst_indices != -1)
+                src_indices = src_indices[mask]
+                if src_indices.size == 0:
+                    is_empty = True
+                    src_indices = dst_indices = edge_array = ()
+                else:
+                    dst_indices = dst_indices[mask]
+
+            # All nodes, reordered
+            else:
+                # TODO: create utility funcs for renumbering/reordering node_ids.
+                # Using `mapper` like this is a useful trick that may not be obvious.
+                mapper = cp.empty(G._N, dtype=index_dtype)
+                mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
+                src_indices = mapper[G.src_indices]
+                dst_indices = mapper[G.dst_indices]
+
+    if not is_empty:
+        src_indices = cp.asnumpy(src_indices)
+        dst_indices = cp.asnumpy(dst_indices)
+
+        if weight in G.edge_values:
+            edge_array = G.edge_values[weight]
+            if weight in G.edge_masks:
+                edge_array = cp.where(G.edge_masks[weight], edge_array, 1)
+            if nlen < G._N:
+                edge_array = edge_array[mask]
+            edge_array = cp.asnumpy(edge_array)
+        else:
+            edge_array = np.repeat(1, src_indices.size)
+
+    # PERF: convert to desired sparse format on GPU before copying to CPU
+    A = sp.sparse.coo_array(
+        (edge_array, (src_indices, dst_indices)), shape=(nlen, nlen), dtype=dtype
+    )
+    try:
+        return A.asformat(format)
+    except ValueError as exc:
+        raise nx.NetworkXError(f"Unknown sparse matrix format: {format}") from exc
 
 
 @networkx_algorithm(version_added="23.12", fallback=True, create_using_arg=2)

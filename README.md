@@ -1,44 +1,62 @@
-# nx-cugraph
+# <div align="left"><img src="img/rapids_logo.png" width="90px"/>&nbsp;nx-cugraph - GPU Backend for NetworkX</div>
 
 ## Description
-[RAPIDS](https://rapids.ai) nx-cugraph is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html)
-to run supported algorithms with GPU acceleration.
+[nx-cugraph](https://rapids.ai/nx-cugraph) is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run algorithms with zero code change GPU acceleration.
+
+- [System Requirements](#system-requirements)
+- [Installation](#installation)
+- [Enabling nx-cugraph](#enabling-nx-cugraph)
+- [Supported Algorithms](#supported-algorithms)
+
+---
 
 ## System Requirements
 
-nx-cugraph requires the following:
- * NVIDIA GPU, Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
- * CUDA 11.4-11.8 or 12.0-12.5
- * Python version 3.10, 3.11, or 3.12
- * NetworkX >= version 3.2 (version 3.4 or higher recommended)
+ * **GPU:** NVIDIA Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
+   * Pascal GPU support was [removed in 24.02](https://docs.rapids.ai/notices/rsn0034/). Compute capability 7.0+ is required for RAPIDS 24.02 and later.
+ * **CUDA Version:** 11.4 - 11.8 or 12.0 - 12.5
+ * **Python Version:** 3.10, 3.11, or 3.12
+ * **NetworkX Version:** minimum 3.2 (version 3.4 or higher recommended)
 
-More details about system requirements can be found in the [RAPIDS System Requirements documentation](https://docs.rapids.ai/install#system-req).
+Note: nx-cugraph is supported only on Linux, and with Python versions 3.10 and later.
+
+See [RAPIDS System Requirements](https://docs.rapids.ai/install#system-req) for detailed information on OS and Versions.
+
 
 ## Installation
 
-nx-cugraph can be installed using either conda or pip.
+nx-cugraph can be installed using either conda or pip with the following commands.
 
 ### conda
-#### latest nightly version
-```
-conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
-```
-#### latest stable version
+
+nx-cugraph can be installed with conda (via [Miniforge](https://github.com/conda-forge/miniforge)) from the `rapidsai` channel.
 ```
 conda install -c rapidsai -c conda-forge -c nvidia nx-cugraph
 ```
+
+We also provide [nightly Conda packages](https://anaconda.org/rapidsai-nightly/nx-cugraph) built from the HEAD of our latest development branch.
+```
+conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
+```
+
 ### pip
-#### latest nightly version
+
+nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index.
+
+#### For CUDA 11.x:
+
+Latest nightly version
 ```
 python -m pip install nx-cugraph-cu11 --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
 ```
-#### latest stable version
+
+Latest stable version
 ```
 python -m pip install nx-cugraph-cu11 --extra-index-url https://pypi.nvidia.com
 ```
 Notes:
  * The pip example above installs for CUDA 11. To install for CUDA 12, replace `-cu11` with `-cu12`
- * Additional information relevant to installing any RAPIDS package can be found [here](https://rapids.ai/#quick-start).
+ * Try out the [RAPIDS Install Selector Tool](https://docs.rapids.ai/install/#install-rapids) to install other RAPIDS packages.
 
 ## Enabling nx-cugraph
 
@@ -107,8 +125,11 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite">bipartite</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite.centrality">centrality</a>
  │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.centrality.betweenness_centrality.html#networkx.algorithms.bipartite.centrality.betweenness_centrality">betweenness_centrality</a>
- └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite.generators">generators</a>
-     └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.generators.complete_bipartite_graph.html#networkx.algorithms.bipartite.generators.complete_bipartite_graph">complete_bipartite_graph</a>
+ ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite.generators">generators</a>
+ │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.generators.complete_bipartite_graph.html#networkx.algorithms.bipartite.generators.complete_bipartite_graph">complete_bipartite_graph</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/bipartite.html#module-networkx.algorithms.bipartite.matrix">matrix</a>
+     ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.matrix.biadjacency_matrix.html#networkx.algorithms.bipartite.matrix.biadjacency_matrix">biadjacency_matrix</a>
+     └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.bipartite.matrix.from_biadjacency_matrix.html#networkx.algorithms.bipartite.matrix.from_biadjacency_matrix">from_biadjacency_matrix</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/centrality.html#module-networkx.algorithms.centrality">centrality</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/centrality.html#networkx-algorithms-centrality-betweenness">betweenness</a>
  │   ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.centrality.betweenness_centrality.html#networkx.algorithms.centrality.betweenness_centrality">betweenness_centrality</a>
@@ -194,6 +215,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra">single_source_dijkstra</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path">single_source_dijkstra_path</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path_length.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path_length">single_source_dijkstra_path_length</a>
+<a href="https://networkx.org/documentation/stable/reference/algorithms/tournament.html#module-networkx.algorithms.tournament">tournament</a>
+ └─ tournament_matrix
 <a href="https://networkx.org/documentation/stable/reference/algorithms/traversal.html">traversal</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/traversal.html#module-networkx.algorithms.traversal.breadth_first_search">breadth_first_search</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.traversal.breadth_first_search.bfs_edges.html#networkx.algorithms.traversal.breadth_first_search.bfs_edges">bfs_edges</a>
@@ -274,11 +297,19 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
  └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert.to_dict_of_lists.html#networkx.convert.to_dict_of_lists">to_dict_of_lists</a>
 <a href="https://networkx.org/documentation/stable/reference/convert.html#module-networkx.convert_matrix">convert_matrix</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_pandas_edgelist.html#networkx.convert_matrix.from_pandas_edgelist">from_pandas_edgelist</a>
- └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_scipy_sparse_array.html#networkx.convert_matrix.from_scipy_sparse_array">from_scipy_sparse_array</a>
+ ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_scipy_sparse_array.html#networkx.convert_matrix.from_scipy_sparse_array">from_scipy_sparse_array</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.to_scipy_sparse_array.html#networkx.convert_matrix.to_scipy_sparse_array">to_scipy_sparse_array</a>
+<a href="https://networkx.org/documentation/stable/reference/linalg.html">linalg</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/linalg.html#module-networkx.linalg.graphmatrix">graphmatrix</a>
+     └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.linalg.graphmatrix.adjacency_matrix.html#networkx.linalg.graphmatrix.adjacency_matrix">adjacency_matrix</a>
 <a href="https://networkx.org/documentation/stable/reference/relabel.html#module-networkx.relabel">relabel</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.relabel.convert_node_labels_to_integers.html#networkx.relabel.convert_node_labels_to_integers">convert_node_labels_to_integers</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.relabel.relabel_nodes.html#networkx.relabel.relabel_nodes">relabel_nodes</a>
 </pre>
 
 To request nx-cugraph backend support for a NetworkX API that is not listed
-above, visit the [nx-cugraph GitHub repo](https://github.com/rapidsai/nx-cugraph).
+above, [file an issue](https://github.com/rapidsai/nx-cugraph/issues/new/choose).
+
+## Contributing
+
+If you would like to contribute to nx-cugraph, refer to the [Contributing Guide](./CONTRIBUTING.md)

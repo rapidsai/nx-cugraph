@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -72,6 +72,8 @@ class BackendInterface:
             "nx-cugraph Graph is incompatible in test setup in nx versions < 3.3"
         )
         different_iteration_order = "Different graph data iteration order"
+        # For nx version <= 3.4
+        bc_normalization_fixed = "BC normalization fixed in 3.5"
         # For all versions
         louvain_different = "Louvain may be different due to RNG"
         sssp_path_different = "sssp may choose a different valid path"
@@ -270,7 +272,15 @@ class BackendInterface:
                     key("test_louvain.py:test_max_level"): louvain_different,
                 }
             )
-
+        if _nxver < (3, 5):
+            xfail.update(
+                {
+                    key(
+                        "test_betweenness_centrality.py:"
+                        "TestBetweennessCentrality.test_sample_from_P3"
+                    ): bc_normalization_fixed,
+                }
+            )
         xfail.update(
             {
                 key("test_louvain.py:test_karate_club_partition"): louvain_different,
@@ -341,7 +351,23 @@ class BackendInterface:
                 "test_matching_order_all_branches"
             ): too_slow,
         }
-        if os.environ.get("PYTEST_NO_SKIP", False):
+        # These were added in NetworkX 3.5
+        for i in range(8, 12):
+            skip[
+                key(
+                    "test_tree_isomorphism.py:"
+                    f"test_tree_isomorphism_all_non_isomorphic_pairs[{i}]"
+                )
+            ] = too_slow
+        for i in range(9, 15):
+            skip[
+                key(
+                    "test_tree_isomorphism.py:"
+                    f"test_tree_isomorphic_all_non_isomorphic_trees_relabeled[{i}]"
+                )
+            ] = too_slow
+
+        if os.environ.get("PYTEST_NO_SKIP", ""):
             skip.clear()
 
         for item in items:

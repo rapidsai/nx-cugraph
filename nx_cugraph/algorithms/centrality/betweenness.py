@@ -28,7 +28,15 @@ __all__ = ["betweenness_centrality", "edge_betweenness_centrality"]
 def betweenness_centrality(
     G, k=None, normalized=True, weight=None, endpoints=False, seed=None
 ):
-    """`weight` parameter is not yet supported, and RNG with seed may be different."""
+    """
+    `weight` parameter is not yet supported, and RNG with seed may be different.
+    Normalization when using k and endpoints=False does not currently match
+    NetworkX. nx-cugraph was updated in 25.04 to match
+    https://github.com/networkx/networkx/pull/7908, but does not yet match
+    https://github.com/networkx/networkx/pull/7949. These changes
+    were introduced in NetworkX 3.5. The next release of nx-cugraph, 25.06,
+    will match NetworkX 3.5.
+    """
     if weight is not None:
         raise NotImplementedError(
             "Weighted implementation of betweenness centrality not currently supported"
