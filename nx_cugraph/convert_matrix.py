@@ -314,8 +314,14 @@ def to_numpy_array(
     if len(nodelist_as_set) < N:
         raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
 
-    # Construct array of fill_value matching resulting shape
-    A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+    use_numpy = dtype.names is not None
+    if not use_numpy:
+        try:
+            A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+        except Exception:
+            use_numpy = True
+    if use_numpy:
+        A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
 
     # Case: empty nodelist or graph without any edges
     if N == 0 or G.number_of_edges() == 0:
