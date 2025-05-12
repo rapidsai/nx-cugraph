@@ -298,7 +298,9 @@ def to_numpy_array(
 ):
     """MultiGraphs are not yet supported"""
     # print(" ==> hello!! dispatched to nxcg!")
-    G = _to_graph(G, weight, 1, _get_float_dtype(dtype))
+    if dtype is None:
+        dtype = np.float64
+    G = _to_graph(G, weight, 1, dtype)
 
     if nodelist is None:
         nodelist = list(G)
@@ -340,10 +342,23 @@ def to_numpy_array(
                 "use `weight=None`."
             )
 
-    # Map nodes to row/col in matrix
-    # idx = dict(zip(nodelist, range(N)))
-    if len(nodelist) < len(G):
-        G = G.subgraph(nodelist)
+    # Subgraph
+    if N < G._N:
+        # TODO: convert this to a util function somewhere
+        # dunno if this is correct rn
+        node_ids = G._nodekeys_to_nodearray(nodelist)
+        mapper = cp.empty(G._N, dtype=index_dtype)
+        mapper[:] = -1  # Indicate nodes to exclude
+        mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
+        src_indices = mapper[G.src_indices]
+        dst_indices = mapper[G.dst_indices]
+        mask = (src_indices != -1) & (dst_indices != -1)
+        src_indices = src_indices[mask]
+        if src_indices.size == 0:
+            is_empty = True
+            src_indices = dst_indices = edge_array = ()
+        else:
+            dst_indices = dst_indices[mask]
 
     # Collect all edge weights and reduce with `multigraph_weights`
     # TODO handle this case
@@ -353,18 +368,31 @@ def to_numpy_array(
                 "Structured arrays are not supported for MultiGraphs"
             )
     else:
-        # Special case: TODO: figure out
         if edge_attrs:
-            pass
+            edge_array = np.empty(src_indices.size, dtype=dtype)
+            for edge_attr in edge_attrs:
+                if edge_attr in G.edge_values:
+                    e_array = G.edge_values[edge_attr]
+                    if edge_attr in G.edge_masks:
+                        e_array = cp.where(G.edge_masks[edge_attr], e_array, 1)
+                else:
+                    e_array = np.ones(G.src_indices.size, dtype=dtype)
+                edge_array[edge_attr] = cp.asnumpy(e_array)
 
-        wts = G.edge_values["weight"]
+        if weight in G.edge_values:
+            wts = G.edge_values[weight]
+            if weight in G.edge_masks:
+                wts = cp.where(G.edge_masks[weight], wts, 1)
+            wts = cp.asnumpy(wts)
+        else:
+            wts = np.repeat(1, G.src_indices.size)
         A[G.src_indices, G.dst_indices] = wts
 
     return cp.asnumpy(A)
 
 
 @to_numpy_array._can_run
-def _(
+def _(ODO
     G,
     nodelist=None,
     dtype=None,
