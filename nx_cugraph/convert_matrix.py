@@ -325,7 +325,7 @@ def to_numpy_array(
 
     # Case: empty nodelist or graph without any edges
     if N == 0 or G.number_of_edges() == 0:
-        return A
+        return cp.asnumpy(A)
 
     # If dtype is structured and weight is None, use dtype field names as
     # edge attribs
