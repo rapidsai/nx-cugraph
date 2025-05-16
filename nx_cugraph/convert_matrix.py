@@ -21,7 +21,6 @@ from .convert import _to_graph
 from .generators._utils import _create_using_class
 from .utils import (
     _cp_iscopied_asarray,
-    _get_float_dtype,
     index_dtype,
     networkx_algorithm,
 )
@@ -286,7 +285,17 @@ def from_scipy_sparse_array(
     return G
 
 
-@networkx_algorithm(version_added="25.06", fallback=True)
+@networkx_algorithm(
+    extra_params={
+        "use_numpy : bool, default False": (
+            "When working with structured dtypes, might want to use numpy",
+            "Referring to: ",
+            "https://github.com/rapidsai/nx-cugraph/pull/127#discussion_r2078445779",
+        ),
+    },
+    version_added="25.06",
+    fallback=True,
+)
 def to_numpy_array(
     G,
     nodelist=None,
@@ -295,18 +304,20 @@ def to_numpy_array(
     multigraph_weight=sum,
     weight="weight",
     nonedge=0.0,
+    # nx_cugraph-only argument
+    use_numpy=False,
 ):
     """MultiGraphs are not yet supported"""
-    # print(" ==> hello!! dispatched to nxcg!")
+    print(" ==> hello!! dispatched to nxcg!")
+    G = _to_graph(G, weight, 1, dtype)
+
     if dtype is None:
         dtype = np.float64
-    G = _to_graph(G, weight, 1, dtype)
 
     if nodelist is None:
         nodelist = list(G)
 
     N = len(nodelist)
-
     # use set to check for nodes not in the graph or duplicate nodes
     nodelist_as_set = set(nodelist)
     if nodelist_as_set - set(G):
@@ -316,7 +327,6 @@ def to_numpy_array(
     if len(nodelist_as_set) < N:
         raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
 
-    use_numpy = dtype.names is not None
     if not use_numpy:
         try:
             A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
@@ -325,12 +335,17 @@ def to_numpy_array(
     if use_numpy:
         A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
 
-    # Case: empty nodelist or graph without any edges
-    if N == 0 or G.number_of_edges() == 0:
+    # Case: graph with no nodes
+    if G._N == 0:
         return cp.asnumpy(A)
 
     # If dtype is structured and weight is None, use dtype field names as
     # edge attribs
+
+    # so essentially treating some other edge attribute as the "weight" value
+    # we return in the adj matrix. like "distance" for example
+
+    # assume edge_attrs is None unless other weight value is specified ig?
     edge_attrs = None
     if A.dtype.names:
         if weight is None:
@@ -342,10 +357,19 @@ def to_numpy_array(
                 "use `weight=None`."
             )
 
+    # FIXME: figure out where to put this
+    # if G.is_multigraph():
+    # if edge_attrs:
+    #     raise nx.NetworkXError(
+    #         "Structured arrays are not supported for MultiGraphs"
+    #     )
+
+    src_indices = G.src_indices
+    dst_indices = G.dst_indices
+
     # Subgraph
     if N < G._N:
         # TODO: convert this to a util function somewhere
-        # dunno if this is correct rn
         node_ids = G._nodekeys_to_nodearray(nodelist)
         mapper = cp.empty(G._N, dtype=index_dtype)
         mapper[:] = -1  # Indicate nodes to exclude
@@ -354,45 +378,35 @@ def to_numpy_array(
         dst_indices = mapper[G.dst_indices]
         mask = (src_indices != -1) & (dst_indices != -1)
         src_indices = src_indices[mask]
-        if src_indices.size == 0:
-            is_empty = True
-            src_indices = dst_indices = edge_array = ()
-        else:
-            dst_indices = dst_indices[mask]
+        dst_indices = dst_indices[mask]
+    elif edge_attrs:
+        edge_array = np.empty(src_indices.size, dtype=dtype)
+        for edge_attr in edge_attrs:
+            if edge_attr in G.edge_values:
+                e_array = G.edge_values[edge_attr]
+                if edge_attr in G.edge_masks:
+                    e_array = cp.where(G.edge_masks[edge_attr], e_array, 1)
+            else:
+                e_array = np.ones(G.src_indices.size, dtype=dtype)
+            edge_array[edge_attr] = cp.asnumpy(e_array)
 
-    # Collect all edge weights and reduce with `multigraph_weights`
-    # TODO handle this case
-    if G.is_multigraph():
-        if edge_attrs:
-            raise nx.NetworkXError(
-                "Structured arrays are not supported for MultiGraphs"
-            )
+    if weight in G.edge_values:
+        edge_array = G.edge_values[weight]
+        if weight in G.edge_masks:
+            edge_array = cp.where(G.edge_masks[weight], edge_array, 1)
+        if N < G._N:
+            edge_array = edge_array[mask]
+        edge_array = cp.asnumpy(edge_array)
     else:
-        if edge_attrs:
-            edge_array = np.empty(src_indices.size, dtype=dtype)
-            for edge_attr in edge_attrs:
-                if edge_attr in G.edge_values:
-                    e_array = G.edge_values[edge_attr]
-                    if edge_attr in G.edge_masks:
-                        e_array = cp.where(G.edge_masks[edge_attr], e_array, 1)
-                else:
-                    e_array = np.ones(G.src_indices.size, dtype=dtype)
-                edge_array[edge_attr] = cp.asnumpy(e_array)
+        edge_array = np.repeat(1, G.src_indices.size)
 
-        if weight in G.edge_values:
-            wts = G.edge_values[weight]
-            if weight in G.edge_masks:
-                wts = cp.where(G.edge_masks[weight], wts, 1)
-            wts = cp.asnumpy(wts)
-        else:
-            wts = np.repeat(1, G.src_indices.size)
-        A[G.src_indices, G.dst_indices] = wts
+    A[src_indices, dst_indices] = edge_array
 
     return cp.asnumpy(A)
 
 
 @to_numpy_array._can_run
-def _(ODO
+def _(
     G,
     nodelist=None,
     dtype=None,
