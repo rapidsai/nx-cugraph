@@ -21,6 +21,7 @@ from . import (
     lowest_common_ancestors,
     operators,
     shortest_paths,
+    tournament,
     traversal,
     tree,
 )

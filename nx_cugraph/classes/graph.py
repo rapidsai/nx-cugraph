@@ -846,7 +846,21 @@ class CudaGraph:
             return iter(self)
         if nbunch in self:
             return iter([nbunch])
-        return (node for node in nbunch if node in self)
+        # This is similar to __contains__
+        if self.key_to_id is not None:
+            container = self.key_to_id
+        else:
+            container = set(range(self._N))
+
+        def bunch_iter(nbunch, container):
+            for node in nbunch:
+                try:
+                    if node in container:
+                        yield node
+                except TypeError:
+                    pass
+
+        return bunch_iter(nbunch, container)
 
     @networkx_api
     def number_of_edges(
