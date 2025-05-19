@@ -94,7 +94,6 @@ _info = {
         "forceatlas2_layout",
         "from_biadjacency_matrix",
         "from_dict_of_lists",
-        "from_numpy_array",
         "from_pandas_edgelist",
         "from_scipy_sparse_array",
         "frucht_graph",
