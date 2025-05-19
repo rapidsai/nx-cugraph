@@ -297,7 +297,10 @@ _info = {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
         "to_numpy_array": {
-            "use_numpy : bool, default False": ('When working with structured dtypes, might want to use numpy', 'Referring to: ', 'https://github.com/rapidsai/nx-cugraph/pull/127#discussion_r2078445779'),
+            "use_numpy : bool, default False": (
+                "When working with structured dtypes, might want to use numpy\n"
+                "Referring to: https://github.com/rapidsai/nx-cugraph/pull/127#discussion_r2078445779"
+            ),
         },
         # END: additional_parameters
     },

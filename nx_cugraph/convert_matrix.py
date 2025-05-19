@@ -260,9 +260,9 @@ def from_scipy_sparse_array(
 @networkx_algorithm(
     extra_params={
         "use_numpy : bool, default False": (
-            "When working with structured dtypes, might want to use numpy",
-            "Referring to: ",
-            "https://github.com/rapidsai/nx-cugraph/pull/127#discussion_r2078445779",
+            "When working with structured dtypes, might want to use numpy\n"
+            "Referring to: "
+            "https://github.com/rapidsai/nx-cugraph/pull/127#discussion_r2078445779"
         ),
     },
     version_added="25.06",
