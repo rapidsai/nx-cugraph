@@ -34,8 +34,7 @@ class BackendInterface:
 
     @staticmethod
     def convert_to_nx(obj, *, name: str | None = None):
-        if isinstance(obj, nxcg.CudaGraph):
-            # Observe that this does not try to convert Graph!
+        if isinstance(obj, nxcg.Graph | nxcg.CudaGraph):
             return nxcg.to_networkx(obj)
         return obj
 
