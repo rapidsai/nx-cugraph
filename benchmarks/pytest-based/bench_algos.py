@@ -1008,22 +1008,7 @@ def bench_to_numpy_array(benchmark, graph_obj, backend_wrapper):
         warmup_rounds=warmup_rounds,
     )
 
-    assert isinstance(result, np.array)
-
-
-def bench_from_numpy_array(benchmark, graph_obj, backend_wrapper):
-
-    # result = benchmark.pedantic(
-    #     target=backend_wrapper(nx.from_numpy_array),
-    #     args=(G,),
-    #     rounds=rounds,
-    #     iterations=iterations,
-    #     warmup_rounds=warmup_rounds,
-    # )
-
-    # TODO
-    assert True
-    # assert isinstance(result, )
+    assert isinstance(result, np.ndarray)
 
 
 @pytest.mark.parametrize("nodes", ["default", "shuffle", "subset"])

@@ -257,13 +257,6 @@ def from_scipy_sparse_array(
 
 
 @networkx_algorithm(
-    extra_params={
-        "use_numpy : bool, default False": (
-            "When working with structured dtypes, might want to use numpy\n"
-            "Referring to: "
-            "https://github.com/rapidsai/nx-cugraph/pull/127#discussion_r2078445779"
-        ),
-    },
     version_added="25.06",
     fallback=False,
 )
@@ -275,8 +268,6 @@ def to_numpy_array(
     multigraph_weight=sum,
     weight="weight",
     nonedge=0.0,
-    # nx_cugraph-only argument
-    use_numpy=False,
 ):
     """MultiGraphs are not yet supported"""
     if dtype is None:
@@ -356,7 +347,6 @@ def _(
     multigraph_weight=sum,
     weight="weight",
     nonedge=0.0,
-    use_numpy=False,
 ):
     # TODO: nxcg does not handle multigraphs yet
     return not G.is_multigraph()
