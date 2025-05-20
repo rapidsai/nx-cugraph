@@ -30,7 +30,6 @@ __all__ = [
     "from_scipy_sparse_array",
     "to_scipy_sparse_array",
     "to_numpy_array",
-    "from_numpy_array",
 ]
 
 
@@ -357,13 +356,7 @@ def _(
     multigraph_weight=sum,
     weight="weight",
     nonedge=0.0,
+    use_numpy=False,
 ):
-    # do not handle multigraph yet
+    # TODO: nxcg does not handle multigraphs yet
     return not G.is_multigraph()
-
-
-# @networkx_algorithm(version_added="25.06", fallback=True)
-def from_numpy_array(
-    A, parallel_edges=False, create_using=None, edge_attr="weight", *, nodelist=None
-):
-    pass
