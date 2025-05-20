@@ -111,6 +111,10 @@ dependencies:
               cuda: "12.8"
             packages:
               - cuda-version=12.8
+          - matrix:
+              cuda: "12.9"
+            packages:
+              - cuda-version=12.9
   depends_on_nx_cugraph:
     common:
       - output_types: conda
@@ -133,8 +137,12 @@ dependencies:
             packages:
               - python=3.12
           - matrix:
+              py: "3.13"
             packages:
-              - python>=3.10,<3.13
+              - python=3.13
+          - matrix:
+            packages:
+              - python>=3.10,<3.14
   python_build_rapids:
     common:
       - output_types: [conda, pyproject, requirements]
