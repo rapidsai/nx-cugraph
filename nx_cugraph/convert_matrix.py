@@ -288,8 +288,13 @@ def to_numpy_array(
 
     use_numpy = dtype.names is not None
     if not use_numpy:
-        A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
-    else:
+        # May run out of GPU memory on large graphs
+        try:
+            A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+        except MemoryError:
+            use_numpy = True
+    if use_numpy:
+        # Most likely will also run out of CPU memory on large graphs
         A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
 
     # Case: graph with no nodes
@@ -328,6 +333,7 @@ def to_numpy_array(
     if use_numpy:
         src_indices = cp.asnumpy(src_indices)
         dst_indices = cp.asnumpy(dst_indices)
+        edge_array = cp.asnumpy(edge_array)
 
     A[src_indices, dst_indices] = edge_array
 
