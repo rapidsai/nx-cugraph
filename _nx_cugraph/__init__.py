@@ -213,7 +213,7 @@ _info = {
         "single_source_bellman_ford": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "single_source_bellman_ford_path": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
         "single_source_bellman_ford_path_length": "Negative cycles are not yet supported. ``NotImplementedError`` will be raised if there are negative edge weights. We plan to support negative edge weights soon. Also, callable ``weight`` argument is not supported.",
-        "to_numpy_array": "MultiGraphs are not yet supported",
+        "to_numpy_array": "MultiGraphs are not yet supported. Only valid CuPy dtypes are supported.",
         "transitivity": "Directed graphs are not yet supported.",
         # END: additional_docs
     },

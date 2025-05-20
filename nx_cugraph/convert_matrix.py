@@ -266,7 +266,7 @@ def to_numpy_array(
     weight="weight",
     nonedge=0.0,
 ):
-    """MultiGraphs are not yet supported"""
+    """MultiGraphs are not yet supported. Only valid CuPy dtypes are supported."""
     if dtype is None:
         dtype = np.float64
     dtype = np.dtype(dtype)
@@ -288,18 +288,15 @@ def to_numpy_array(
 
     use_numpy = dtype.names is not None
     if not use_numpy:
-        # try:
         A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
-        # except Exception:
-        # use_numpy = True
     else:
         A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
 
     # Case: graph with no nodes
-    if G._N == 0:
+    if N == 0:
         return cp.asnumpy(A)
 
-    # assume edge_attrs is None unless other weight value is specified ig?
+    # assume edge_attrs is None unless other weight value is specified
     edge_attrs = None
     if A.dtype.names:
         if weight is None:
@@ -314,6 +311,8 @@ def to_numpy_array(
     src_indices, dst_indices, mask = G._subgraph_indices(nodelist)
 
     if edge_attrs:
+        # TODO could convert this logic into a util function if
+        # more np structured arrays need support in the future
         edge_array = np.empty(src_indices.size, dtype=dtype)
         for edge_attr in edge_attrs:
             if edge_attr in G.edge_values:
@@ -345,5 +344,5 @@ def _(
     weight="weight",
     nonedge=0.0,
 ):
-    # TODO: nxcg does not handle multigraphs yet
+    # TODO handle multigraphs
     return not G.is_multigraph()
