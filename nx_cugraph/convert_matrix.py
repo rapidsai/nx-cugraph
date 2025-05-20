@@ -256,10 +256,7 @@ def from_scipy_sparse_array(
     return G
 
 
-@networkx_algorithm(
-    version_added="25.06",
-    fallback=False,
-)
+@networkx_algorithm(version_added="25.06")
 def to_numpy_array(
     G,
     nodelist=None,
