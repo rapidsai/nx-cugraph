@@ -89,9 +89,11 @@ def circular_ladder_graph(n, create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def complete_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
     if n < 3:
-        return _common_small_graph(n, nodes, create_using)
+        return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
     graph_class, inplace = _create_using_class(create_using)
     src_indices, dst_indices = _complete_graph_indices(n)
     G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
@@ -149,17 +151,21 @@ def complete_multipartite_graph(*subset_sizes):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def cycle_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
     graph_class, inplace = _create_using_class(create_using)
     if n == 1:
         src_indices = cp.zeros(1, index_dtype)
         dst_indices = cp.zeros(1, index_dtype)
     elif n == 2 and graph_class.is_multigraph() and not graph_class.is_directed():
         # This is kind of a peculiar edge case
+        if self_loops:
+            1 / 0
         src_indices = cp.array([0, 0, 1, 1], index_dtype)
         dst_indices = cp.array([1, 1, 0, 0], index_dtype)
     elif n < 3:
-        return _common_small_graph(n, nodes, create_using)
+        return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
     elif graph_class.is_directed():
         src_indices = cp.arange(n, dtype=index_dtype)
         dst_indices = cp.arange(1, n + 1, dtype=index_dtype)
@@ -179,7 +185,7 @@ def cycle_graph(n, create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def empty_graph(n=0, create_using=None, default=nx.Graph):
-    n, nodes = _number_and_nodes(n)
+    n, nodes = _number_and_nodes(n, drop_duplicates=True)
     graph_class, inplace = _create_using_class(create_using, default=default)
     G = graph_class.from_coo(
         n, cp.empty(0, index_dtype), cp.empty(0, index_dtype), id_to_key=nodes
@@ -286,13 +292,17 @@ def null_graph(create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def path_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         src_indices = cp.arange(n - 1, dtype=index_dtype)
         dst_indices = cp.arange(1, n, dtype=index_dtype)
     elif n < 3:
-        return _common_small_graph(n, nodes, create_using)
+        return _common_small_graph(
+            n, nodes, create_using, self_loops=self_loops if n == 2 else None
+        )
     else:
         src_indices = cp.arange(1, 2 * n - 1, dtype=index_dtype) // 2
         dst_indices = (
@@ -307,14 +317,24 @@ def path_graph(n, create_using=None):
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def star_graph(n, create_using=None):
     orig_n, orig_nodes = n
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
     # star_graph behaves differently whether the input was an int or iterable
     if isinstance(orig_n, Integral):
         if nodes is not None:
             nodes.append(n)
         n += 1
+    if self_loops:
+        node0 = nodes[0]
+        if node0 in self_loops:
+            self_loops = {node0: self_loops[node0]}
+        else:
+            self_loops = None
     if n < 3:
-        return _common_small_graph(n, nodes, create_using, allow_directed=False)
+        return _common_small_graph(
+            n, nodes, create_using, allow_directed=False, self_loops=self_loops
+        )
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
@@ -382,39 +402,45 @@ def turan_graph(n, r):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def wheel_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
     if n < 2:
+        return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
+
         G = graph_class.from_coo(
-            n, cp.empty(0, index_dtype), cp.empty(0, index_dtype), id_to_key=nodes
+            n,
+            cp.empty(0, index_dtype),
+            cp.empty(0, index_dtype),
+            id_to_key=nodes,
+            self_loops=self_loops,
         )
+    # Like star_graph
+    flat = cp.zeros(n - 1, index_dtype)
+    ramp = cp.arange(1, n, dtype=index_dtype)
+    # Like cycle_graph
+    if n < 3:
+        src_indices = cp.empty(0, index_dtype)
+        dst_indices = cp.empty(0, index_dtype)
+    elif n > 3:
+        src_indices = cp.arange(2, 2 * n, dtype=index_dtype) // 2
+        dst_indices = (
+            cp.arange(1, n, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
+        ).ravel()
+        dst_indices[-1] = 1
+        dst_indices[0] = n - 1
+    elif graph_class.is_multigraph():
+        src_indices = cp.array([1, 1, 2, 2], index_dtype)
+        dst_indices = cp.array([2, 2, 1, 1], index_dtype)
     else:
-        # Like star_graph
-        flat = cp.zeros(n - 1, index_dtype)
-        ramp = cp.arange(1, n, dtype=index_dtype)
-        # Like cycle_graph
-        if n < 3:
-            src_indices = cp.empty(0, index_dtype)
-            dst_indices = cp.empty(0, index_dtype)
-        elif n > 3:
-            src_indices = cp.arange(2, 2 * n, dtype=index_dtype) // 2
-            dst_indices = (
-                cp.arange(1, n, dtype=index_dtype)[:, None]
-                + cp.array([-1, 1], index_dtype)
-            ).ravel()
-            dst_indices[-1] = 1
-            dst_indices[0] = n - 1
-        elif graph_class.is_multigraph():
-            src_indices = cp.array([1, 1, 2, 2], index_dtype)
-            dst_indices = cp.array([2, 2, 1, 1], index_dtype)
-        else:
-            src_indices = cp.array([1, 2], index_dtype)
-            dst_indices = cp.array([2, 1], index_dtype)
-        src_indices = cp.hstack((flat, ramp, src_indices))
-        dst_indices = cp.hstack((ramp, flat, dst_indices))
-        G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
+        src_indices = cp.array([1, 2], index_dtype)
+        dst_indices = cp.array([2, 1], index_dtype)
+    src_indices = cp.hstack((flat, ramp, src_indices))
+    dst_indices = cp.hstack((ramp, flat, dst_indices))
+    G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
     if inplace:
         return create_using._become(G)
     return G
