@@ -15,6 +15,7 @@ import random
 from collections.abc import Mapping
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 import pytest
 from cugraph import datasets
@@ -994,6 +995,20 @@ def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
     )
 
     assert type(result) is dict
+
+
+def bench_to_numpy_array(benchmark, graph_obj, backend_wrapper):
+    G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+
+    result = benchmark.pedantic(
+        target=backend_wrapper(nx.to_numpy_array),
+        args=(G,),
+        rounds=rounds,
+        iterations=iterations,
+        warmup_rounds=warmup_rounds,
+    )
+
+    assert isinstance(result, np.ndarray)
 
 
 @pytest.mark.parametrize("nodes", ["default", "shuffle", "subset"])

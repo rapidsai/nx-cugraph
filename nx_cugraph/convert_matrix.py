@@ -10,6 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import cupy as cp
 import networkx as nx
 import numpy as np
@@ -18,12 +19,17 @@ from nx_cugraph import _nxver
 
 from .convert import _to_graph
 from .generators._utils import _create_using_class
-from .utils import _cp_iscopied_asarray, index_dtype, networkx_algorithm
+from .utils import (
+    _cp_iscopied_asarray,
+    index_dtype,
+    networkx_algorithm,
+)
 
 __all__ = [
     "from_pandas_edgelist",
     "from_scipy_sparse_array",
     "to_scipy_sparse_array",
+    "to_numpy_array",
 ]
 
 
@@ -187,6 +193,7 @@ def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format=
         else:
             src_indices = G.src_indices
             dst_indices = G.dst_indices
+            mask = None
     else:
         nlen = len(nodelist)
         if nlen == 0:
@@ -199,47 +206,18 @@ def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format=
         if is_empty:
             src_indices = dst_indices = edge_array = ()
         else:
-            node_ids = G._nodekeys_to_nodearray(nodelist)
+            src_indices, dst_indices, mask = G._subgraph_indices(nodelist)
 
-            # Subgraph
-            if nlen < G._N:
-                # TODO: create utility funcs for renumbering/reordering node_ids.
-                # Using `mapper` like this is a useful trick that may not be obvious.
-                mapper = cp.empty(G._N, dtype=index_dtype)
-                mapper[:] = -1  # Indicate nodes to exclude
-                mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
-                src_indices = mapper[G.src_indices]
-                dst_indices = mapper[G.dst_indices]
-                mask = (src_indices != -1) & (dst_indices != -1)
-                src_indices = src_indices[mask]
-                if src_indices.size == 0:
-                    is_empty = True
-                    src_indices = dst_indices = edge_array = ()
-                else:
-                    dst_indices = dst_indices[mask]
-
-            # All nodes, reordered
-            else:
-                # TODO: create utility funcs for renumbering/reordering node_ids.
-                # Using `mapper` like this is a useful trick that may not be obvious.
-                mapper = cp.empty(G._N, dtype=index_dtype)
-                mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
-                src_indices = mapper[G.src_indices]
-                dst_indices = mapper[G.dst_indices]
+            if src_indices.size == 0:
+                is_empty = True
+                src_indices = dst_indices = edge_array = ()
 
     if not is_empty:
         src_indices = cp.asnumpy(src_indices)
         dst_indices = cp.asnumpy(dst_indices)
 
-        if weight in G.edge_values:
-            edge_array = G.edge_values[weight]
-            if weight in G.edge_masks:
-                edge_array = cp.where(G.edge_masks[weight], edge_array, 1)
-            if nlen < G._N:
-                edge_array = edge_array[mask]
-            edge_array = cp.asnumpy(edge_array)
-        else:
-            edge_array = np.repeat(1, src_indices.size)
+        edge_array = G._subgraph_weights(mask, weight, 1)
+        edge_array = cp.asnumpy(edge_array)
 
     # PERF: convert to desired sparse format on GPU before copying to CPU
     A = sp.sparse.coo_array(
@@ -276,3 +254,101 @@ def from_scipy_sparse_array(
     if inplace:
         return create_using._become(G)
     return G
+
+
+@networkx_algorithm(version_added="25.06")
+def to_numpy_array(
+    G,
+    nodelist=None,
+    dtype=None,
+    order=None,
+    multigraph_weight=sum,
+    weight="weight",
+    nonedge=0.0,
+):
+    """MultiGraphs are not yet supported. Only valid CuPy dtypes are supported."""
+    if dtype is None:
+        dtype = np.float64
+    dtype = np.dtype(dtype)
+
+    G = _to_graph(G, weight, 1, dtype)
+
+    if nodelist is not None:
+        N = len(nodelist)
+        # use set to check for nodes not in the graph or duplicate nodes
+        nodelist_as_set = set(nodelist)
+        if nodelist_as_set - set(G):
+            raise nx.NetworkXError(
+                f"Nodes {nodelist_as_set - set(G)} in nodelist is not in G"
+            )
+        if len(nodelist_as_set) < N:
+            raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
+    else:
+        N = G._N
+
+    use_numpy = dtype.names is not None
+    if not use_numpy:
+        # May run out of GPU memory on large graphs
+        try:
+            A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+        except MemoryError:
+            use_numpy = True
+    if use_numpy:
+        # Most likely will also run out of CPU memory on large graphs
+        A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+
+    # Case: graph with no nodes
+    if N == 0:
+        return cp.asnumpy(A)
+
+    # assume edge_attrs is None unless other weight value is specified
+    edge_attrs = None
+    if A.dtype.names:
+        if weight is None:
+            edge_attrs = dtype.names
+        else:
+            raise ValueError(
+                "Specifying `weight` not supported for structured dtypes\n."
+                "To create adjacency matrices from structured dtypes,"
+                "use `weight=None`."
+            )
+
+    src_indices, dst_indices, mask = G._subgraph_indices(nodelist)
+
+    if edge_attrs:
+        # TODO could convert this logic into a util function if
+        # more np structured arrays need support in the future
+        edge_array = np.empty(src_indices.size, dtype=dtype)
+        for edge_attr in edge_attrs:
+            if edge_attr in G.edge_values:
+                e_array = G.edge_values[edge_attr]
+                if edge_attr in G.edge_masks:
+                    e_array = cp.where(G.edge_masks[edge_attr], e_array, 1)
+            else:
+                e_array = np.ones(G.src_indices.size, dtype=dtype)
+            edge_array[edge_attr] = cp.asnumpy(e_array)
+    else:
+        edge_array = G._subgraph_weights(mask, weight, 1)
+
+    if use_numpy:
+        src_indices = cp.asnumpy(src_indices)
+        dst_indices = cp.asnumpy(dst_indices)
+        edge_array = cp.asnumpy(edge_array)
+
+    A[src_indices, dst_indices] = edge_array
+
+    return cp.asnumpy(A)
+
+
+@to_numpy_array._can_run
+def _(
+    G,
+    nodelist=None,
+    dtype=None,
+    order=None,
+    multigraph_weight=sum,
+    weight="weight",
+    nonedge=0.0,
+):
+    # TODO handle multigraphs
+    return not G.is_multigraph()

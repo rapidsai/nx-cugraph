@@ -298,6 +298,7 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 <a href="https://networkx.org/documentation/stable/reference/convert.html#module-networkx.convert_matrix">convert_matrix</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_pandas_edgelist.html#networkx.convert_matrix.from_pandas_edgelist">from_pandas_edgelist</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_scipy_sparse_array.html#networkx.convert_matrix.from_scipy_sparse_array">from_scipy_sparse_array</a>
+ ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.to_numpy_array.html#networkx.convert_matrix.to_numpy_array">to_numpy_array</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.to_scipy_sparse_array.html#networkx.convert_matrix.to_scipy_sparse_array">to_scipy_sparse_array</a>
 <a href="https://networkx.org/documentation/stable/reference/linalg.html">linalg</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/linalg.html#module-networkx.linalg.graphmatrix">graphmatrix</a>
