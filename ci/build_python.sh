@@ -30,5 +30,3 @@ rattler-build build --recipe conda/recipes/nx-cugraph \
                     --test skip \
                     "${RATTLER_ARGS[@]}" \
                     "${RATTLER_CHANNELS[@]}"
-
-rapids-upload-conda-to-s3 python

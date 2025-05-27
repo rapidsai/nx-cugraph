@@ -5,5 +5,5 @@ set -euo pipefail
 
 source rapids-init-pip
 
-./ci/build_wheel.sh nx-cugraph .
+./ci/build_wheel.sh .
 ./ci/validate_wheel.sh "${RAPIDS_WHEEL_BLD_OUTPUT_DIR}"
