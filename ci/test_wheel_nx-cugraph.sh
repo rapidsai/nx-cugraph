@@ -3,10 +3,11 @@
 
 set -eoxu pipefail
 
+source rapids-init-pip
+
 package_name="nx-cugraph"
 python_package_name=${package_name//-/_}
 
-mkdir -p ./dist
 RAPIDS_PY_CUDA_SUFFIX="$(rapids-wheel-ctk-name-gen "${RAPIDS_CUDA_VERSION}")"
 
 # nx-cugraph is a pure wheel, which is part of generating the download path
