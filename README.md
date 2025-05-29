@@ -148,6 +148,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
  ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.cluster.transitivity.html#networkx.algorithms.cluster.transitivity">transitivity</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.cluster.triangles.html#networkx.algorithms.cluster.triangles">triangles</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/community.html#module-networkx.algorithms.community">community</a>
+ ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/community.html#module-networkx.algorithms.community.leiden">leiden</a>
+ │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.community.leiden.leiden_communities.html#networkx.algorithms.community.leiden.leiden_communities">leiden_communities</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/community.html#module-networkx.algorithms.community.louvain">louvain</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.community.louvain.louvain_communities.html#networkx.algorithms.community.louvain.louvain_communities">louvain_communities</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/component.html#module-networkx.algorithms.components">components</a>
@@ -291,7 +293,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
 <pre>
 <a href="https://networkx.org/documentation/stable/reference/classes/index.html">classes</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/functions.html#module-networkx.classes.function">function</a>
-     └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.classes.function.is_negatively_weighted.html#networkx.classes.function.is_negatively_weighted">is_negatively_weighted</a>
+     ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.classes.function.is_negatively_weighted.html#networkx.classes.function.is_negatively_weighted">is_negatively_weighted</a>
+     └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.classes.function.number_of_selfloops.html#networkx.classes.function.number_of_selfloops">number_of_selfloops</a>
 <a href="https://networkx.org/documentation/stable/reference/convert.html#module-networkx.convert">convert</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert.from_dict_of_lists.html#networkx.convert.from_dict_of_lists">from_dict_of_lists</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert.to_dict_of_lists.html#networkx.convert.to_dict_of_lists">to_dict_of_lists</a>
@@ -300,6 +303,9 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_scipy_sparse_array.html#networkx.convert_matrix.from_scipy_sparse_array">from_scipy_sparse_array</a>
  ├─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.to_numpy_array.html#networkx.convert_matrix.to_numpy_array">to_numpy_array</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.to_scipy_sparse_array.html#networkx.convert_matrix.to_scipy_sparse_array">to_scipy_sparse_array</a>
+<a href="https://networkx.org/documentation/stable/reference/drawing.html">drawing</a>
+ └─ <a href="https://networkx.org/documentation/stable/reference/drawing.html#module-networkx.drawing.layout">layout</a>
+     └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.forceatlas2_layout.html#networkx.drawing.layout.forceatlas2_layout">forceatlas2_layout</a>
 <a href="https://networkx.org/documentation/stable/reference/linalg.html">linalg</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/linalg.html#module-networkx.linalg.graphmatrix">graphmatrix</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/generated/networkx.linalg.graphmatrix.adjacency_matrix.html#networkx.linalg.graphmatrix.adjacency_matrix">adjacency_matrix</a>
