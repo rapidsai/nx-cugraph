@@ -216,7 +216,7 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path">single_source_dijkstra_path</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path_length.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path_length">single_source_dijkstra_path_length</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/tournament.html#module-networkx.algorithms.tournament">tournament</a>
- └─ tournament_matrix
+ └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tournament.tournament_matrix.html#networkx.algorithms.tournament.tournament_matrix">tournament_matrix</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/traversal.html">traversal</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/traversal.html#module-networkx.algorithms.traversal.breadth_first_search">breadth_first_search</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.traversal.breadth_first_search.bfs_edges.html#networkx.algorithms.traversal.breadth_first_search.bfs_edges">bfs_edges</a>
