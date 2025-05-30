@@ -1,4 +1,4 @@
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# Copyright (c) 2024-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -13,7 +13,7 @@
 
 """
 Checks if a particular dataset has been downloaded inside the datasets dir
-(RAPIDS_DATAEST_ROOT_DIR). If not, the file will be downloaded using the
+(RAPIDS_DATASET_ROOT_DIR). If not, the file will be downloaded using the
 datasets API.
 
 Positional Arguments:
