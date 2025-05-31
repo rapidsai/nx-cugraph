@@ -6,15 +6,21 @@ This directory contains a set of scripts designed to benchmark NetworkX with the
 
 Our current benchmarks provide the following datasets:
 
-| Dataset     | Nodes | Edges | Directed |
-| --------    | ------- | ------- | ------- |
-| netscience  | 1,461    | 5,484 | Yes |
-| email-Eu-core  | 1,005    | 25,571 | Yes |
-| cit-Patents  | 3,774,768    | 16,518,948 | Yes |
-| hollywood  | 1,139,905    | 57,515,616 | No |
-| soc-LiveJournal1  | 4,847,571    | 68,993,773 | Yes |
+| Dataset          | Nodes     | Edges      | Directed |
+| ---------------- | --------- | ---------- | -------- |
+| netscience       | 1,461     | 5,484      | Yes      |
+| email-Eu-core    | 1,005     | 25,571     | Yes      |
+| cit-Patents      | 3,774,768 | 16,518,948 | Yes      |
+| hollywood        | 1,139,905 | 57,515,616 | No       |
+| soc-LiveJournal1 | 4,847,571 | 68,993,773 | Yes      |
 
+### Requirements
 
+Install nx-cugraph and the benchmark dependencies:
+
+```
+conda create -n nx-cugraph-benchmark -c rapidsai -c conda-forge nx-cugraph pytest pytest-benchmark
+```
 
 ### Scripts
 
