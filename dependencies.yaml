@@ -3,7 +3,7 @@ files:
   all:
     output: [conda]
     matrix:
-      cuda: ["11.8", "12.8"]
+      cuda: ["12.8"]
       arch: [x86_64, aarch64]
     includes:
       - checks
@@ -79,22 +79,6 @@ dependencies:
     specific:
       - output_types: conda
         matrices:
-          - matrix:
-              cuda: "11.2"
-            packages:
-              - cuda-version=11.2
-          - matrix:
-              cuda: "11.4"
-            packages:
-              - cuda-version=11.4
-          - matrix:
-              cuda: "11.5"
-            packages:
-              - cuda-version=11.5
-          - matrix:
-              cuda: "11.8"
-            packages:
-              - cuda-version=11.8
           - matrix:
               cuda: "12.0"
             packages:
@@ -194,12 +178,9 @@ dependencies:
       - output_types: [pyproject, requirements]
         matrices:
           - matrix: {cuda: "12.*"}
-            packages:
+            packages: &cupy_packages_cu12
               - cupy-cuda12x>=12.0.0
-          - matrix: {cuda: "11.*"}
-            packages: &cupy_packages_cu11
-              - cupy-cuda11x>=12.0.0
-          - {matrix: null, packages: *cupy_packages_cu11}
+          - {matrix: null, packages: *cupy_packages_cu12}
   depends_on_cudf:
     common:
       - output_types: conda
@@ -218,11 +199,6 @@ dependencies:
               cuda_suffixed: "true"
             packages:
               - cudf-cu12==25.8.*,>=0.0.0a0
-          - matrix:
-              cuda: "11.*"
-              cuda_suffixed: "true"
-            packages:
-              - cudf-cu11==25.8.*,>=0.0.0a0
           - {matrix: null, packages: [*cudf_unsuffixed]}
   depends_on_pylibcugraph:
     common:
@@ -242,9 +218,4 @@ dependencies:
               cuda_suffixed: "true"
             packages:
               - pylibcugraph-cu12==25.8.*,>=0.0.0a0
-          - matrix:
-              cuda: "11.*"
-              cuda_suffixed: "true"
-            packages:
-              - pylibcugraph-cu11==25.8.*,>=0.0.0a0
           - {matrix: null, packages: [*pylibcugraph_unsuffixed]}
