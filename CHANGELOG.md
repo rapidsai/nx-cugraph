@@ -1,3 +1,32 @@
+# nx-cugraph 25.06.00 (5 Jun 2025)
+
+## 🐛 Bug Fixes
+
+- Fix update-version.sh ([#124](https://github.com/rapidsai/nx-cugraph/pull/124)) [@raydouglass](https://github.com/raydouglass)
+- Fix edgecase when converting to networkx w/o fallback ([#118](https://github.com/rapidsai/nx-cugraph/pull/118)) [@eriknw](https://github.com/eriknw)
+
+## 📖 Documentation
+
+- Fix Typo in Contributing Guide ([#111](https://github.com/rapidsai/nx-cugraph/pull/111)) [@nv-rliu](https://github.com/nv-rliu)
+
+## 🛠️ Improvements
+
+- use &#39;rapids-init-pip&#39; in wheel CI, other CI changes ([#141](https://github.com/rapidsai/nx-cugraph/pull/141)) [@jameslamb](https://github.com/jameslamb)
+- Finish CUDA 12.9 migration and use branch-25.06 workflows ([#138](https://github.com/rapidsai/nx-cugraph/pull/138)) [@bdice](https://github.com/bdice)
+- Quote head_rev in conda recipes ([#137](https://github.com/rapidsai/nx-cugraph/pull/137)) [@bdice](https://github.com/bdice)
+- Build and test with CUDA 12.9.0 ([#135](https://github.com/rapidsai/nx-cugraph/pull/135)) [@bdice](https://github.com/bdice)
+- Add support for Python 3.13 ([#132](https://github.com/rapidsai/nx-cugraph/pull/132)) [@gforsyth](https://github.com/gforsyth)
+- Branch 25.06 merge 25.04 ([#130](https://github.com/rapidsai/nx-cugraph/pull/130)) [@nv-rliu](https://github.com/nv-rliu)
+- Branch 25.06 merge 25.04 (Trying Again) ([#128](https://github.com/rapidsai/nx-cugraph/pull/128)) [@nv-rliu](https://github.com/nv-rliu)
+- Dispatching `to_numpy_array` ([#127](https://github.com/rapidsai/nx-cugraph/pull/127)) [@nv-rliu](https://github.com/nv-rliu)
+- Download build artifacts from Github for CI ([#122](https://github.com/rapidsai/nx-cugraph/pull/122)) [@VenkateshJaya](https://github.com/VenkateshJaya)
+- feat(rattler): port conda build recipe to rattler build ([#121](https://github.com/rapidsai/nx-cugraph/pull/121)) [@gforsyth](https://github.com/gforsyth)
+- Add `to_scipy_sparse_array` ([#120](https://github.com/rapidsai/nx-cugraph/pull/120)) [@eriknw](https://github.com/eriknw)
+- Add ARM conda environments ([#119](https://github.com/rapidsai/nx-cugraph/pull/119)) [@bdice](https://github.com/bdice)
+- Branch 25.06 merge 25.04 ([#108](https://github.com/rapidsai/nx-cugraph/pull/108)) [@rlratzel](https://github.com/rlratzel)
+- Forward-merge branch-25.04 into branch-25.06 ([#105](https://github.com/rapidsai/nx-cugraph/pull/105)) [@nv-rliu](https://github.com/nv-rliu)
+- Moving wheel builds to specified location and uploading build artifacts to Github ([#104](https://github.com/rapidsai/nx-cugraph/pull/104)) [@VenkateshJaya](https://github.com/VenkateshJaya)
+
 # nx-cugraph 25.04.00 (9 Apr 2025)
 
 ## 🚨 Breaking Changes
