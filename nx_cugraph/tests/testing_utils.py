@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -31,8 +31,14 @@ def assert_graphs_equal(Gnx, Gcg):
         assert sorted(G._node) == sorted(Gnx._node)
         for k in sorted(G._adj):
             print(k, sorted(G._adj[k]), sorted(Gnx._adj[k]))
-        print(nx.to_scipy_sparse_array(G).todense())
-        print(nx.to_scipy_sparse_array(Gnx).todense())
-        print(G.graph)
-        print(Gnx.graph)
+        if len(G) > 0:
+            print(nx.to_scipy_sparse_array(G).todense())
+        else:
+            print(G)
+        if len(Gnx) > 0:
+            print(nx.to_scipy_sparse_array(Gnx).todense())
+        else:
+            print(Gnx)
+        print(f"{G.graph=}")
+        print(f"{Gnx.graph=}")
     assert rv
