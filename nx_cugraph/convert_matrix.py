@@ -10,18 +10,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import cupy as cp
 import networkx as nx
 import numpy as np
 
 from nx_cugraph import _nxver
 
+from .convert import _to_graph
 from .generators._utils import _create_using_class
-from .utils import _cp_iscopied_asarray, index_dtype, networkx_algorithm
+from .utils import (
+    _cp_iscopied_asarray,
+    index_dtype,
+    networkx_algorithm,
+)
 
 __all__ = [
     "from_pandas_edgelist",
     "from_scipy_sparse_array",
+    "to_scipy_sparse_array",
+    "to_numpy_array",
 ]
 
 
@@ -165,6 +173,62 @@ def from_pandas_edgelist(
     return G
 
 
+@networkx_algorithm(version_added="25.06")
+def to_scipy_sparse_array(G, nodelist=None, dtype=None, weight="weight", format="csr"):
+    # Future work: allow this to return a cupyx.scipy.sparse object.
+    # This code is very well covered by networkx tests, and the logic
+    # for raising errors closely matches networkx.
+    import scipy as sp
+
+    G = _to_graph(G, weight, 1, dtype)
+    if G._N == 0:
+        raise nx.NetworkXError("Graph has no nodes or edges")
+
+    is_empty = G.src_indices.size == 0  # Use is_empty to avoid work
+    if nodelist is None:
+        # No reordering necessary
+        nlen = G._N
+        if is_empty:
+            src_indices = dst_indices = edge_array = ()
+        else:
+            src_indices = G.src_indices
+            dst_indices = G.dst_indices
+            mask = None
+    else:
+        nlen = len(nodelist)
+        if nlen == 0:
+            raise nx.NetworkXError("nodelist has no nodes")
+        if nlen != len(set(G.nbunch_iter(nodelist))):
+            for n in nodelist:
+                if n not in G:
+                    raise nx.NetworkXError(f"Node {n} in nodelist is not in G")
+            raise nx.NetworkXError("nodelist contains duplicates.")
+        if is_empty:
+            src_indices = dst_indices = edge_array = ()
+        else:
+            src_indices, dst_indices, mask = G._subgraph_indices(nodelist)
+
+            if src_indices.size == 0:
+                is_empty = True
+                src_indices = dst_indices = edge_array = ()
+
+    if not is_empty:
+        src_indices = cp.asnumpy(src_indices)
+        dst_indices = cp.asnumpy(dst_indices)
+
+        edge_array = G._subgraph_weights(mask, weight, 1)
+        edge_array = cp.asnumpy(edge_array)
+
+    # PERF: convert to desired sparse format on GPU before copying to CPU
+    A = sp.sparse.coo_array(
+        (edge_array, (src_indices, dst_indices)), shape=(nlen, nlen), dtype=dtype
+    )
+    try:
+        return A.asformat(format)
+    except ValueError as exc:
+        raise nx.NetworkXError(f"Unknown sparse matrix format: {format}") from exc
+
+
 @networkx_algorithm(version_added="23.12", fallback=True, create_using_arg=2)
 def from_scipy_sparse_array(
     A, parallel_edges=False, create_using=None, edge_attribute="weight"
@@ -190,3 +254,101 @@ def from_scipy_sparse_array(
     if inplace:
         return create_using._become(G)
     return G
+
+
+@networkx_algorithm(version_added="25.06")
+def to_numpy_array(
+    G,
+    nodelist=None,
+    dtype=None,
+    order=None,
+    multigraph_weight=sum,
+    weight="weight",
+    nonedge=0.0,
+):
+    """MultiGraphs are not yet supported. Only valid CuPy dtypes are supported."""
+    if dtype is None:
+        dtype = np.float64
+    dtype = np.dtype(dtype)
+
+    G = _to_graph(G, weight, 1, dtype)
+
+    if nodelist is not None:
+        N = len(nodelist)
+        # use set to check for nodes not in the graph or duplicate nodes
+        nodelist_as_set = set(nodelist)
+        if nodelist_as_set - set(G):
+            raise nx.NetworkXError(
+                f"Nodes {nodelist_as_set - set(G)} in nodelist is not in G"
+            )
+        if len(nodelist_as_set) < N:
+            raise nx.NetworkXError(f"Nodelist {nodelist} contains duplicates")
+    else:
+        N = G._N
+
+    use_numpy = dtype.names is not None
+    if not use_numpy:
+        # May run out of GPU memory on large graphs
+        try:
+            A = cp.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+        except MemoryError:
+            use_numpy = True
+    if use_numpy:
+        # Most likely will also run out of CPU memory on large graphs
+        A = np.full((N, N), fill_value=nonedge, dtype=dtype, order=order)
+
+    # Case: graph with no nodes
+    if N == 0:
+        return cp.asnumpy(A)
+
+    # assume edge_attrs is None unless other weight value is specified
+    edge_attrs = None
+    if A.dtype.names:
+        if weight is None:
+            edge_attrs = dtype.names
+        else:
+            raise ValueError(
+                "Specifying `weight` not supported for structured dtypes\n."
+                "To create adjacency matrices from structured dtypes,"
+                "use `weight=None`."
+            )
+
+    src_indices, dst_indices, mask = G._subgraph_indices(nodelist)
+
+    if edge_attrs:
+        # TODO could convert this logic into a util function if
+        # more np structured arrays need support in the future
+        edge_array = np.empty(src_indices.size, dtype=dtype)
+        for edge_attr in edge_attrs:
+            if edge_attr in G.edge_values:
+                e_array = G.edge_values[edge_attr]
+                if edge_attr in G.edge_masks:
+                    e_array = cp.where(G.edge_masks[edge_attr], e_array, 1)
+            else:
+                e_array = np.ones(G.src_indices.size, dtype=dtype)
+            edge_array[edge_attr] = cp.asnumpy(e_array)
+    else:
+        edge_array = G._subgraph_weights(mask, weight, 1)
+
+    if use_numpy:
+        src_indices = cp.asnumpy(src_indices)
+        dst_indices = cp.asnumpy(dst_indices)
+        edge_array = cp.asnumpy(edge_array)
+
+    A[src_indices, dst_indices] = edge_array
+
+    return cp.asnumpy(A)
+
+
+@to_numpy_array._can_run
+def _(
+    G,
+    nodelist=None,
+    dtype=None,
+    order=None,
+    multigraph_weight=sum,
+    weight="weight",
+    nonedge=0.0,
+):
+    # TODO handle multigraphs
+    return not G.is_multigraph()

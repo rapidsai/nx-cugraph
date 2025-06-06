@@ -3,18 +3,19 @@
 
 set -eoxu pipefail
 
+source rapids-init-pip
+
 package_name="nx-cugraph"
 python_package_name=${package_name//-/_}
 
-mkdir -p ./dist
 RAPIDS_PY_CUDA_SUFFIX="$(rapids-wheel-ctk-name-gen "${RAPIDS_CUDA_VERSION}")"
 
 # nx-cugraph is a pure wheel, which is part of generating the download path
-RAPIDS_PY_WHEEL_NAME="${package_name}_${RAPIDS_PY_CUDA_SUFFIX}" RAPIDS_PY_WHEEL_PURE="1" rapids-download-wheels-from-s3 ./dist
+NX_CUGRAPH_WHEELHOUSE=$(RAPIDS_PY_WHEEL_NAME="${package_name}_${RAPIDS_PY_CUDA_SUFFIX}" RAPIDS_PY_WHEEL_PURE="1" rapids-download-wheels-from-github python)
 
 # echo to expand wildcard before adding `[extra]` requires for pip
 rapids-pip-retry install \
-    "$(echo ./dist/"${python_package_name}"*.whl)[test]"
+    "$(echo "${NX_CUGRAPH_WHEELHOUSE}"/"${python_package_name}"*.whl)[test]"
 
 # Run smoke tests for aarch64 pull requests
 arch=$(uname -m)

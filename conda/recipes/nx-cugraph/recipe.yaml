@@ -1,0 +1,47 @@
+
+# Copyright (c) 2025, NVIDIA CORPORATION.
+schema_version: 1
+
+context:
+  version: ${{ env.get("RAPIDS_PACKAGE_VERSION") }}
+  minor_version: ${{ (version | split("."))[:2] | join(".") }}
+  date_string: '${{ env.get("RAPIDS_DATE_STRING") }}'
+  py_version: ${{ env.get("RAPIDS_PY_VERSION") }}
+  py_buildstring: ${{ py_version | version_to_buildstring }}
+  head_rev: '${{ git.head_rev(".")[:8] }}'
+
+package:
+  name: nx-cugraph
+  version: ${{ version }}
+
+source:
+  path: ../../..
+
+build:
+  string: py${{ py_buildstring }}_${{ date_string }}_${{ head_rev }}
+  script:
+    content: |
+      ./build.sh nx-cugraph
+
+requirements:
+  host:
+    - pip
+    - python =${{ py_version }}
+    - rapids-build-backend >=0.3.0,<0.4.0.dev0
+    - setuptools
+  run:
+    - cupy >=12.0.0
+    - networkx >=3.2
+    - pylibcugraph =${{ minor_version }}
+    - python
+
+tests:
+  - python:
+      imports:
+        - nx_cugraph
+      pip_check: false
+
+about:
+  homepage: ${{ load_from_file("pyproject.toml").project.urls.Homepage }}
+  license: ${{ load_from_file("pyproject.toml").project.license.text }}
+  summary: ${{ load_from_file("pyproject.toml").project.description }}
