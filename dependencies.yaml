@@ -119,7 +119,7 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - nx-cugraph==25.6.*,>=0.0.0a0
+          - nx-cugraph==25.6.*
   py_version:
     specific:
       - output_types: [conda]
@@ -204,7 +204,7 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - &cudf_unsuffixed cudf==25.6.*,>=0.0.0a0
+          - &cudf_unsuffixed cudf==25.6.*
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -217,18 +217,18 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu12==25.6.*,>=0.0.0a0
+              - cudf-cu12==25.6.*
           - matrix:
               cuda: "11.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu11==25.6.*,>=0.0.0a0
+              - cudf-cu11==25.6.*
           - {matrix: null, packages: [*cudf_unsuffixed]}
   depends_on_pylibcugraph:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==25.6.*,>=0.0.0a0
+          - &pylibcugraph_unsuffixed pylibcugraph==25.6.*
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -241,10 +241,10 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu12==25.6.*,>=0.0.0a0
+              - pylibcugraph-cu12==25.6.*
           - matrix:
               cuda: "11.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu11==25.6.*,>=0.0.0a0
+              - pylibcugraph-cu11==25.6.*
           - {matrix: null, packages: [*pylibcugraph_unsuffixed]}

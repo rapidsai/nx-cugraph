@@ -7,13 +7,13 @@ channels:
 - nvidia
 dependencies:
 - cuda-version=12.8
-- cudf==25.6.*,>=0.0.0a0
+- cudf==25.6.*
 - cupy>=12.0.0
 - networkx>=3.2
 - numpy>=1.23,<3.0a0
 - pandas
 - pre-commit
-- pylibcugraph==25.6.*,>=0.0.0a0
+- pylibcugraph==25.6.*
 - pytest
 - pytest-benchmark
 - pytest-cov
