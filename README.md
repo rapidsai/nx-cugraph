@@ -3,12 +3,17 @@
 ## Description
 [nx-cugraph](https://rapids.ai/nx-cugraph) is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run algorithms with zero code change GPU acceleration.
 
+## 🔍 Try it in Google Colab!
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rapidsai/nx-cugraph/blob/HEAD/notebooks/demo/nx_cugraph_demo_2506.ipynb)
+
+---
+
 - [System Requirements](#system-requirements)
 - [Installation](#installation)
 - [Enabling nx-cugraph](#enabling-nx-cugraph)
 - [Supported Algorithms](#supported-algorithms)
 
----
 
 ## System Requirements
 
