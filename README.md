@@ -153,8 +153,8 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
  ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.cluster.transitivity.html#networkx.algorithms.cluster.transitivity">transitivity</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.cluster.triangles.html#networkx.algorithms.cluster.triangles">triangles</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/community.html#module-networkx.algorithms.community">community</a>
- ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/community.html#module-networkx.algorithms.community.leiden">leiden</a>
- │   └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.community.leiden.leiden_communities.html#networkx.algorithms.community.leiden.leiden_communities">leiden_communities</a>
+ ├─ leiden
+ │   └─ leiden_communities
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/community.html#module-networkx.algorithms.community.louvain">louvain</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.community.louvain.louvain_communities.html#networkx.algorithms.community.louvain.louvain_communities">louvain_communities</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/component.html#module-networkx.algorithms.components">components</a>
@@ -223,7 +223,7 @@ Below is the list of algorithms that are currently supported in nx-cugraph.
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path">single_source_dijkstra_path</a>
      └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path_length.html#networkx.algorithms.shortest_paths.weighted.single_source_dijkstra_path_length">single_source_dijkstra_path_length</a>
 <a href="https://networkx.org/documentation/stable/reference/algorithms/tournament.html#module-networkx.algorithms.tournament">tournament</a>
- └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tournament.tournament_matrix.html#networkx.algorithms.tournament.tournament_matrix">tournament_matrix</a>
+ └─ tournament_matrix
 <a href="https://networkx.org/documentation/stable/reference/algorithms/traversal.html">traversal</a>
  └─ <a href="https://networkx.org/documentation/stable/reference/algorithms/traversal.html#module-networkx.algorithms.traversal.breadth_first_search">breadth_first_search</a>
      ├─ <a href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.traversal.breadth_first_search.bfs_edges.html#networkx.algorithms.traversal.breadth_first_search.bfs_edges">bfs_edges</a>
