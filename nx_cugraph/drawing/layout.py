@@ -193,6 +193,7 @@ def _(
     dim=2,
     store_pos_as=None,
     outbound_attraction_distribution=True,
+    dtype=None,
 ):
     if dim != 2:
         return f"dim={dim} not supported; only dim=2 is currently supported"

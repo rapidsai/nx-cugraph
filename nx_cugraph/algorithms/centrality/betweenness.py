@@ -43,7 +43,11 @@ def betweenness_centrality(
         )
     random_state = create_py_random_state(seed)
     G = _to_graph(G, weight)
-    if k is not None and k < G._N:
+    if k is not None:
+        if k == 0:
+            # NOTE: this error is to match NetworkX behavior, although PLC allows k=0
+            # as an arg
+            raise ZeroDivisionError("division by zero")
         nodes = cp.array(random_state.sample(range(G._N), k), index_dtype)
     else:
         nodes = None
