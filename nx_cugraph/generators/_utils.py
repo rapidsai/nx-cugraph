@@ -78,16 +78,15 @@ def _common_small_graph(
                 cp.ones(1, dtype=index_dtype),
                 id_to_key=nodes,
             )
-            1 / 0
         else:
             [self_loop] = self_loops
             index = nodes.index(self_loop)
             if index == 0:
-                src = cp.array([0, 0, 1], dtype=index_dtype)  # [[1, 1],
-                dst = cp.array([0, 1, 0], dtype=index_dtype)  #  [1, 0]]
+                src = cp.array([0, 0, 1], dtype=index_dtype)
+                dst = cp.array([0, 1, 0], dtype=index_dtype)
             else:
-                src = cp.array([0, 1, 1], dtype=index_dtype)  # [[0, 1],
-                dst = cp.array([1, 0, 1], dtype=index_dtype)  #  [1, 1]]
+                src = cp.array([0, 1, 1], dtype=index_dtype)
+                dst = cp.array([1, 0, 1], dtype=index_dtype)
             G = graph_class.from_coo(n, src, dst, id_to_key=nodes)
     elif n < 2:
         G = graph_class.from_coo(

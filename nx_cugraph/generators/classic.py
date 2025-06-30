@@ -160,8 +160,7 @@ def cycle_graph(n, create_using=None):
         dst_indices = cp.zeros(1, index_dtype)
     elif n == 2 and graph_class.is_multigraph() and not graph_class.is_directed():
         # This is kind of a peculiar edge case
-        if self_loops:
-            1 / 0
+        # if self_loops:
         src_indices = cp.array([0, 0, 1, 1], index_dtype)
         dst_indices = cp.array([1, 1, 0, 0], index_dtype)
     elif n < 3:
