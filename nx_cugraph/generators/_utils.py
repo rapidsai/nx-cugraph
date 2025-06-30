@@ -150,7 +150,6 @@ def _create_using_class(create_using, *, default=nx.Graph):
 
 
 def _number_and_nodes(n_and_nodes, *, drop_duplicates=False, return_selfloops=False):
-    breakpoint()
     n, nodes = n_and_nodes
     try:
         n = op.index(n)

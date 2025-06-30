@@ -292,19 +292,20 @@ def null_graph(create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def path_graph(num, create_using=None):
-    breakpoint()
-    num, nodes, self_loops = _number_and_nodes(
-        num, return_selfloops=True
-    )
-    if nodes is not None:
-        nodelist = sorted(set(nodes))
+    num, nodes, self_loops = _number_and_nodes(num, return_selfloops=True)
+
+    if nodes is None:
+        nodes = list(range(num))
+        orig_nodes = nodes
     else:
-        nodelist = nodes
+        # if specified, nodes could be in any given order
+        orig_nodes = nodes
+        nodes = sorted(set(nodes))
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         src_indices = cp.arange(num - 1, dtype=index_dtype)
-        mapping = dict(zip(nodelist, range(len(nodelist))))
-        dst_ids = [mapping[i] for i in nodes]
+        mapping = dict(zip(nodes, range(len(nodes))))
+        dst_ids = [mapping[i] for i in orig_nodes]
         # disregard the first item when counting destination nodes
         dst_indices = cp.asarray(dst_ids[1:], dtype=index_dtype)
     elif num < 3:
@@ -316,8 +317,8 @@ def path_graph(num, create_using=None):
         dst_indices = (
             cp.arange(num, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
         ).ravel()[1:-1]
-    
-    G = graph_class.from_coo(len(nodelist), src_indices, dst_indices, id_to_key=nodelist)
+
+    G = graph_class.from_coo(len(nodes), src_indices, dst_indices, id_to_key=nodes)
     if inplace:
         return create_using._become(G)
     return G
