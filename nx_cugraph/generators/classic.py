@@ -291,24 +291,33 @@ def null_graph(create_using=None):
 
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
-def path_graph(n, create_using=None):
-    n, nodes, self_loops = _number_and_nodes(
-        n, drop_duplicates=True, return_selfloops=True
+def path_graph(num, create_using=None):
+    breakpoint()
+    num, nodes, self_loops = _number_and_nodes(
+        num, return_selfloops=True
     )
+    if nodes is not None:
+        nodelist = sorted(set(nodes))
+    else:
+        nodelist = nodes
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
-        src_indices = cp.arange(n - 1, dtype=index_dtype)
-        dst_indices = cp.arange(1, n, dtype=index_dtype)
-    elif n < 3:
+        src_indices = cp.arange(num - 1, dtype=index_dtype)
+        mapping = dict(zip(nodelist, range(len(nodelist))))
+        dst_ids = [mapping[i] for i in nodes]
+        # disregard the first item when counting destination nodes
+        dst_indices = cp.asarray(dst_ids[1:], dtype=index_dtype)
+    elif num < 3:
         return _common_small_graph(
-            n, nodes, create_using, self_loops=self_loops if n == 2 else None
+            num, nodes, create_using, self_loops=self_loops if num == 2 else None
         )
     else:
-        src_indices = cp.arange(1, 2 * n - 1, dtype=index_dtype) // 2
+        src_indices = cp.arange(1, 2 * num - 1, dtype=index_dtype) // 2
         dst_indices = (
-            cp.arange(n, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
+            cp.arange(num, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
         ).ravel()[1:-1]
-    G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
+    
+    G = graph_class.from_coo(len(nodelist), src_indices, dst_indices, id_to_key=nodelist)
     if inplace:
         return create_using._become(G)
     return G
