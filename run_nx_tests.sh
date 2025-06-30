@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 #
 # NETWORKX_TEST_BACKEND=cugraph
 #   Replaces NETWORKX_GRAPH_CONVERT for networkx versions >=3.2
