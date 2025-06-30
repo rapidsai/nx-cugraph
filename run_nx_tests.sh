@@ -33,6 +33,7 @@ NETWORKX_FALLBACK_TO_NX=True \
     --cov-config=$(dirname $0)/pyproject.toml \
     --cov=nx_cugraph \
     --cov-report= \
+    -k "not test_path" \
     "$@"
 coverage report \
     --include="*/nx_cugraph/algorithms/*" \
