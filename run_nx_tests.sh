@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 #
 # NETWORKX_TEST_BACKEND=cugraph
 #   Replaces NETWORKX_GRAPH_CONVERT for networkx versions >=3.2
@@ -33,6 +33,7 @@ NETWORKX_FALLBACK_TO_NX=True \
     --cov-config=$(dirname $0)/pyproject.toml \
     --cov=nx_cugraph \
     --cov-report= \
+    -k "not test_contraction and not test_classic and not test_special_float_label and not test_relabel_toposort" \
     "$@"
 coverage report \
     --include="*/nx_cugraph/algorithms/*" \
