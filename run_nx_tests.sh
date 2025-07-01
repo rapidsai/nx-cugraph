@@ -29,8 +29,8 @@ NETWORKX_TEST_BACKEND=cugraph \
 NETWORKX_FALLBACK_TO_NX=True \
     pytest \
     --pyargs networkx \
-    --config-file=$(dirname $0)/pyproject.toml \
-    --cov-config=$(dirname $0)/pyproject.toml \
+    --config-file="$(dirname "$0")"/pyproject.toml \
+    --cov-config="$(dirname "$0")"/pyproject.toml \
     --cov=nx_cugraph \
     --cov-report= \
     -k "not test_contraction and not test_classic and not test_special_float_label and not test_relabel_toposort" \
@@ -39,4 +39,4 @@ coverage report \
     --include="*/nx_cugraph/algorithms/*" \
     --omit=__init__.py \
     --show-missing \
-    --rcfile=$(dirname $0)/pyproject.toml
+    --rcfile="$(dirname "$0")"/pyproject.toml
