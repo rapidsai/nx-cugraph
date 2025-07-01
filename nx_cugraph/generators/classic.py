@@ -290,11 +290,11 @@ def null_graph(create_using=None):
 
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
-def path_graph(num, create_using=None):
-    num, nodes, self_loops = _number_and_nodes(num, return_selfloops=True)
+def path_graph(n, create_using=None):
+    n, nodes, self_loops = _number_and_nodes(n, return_selfloops=True)
 
     if nodes is None:
-        nodes = list(range(num))
+        nodes = list(range(n))
         orig_nodes = nodes
     else:
         # if specified, nodes could be in any given order
@@ -302,19 +302,19 @@ def path_graph(num, create_using=None):
         nodes = sorted(set(nodes))
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
-        src_indices = cp.arange(num - 1, dtype=index_dtype)
+        src_indices = cp.arange(n - 1, dtype=index_dtype)
         mapping = dict(zip(nodes, range(len(nodes))))
         dst_ids = [mapping[i] for i in orig_nodes]
         # disregard the first item when counting destination nodes
         dst_indices = cp.asarray(dst_ids[1:], dtype=index_dtype)
-    elif num < 3:
+    elif n < 3:
         return _common_small_graph(
-            num, nodes, create_using, self_loops=self_loops if num == 2 else None
+            n, nodes, create_using, self_loops=self_loops if n == 2 else None
         )
     else:
-        src_indices = cp.arange(1, 2 * num - 1, dtype=index_dtype) // 2
+        src_indices = cp.arange(1, 2 * n - 1, dtype=index_dtype) // 2
         dst_indices = (
-            cp.arange(num, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
+            cp.arange(n, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
         ).ravel()[1:-1]
 
     G = graph_class.from_coo(len(nodes), src_indices, dst_indices, id_to_key=nodes)
