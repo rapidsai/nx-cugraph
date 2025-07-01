@@ -4,7 +4,6 @@ channels:
 - rapidsai
 - rapidsai-nightly
 - conda-forge
-- nvidia
 dependencies:
 - cuda-version=12.9
 - cudf==25.8.*,>=0.0.0a0
