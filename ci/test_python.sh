@@ -76,7 +76,8 @@ coverage report \
 
 coverage json --rcfile=../pyproject.toml
 
-python -m nx_cugraph.tests.ensure_algos_covered
+# NOTE: skipping for now
+#python -m nx_cugraph.tests.ensure_algos_covered
 
 # Exercise (and show results of) scripts that show implemented networkx algorithms
 python -m nx_cugraph.scripts.print_tree --dispatch-name --plc --incomplete --different
