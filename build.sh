@@ -16,9 +16,7 @@ ARGS=$*
 
 # NOTE: ensure all dir changes are relative to the location of this
 # script, and that this script resides in the repo dir!
-REPODIR=$(cd $(dirname $0); pwd)
-
-RAPIDS_VERSION="$(sed -E -e 's/^([0-9]{2})\.([0-9]{2})\.([0-9]{2}).*$/\1.\2/' VERSION)"
+REPODIR=$(cd "$(dirname "$0")"; pwd)
 
 # Valid args to this script (all possible targets and options) - only one per line
 VALIDARGS="
@@ -26,9 +24,6 @@ VALIDARGS="
    uninstall
    nx-cugraph
    all
-   -v
-   -g
-   -n
    --pydevelop
    --clean
    -h
@@ -42,9 +37,6 @@ HELP="$0 [<target> ...] [<flag> ...]
    nx-cugraph                 - build the nx-cugraph Python package
    all                        - build everything
  and <flag> is:
-   -v                         - verbose build mode
-   -g                         - build for debug
-   -n                         - do not install after a successful build (does not affect Python packages)
    --pydevelop                - install the Python packages in editable mode
    --clean                    - clean an individual target (note: to do a complete rebuild, use the clean target described above)
    -h                         - print this text
@@ -53,27 +45,29 @@ HELP="$0 [<target> ...] [<flag> ...]
 "
 
 # Set defaults for vars modified by flags to this script
-VERBOSE_FLAG=""
-BUILD_ALL_GPU_ARCH=0
-PYTHON_ARGS_FOR_INSTALL="-m pip install --no-build-isolation --no-deps --config-settings rapidsai.disable-cuda=true"
+PYTHON_ARGS_FOR_INSTALL=("-m" "pip" "install"
+                         "--no-build-isolation"
+                         "--no-deps"
+                         "--config-settings"
+                         "rapidsai.disable-cuda=true")
 
 function hasArg {
-    (( ${NUMARGS} != 0 )) && (echo " ${ARGS} " | grep -q " $1 ")
+    (( NUMARGS != 0 )) && (echo " ${ARGS} " | grep -q " $1 ")
 }
 
 function buildDefault {
-    (( ${NUMARGS} == 0 )) || !(echo " ${ARGS} " | grep -q " [^-][a-zA-Z0-9\_\-]\+ ")
+    (( NUMARGS == 0 )) || ! (echo " ${ARGS} " | grep -q " [^-][a-zA-Z0-9\_\-]\+ ")
 }
 
 function cleanPythonDir {
-    pushd $1 > /dev/null
-    rm -rf dist dask-worker-space *.egg-info
-    find . -type d -name __pycache__ -print | xargs rm -rf
-    find . -type d -name build -print | xargs rm -rf
-    find . -type d -name dist -print | xargs rm -rf
+    pushd "$1" > /dev/null
+    rm -rf dist dask-worker-space ./*.egg-info
+    find . -type d -name __pycache__ -print0 | xargs -0 rm -rf
+    find . -type d -name build -print0 | xargs -0 rm -rf
+    find . -type d -name dist -print0 | xargs -0 rm -rf
     find . -type f -name "*.cpp" -delete
     find . -type f -name "*.cpython*.so" -delete
-    find . -type d -name _external_repositories -print | xargs rm -rf
+    find . -type d -name _external_repositories -print0 | xargs -0 rm -rf
     popd > /dev/null
 }
 
@@ -83,7 +77,7 @@ if hasArg -h || hasArg --help; then
 fi
 
 # Check for valid usage
-if (( ${NUMARGS} != 0 )); then
+if (( NUMARGS != 0 )); then
     for a in ${ARGS}; do
         if ! (echo "${VALIDARGS}" | grep -q "^[[:blank:]]*${a}$"); then
             echo "Invalid option: ${a}"
@@ -92,19 +86,8 @@ if (( ${NUMARGS} != 0 )); then
     done
 fi
 
-# Process flags
-if hasArg -v; then
-    VERBOSE_FLAG="-v"
-    CMAKE_VERBOSE_OPTION="--log-level=VERBOSE"
-fi
-if hasArg -g; then
-    BUILD_TYPE=Debug
-fi
-if hasArg -n; then
-    INSTALL_TARGET=""
-fi
 if hasArg --pydevelop; then
-    PYTHON_ARGS_FOR_INSTALL="${PYTHON_ARGS_FOR_INSTALL} -e"
+    PYTHON_ARGS_FOR_INSTALL+=("-e")
 fi
 
 # If clean or uninstall targets given, run them prior to any other steps
@@ -120,7 +103,7 @@ if hasArg clean; then
     set +e
     # remove artifacts generated inplace
     if [[ -d ${REPODIR}/python ]]; then
-        cleanPythonDir ${REPODIR}/python
+        cleanPythonDir "${REPODIR}"/python
     fi
 
     # If the dirs to clean are mounted dirs in a container, the contents should
@@ -128,9 +111,9 @@ if hasArg clean; then
     # contents but leaves the dirs, the rmdir attempts to remove the dirs but
     # can fail safely.
     for bd in ${BUILD_DIRS}; do
-        if [ -d ${bd} ]; then
-            find ${bd} -mindepth 1 -delete
-            rmdir ${bd} || true
+        if [ -d "${bd}" ]; then
+            find "${bd}" -mindepth 1 -delete
+            rmdir "${bd}" || true
         fi
     done
     # Go back to failing on first error for all other operations
@@ -140,8 +123,8 @@ fi
 # Build and install the nx-cugraph Python package
 if buildDefault || hasArg nx-cugraph || hasArg all; then
     if hasArg --clean; then
-        cleanPythonDir ${REPODIR}
+        cleanPythonDir "${REPODIR}"
     else
-        python ${PYTHON_ARGS_FOR_INSTALL} ${REPODIR}
+        python "${PYTHON_ARGS_FOR_INSTALL[@]}" "${REPODIR}"
     fi
 fi
