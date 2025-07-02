@@ -89,13 +89,29 @@ def circular_ladder_graph(n, create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def complete_graph(n, create_using=None):
-    n, nodes, self_loops = _number_and_nodes(
-        n, drop_duplicates=True, return_selfloops=True
-    )
+    n, nodes, self_loops = _number_and_nodes(n, return_selfloops=True)
+    # TODO: this behavior is also used in path_graph. perhaps a util fxn can
+    # be created if more functions begin to rely on this
+    if nodes is None:
+        nodes = list(range(n))
+        # orig_nodes = nodes
+    else:
+        # if specified, nodes could be in any given order
+        # orig_nodes = nodes
+        nodes = sorted(set(nodes))
     if n < 3:
         return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
     graph_class, inplace = _create_using_class(create_using)
+
+    n = len(nodes)
     src_indices, dst_indices = _complete_graph_indices(n)
+
+    if self_loops is not None:
+        mapping = dict(zip(nodes, range(len(nodes))))
+        self_loop_indcs = cp.asarray([mapping[i] for i in self_loops])
+        src_indices = cp.append(src_indices, self_loop_indcs)
+        dst_indices = cp.append(dst_indices, self_loop_indcs)
+
     G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
     if inplace:
         return create_using._become(G)

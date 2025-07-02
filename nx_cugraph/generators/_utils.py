@@ -41,11 +41,13 @@ def _ensure_nonnegative_int(n):
 
 
 def _complete_graph_indices(n):
+    # returns complete adj matrix for graph with N nodes
     all_indices = cp.indices((n, n), dtype=index_dtype)
     src_indices = all_indices[0].ravel()
     dst_indices = all_indices[1].ravel()
     del all_indices
     mask = src_indices != dst_indices
+
     return (src_indices[mask], dst_indices[mask])
 
 
@@ -164,7 +166,6 @@ def _number_and_nodes(n_and_nodes, *, drop_duplicates=False, return_selfloops=Fa
         if return_selfloops:
             return (n, None, None)
         return (n, None)
-
     if return_selfloops:
         counter = Counter(nodes)
         if len(counter) < n:
