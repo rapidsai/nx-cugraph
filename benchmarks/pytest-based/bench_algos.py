@@ -70,8 +70,11 @@ def setup_module(module):
     operations to happen outside of benchmarks (if GPU is available).
     """
     if cp.cuda.is_available():
+        print("CUDA is available, running one-time code to force initialization.")
         G = nx.karate_club_graph()
         nxcg.from_networkx(G)
+    else:
+        print("CUDA is not available, skipping one-time code to force initialization.")
 
 
 # Test IDs are generated using the lambda assigned to the ids arg to provide an
