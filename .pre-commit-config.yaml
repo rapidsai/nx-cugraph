@@ -83,7 +83,7 @@ repos:
         # Don't have strict linting for miscellaneous code
         args: [--extend-exclude, "benchmarks/,ci/,notebooks/"]
   - repo: https://github.com/rapidsai/dependency-file-generator
-    rev: v1.18.1
+    rev: v1.19.0
     hooks:
         - id: rapids-dependency-file-generator
           args: ["--clean"]
@@ -139,8 +139,6 @@ repos:
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
-        args: ["--severity=warning"]
-        files: ^ci/
   - repo: meta
     hooks:
       - id: check-hooks-apply
