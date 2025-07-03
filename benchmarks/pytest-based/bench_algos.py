@@ -14,6 +14,7 @@
 import random
 from collections.abc import Mapping
 
+import cupy as cp
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -66,10 +67,11 @@ backend_param_values = ["cugraph", "cugraph-preconverted", None]
 def setup_module(module):
     """
     Trivial conversion call to force various one-time CUDA initialization
-    operations to happen outside of benchmarks.
+    operations to happen outside of benchmarks (if GPU is available).
     """
-    G = nx.karate_club_graph()
-    nxcg.from_networkx(G)
+    if cp.cuda.is_available():
+        G = nx.karate_club_graph()
+        nxcg.from_networkx(G)
 
 
 # Test IDs are generated using the lambda assigned to the ids arg to provide an
