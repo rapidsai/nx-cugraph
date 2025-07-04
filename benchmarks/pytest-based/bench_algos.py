@@ -74,6 +74,7 @@ def setup_module(module):
         has_cuda_gpu = cp.cuda.is_available()
     except p.cuda.runtime.CUDARuntimeError:
         # Treat errors as no GPU available.
+        # xref: https://github.com/cupy/cupy/issues/9091
         pass
 
     if has_cuda_gpu:
