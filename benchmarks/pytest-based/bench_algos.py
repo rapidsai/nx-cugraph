@@ -69,7 +69,14 @@ def setup_module(module):
     Trivial conversion call to force various one-time CUDA initialization
     operations to happen outside of benchmarks (if GPU is available).
     """
-    if cp.is_available():
+    has_cuda_gpu = False
+    try:
+        has_cuda_gpu = cp.cuda.is_available()
+    except p.cuda.runtime.CUDARuntimeError:
+        # Treat errors as no GPU available.
+        pass
+
+    if has_cuda_gpu:
         print("CUDA is available, running one-time code to force initialization.")
         G = nx.karate_club_graph()
         nxcg.from_networkx(G)
