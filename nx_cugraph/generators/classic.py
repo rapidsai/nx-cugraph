@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import itertools
+from collections import OrderedDict
 from numbers import Integral
 
 import cupy as cp
@@ -312,9 +313,9 @@ def path_graph(n, create_using=None):
         nodes = list(range(n))
         orig_nodes = nodes
     else:
-        # if specified, nodes could be in any given order
         orig_nodes = nodes
-        nodes = set(nodes)
+        # remove duplicates while preserving order
+        nodes = list(OrderedDict.fromkeys(nodes))
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         src_indices = cp.arange(n - 1, dtype=index_dtype)
