@@ -86,7 +86,15 @@ class BackendInterface:
         no_object_dtype_for_edges = (
             "Edges don't support object dtype (lists, strings, etc.)"
         )
-
+        unsupported_node_attr_for_convert = (
+            "cannot convert unsupported node attribute, strict graph compare fails"
+        )
+        fails_strict_compare_with_nan_inf = (
+            "strict compare fails when nan/inf are present"
+        )
+        undirected_graph_edges_out_of_order = (
+            "undirected graph edges valid but out of order"
+        )
         xfail = {
             # This is removed while strongly_connected_components() is not
             # dispatchable. See algorithms/components/strongly_connected.py for
@@ -117,6 +125,35 @@ class BackendInterface:
                 "test_gml.py:"
                 "TestPropertyLists.test_reading_graph_with_single_element_list_property"
             ): tuple_elements_preferred,
+            key("test_contraction.py:test_path"): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_path__partition_provided_as_dict_of_lists"
+            ): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_path__partition_provided_as_dict_of_tuples"
+            ): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_path__partition_provided_as_dict_of_sets"
+            ): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_directed_path"
+            ): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_weighted_path"
+            ): unsupported_node_attr_for_convert,
+            key("test_contraction.py:test_barbell"): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_barbell_plus"
+            ): unsupported_node_attr_for_convert,
+            key(
+                "test_contraction.py:test_blockmodel"
+            ): unsupported_node_attr_for_convert,
+            key(
+                "test_gml.py:TestGraph.test_special_float_label"
+            ): fails_strict_compare_with_nan_inf,
+            key(
+                "test_relabel.py:TestRelabel.test_relabel_toposort"
+            ): undirected_graph_edges_out_of_order,
         }
         if not fallback:
             xfail.update(

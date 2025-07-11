@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import itertools
-from collections import OrderedDict
 from numbers import Integral
 
 import cupy as cp
@@ -91,6 +90,22 @@ def circular_ladder_graph(n, create_using=None):
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def complete_graph(n, create_using=None):
     n, nodes, self_loops = _number_and_nodes(n, return_selfloops=True)
+
+    # For input n="abcb", create_using=nx.MultiGraph,
+    # NX returns:
+    # MultiEdgeDataView([('a', 'b'), ('a', 'b'), ('a', 'c'),
+    #                    ('b', 'c'), ('b', 'c'), ('b', 'b')])
+    # This code returns:
+    # MultiEdgeDataView([('a', 'b'), ('a', 'c'), ('b', 'c'),
+    #                    ('b', 'b')])
+    if (self_loops is not None) and (
+        create_using
+        in (nx.MultiGraph, nx.MultiDiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph)
+    ):
+        raise NotImplementedError(
+            "MultiGraph types not supported when self loops present"
+        )
+
     # TODO: this behavior is also used in path_graph. perhaps a util fxn can
     # be created if more functions begin to rely on this
     if nodes is None:
@@ -171,6 +186,10 @@ def cycle_graph(n, create_using=None):
     n, nodes, self_loops = _number_and_nodes(
         n, drop_duplicates=True, return_selfloops=True
     )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("self loops are not supported")
+
     graph_class, inplace = _create_using_class(create_using)
     if n == 1:
         src_indices = cp.zeros(1, index_dtype)
@@ -308,19 +327,21 @@ def null_graph(create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def path_graph(n, create_using=None):
-    n, nodes, self_loops = _number_and_nodes(n, return_selfloops=True)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("self loops are not supported")
+
     if nodes is None:
         nodes = list(range(n))
-        orig_nodes = nodes
-    else:
-        orig_nodes = nodes
-        # remove duplicates while preserving order
-        nodes = list(OrderedDict.fromkeys(nodes))
+
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         src_indices = cp.arange(n - 1, dtype=index_dtype)
         mapping = dict(zip(nodes, range(len(nodes))))
-        dst_ids = [mapping[i] for i in orig_nodes]
+        dst_ids = [mapping[i] for i in nodes]
         # disregard the first item when counting destination nodes
         dst_indices = cp.asarray(dst_ids[1:], dtype=index_dtype)
     elif n < 3:
@@ -345,6 +366,10 @@ def star_graph(n, create_using=None):
     n, nodes, self_loops = _number_and_nodes(
         n, drop_duplicates=True, return_selfloops=True
     )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("self loops are not supported")
+
     # star_graph behaves differently whether the input was an int or iterable
     if isinstance(orig_n, Integral):
         if nodes is not None:
@@ -430,6 +455,10 @@ def wheel_graph(n, create_using=None):
     n, nodes, self_loops = _number_and_nodes(
         n, drop_duplicates=True, return_selfloops=True
     )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("self loops are not supported")
+
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
