@@ -110,10 +110,8 @@ def complete_graph(n, create_using=None):
     # be created if more functions begin to rely on this
     if nodes is None:
         nodes = list(range(n))
-        # orig_nodes = nodes
     else:
         # if specified, nodes could be in any given order
-        # orig_nodes = nodes
         nodes = sorted(set(nodes))
     if n < 3:
         return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
