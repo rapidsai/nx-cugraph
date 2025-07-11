@@ -103,7 +103,7 @@ def complete_graph(n, create_using=None):
         in (nx.MultiGraph, nx.MultiDiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph)
     ):
         raise NotImplementedError(
-            "MultiGraph types not supported when self loops present"
+            "MultiGraph types not supported when cycles/repeated nodes present"
         )
 
     # TODO: this behavior is also used in path_graph. perhaps a util fxn can
@@ -188,7 +188,7 @@ def cycle_graph(n, create_using=None):
     )
     # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
     if self_loops is not None:
-        raise NotImplementedError("self loops are not supported")
+        raise NotImplementedError("cycles/repeated nodes are not supported")
 
     graph_class, inplace = _create_using_class(create_using)
     if n == 1:
@@ -332,7 +332,7 @@ def path_graph(n, create_using=None):
     )
     # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
     if self_loops is not None:
-        raise NotImplementedError("self loops are not supported")
+        raise NotImplementedError("cycles/repeated nodes are not supported")
 
     if nodes is None:
         nodes = list(range(n))
@@ -368,7 +368,7 @@ def star_graph(n, create_using=None):
     )
     # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
     if self_loops is not None:
-        raise NotImplementedError("self loops are not supported")
+        raise NotImplementedError("cycles/repeated nodes are not supported")
 
     # star_graph behaves differently whether the input was an int or iterable
     if isinstance(orig_n, Integral):
@@ -457,7 +457,7 @@ def wheel_graph(n, create_using=None):
     )
     # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
     if self_loops is not None:
-        raise NotImplementedError("self loops are not supported")
+        raise NotImplementedError("cycles/repeated nodes are not supported")
 
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
