@@ -513,6 +513,20 @@ def from_networkx(
                 # Someday we'll let the user choose np or cp, and support edge values.
                 if dtype is None:
                     vals = list(iter_values)
+                    # vals containing NX Graph objects can be added to the resulting
+                    # NumPy array due to the Graph also being a sequence object (a
+                    # Graph with nodes 22 and 33 will be an entry [22, 33] in the
+                    # resulting NumPy array). This is not the expected node attribute,
+                    # so this case is not supported.
+                    if any(
+                        isinstance(
+                            v, (nx.Graph, nx.DiGraph, nx.MultiGraph, nx.MultiDiGraph)
+                        )
+                        for v in vals
+                    ):
+                        raise NotImplementedError(
+                            "networkx Graph objects are not supported node attributes"
+                        )
                     try:
                         node_value = np.array(vals)
                     except ValueError:

@@ -86,7 +86,6 @@ class BackendInterface:
         no_object_dtype_for_edges = (
             "Edges don't support object dtype (lists, strings, etc.)"
         )
-
         xfail = {
             # This is removed while strongly_connected_components() is not
             # dispatchable. See algorithms/components/strongly_connected.py for
@@ -313,6 +312,10 @@ class BackendInterface:
             xfail[key("test_pylab.py:test_return_types")] = "Ephemeral NetworkX bug"
 
         too_slow = "Too slow to run"
+        fails_strict_compare_with_nan_inf = "Fails strict compare with nan/inf"
+        undirected_graph_edges_out_of_order = (
+            "Undirected graph edges may be out of order"
+        )
         skip = {
             key("test_tree_isomorphism.py:test_positive"): too_slow,
             key("test_tree_isomorphism.py:test_negative"): too_slow,
@@ -349,6 +352,12 @@ class BackendInterface:
                 "test_vf2pp_helpers.py:TestNodeOrdering."
                 "test_matching_order_all_branches"
             ): too_slow,
+            key(
+                "test_gml.py:TestGraph.test_special_float_label"
+            ): fails_strict_compare_with_nan_inf,
+            key(
+                "test_relabel.py:TestRelabel.test_relabel_toposort"
+            ): undirected_graph_edges_out_of_order,
         }
         # These were added in NetworkX 3.5
         for i in range(8, 12):
