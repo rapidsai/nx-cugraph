@@ -18,12 +18,11 @@
 ## System Requirements
 
  * **GPU:** NVIDIA Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
-   * Pascal GPU support was [removed in 24.02](https://docs.rapids.ai/notices/rsn0034/). Compute capability 7.0+ is required for RAPIDS 24.02 and later.
- * **CUDA Version:** 11.4 - 11.8 or 12.0 - 12.5
- * **Python Version:** 3.10, 3.11, or 3.12
- * **NetworkX Version:** minimum 3.2 (version 3.4 or higher recommended)
+ * **CUDA Version:** 12.0 - 12.9
+ * **Python Version:** 3.10 - 3.13
+ * **NetworkX Version:** minimum 3.2 (version 3.5 or higher recommended)
 
-Note: nx-cugraph is supported only on Linux, and with Python versions 3.10 and later.
+Note: nx-cugraph is supported only on Linux
 
 See [RAPIDS System Requirements](https://docs.rapids.ai/install#system-req) for detailed information on OS and Versions.
 
@@ -48,19 +47,18 @@ conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
 
 nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index.
 
-#### For CUDA 11.x:
+#### For CUDA 12.x:
 
 Latest nightly version
 ```
-python -m pip install nx-cugraph-cu11 --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
+python -m pip install nx-cugraph-cu12 --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
 ```
 
 Latest stable version
 ```
-python -m pip install nx-cugraph-cu11 --extra-index-url https://pypi.nvidia.com
+python -m pip install nx-cugraph-cu12 --extra-index-url https://pypi.nvidia.com
 ```
 Notes:
- * The pip example above installs for CUDA 11. To install for CUDA 12, replace `-cu11` with `-cu12`
  * Try out the [RAPIDS Install Selector Tool](https://docs.rapids.ai/install/#install-rapids) to install other RAPIDS packages.
 
 ## Enabling nx-cugraph
