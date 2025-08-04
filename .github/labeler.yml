@@ -3,10 +3,14 @@
 # Labels culled from https://github.com/rapidsai/nx-cugraph/labels
 
 benchmarks:
-  - 'benchmarks/**'
-
+  - changed-files:
+      any-glob-to-any-file:
+        - 'benchmarks/**'
 ci:
-   - 'ci/**'
-
+  - changed-files:
+      any-glob-to-any-file:
+        - 'ci/**'
 conda:
-  - 'conda/**'
+  - changed-files:
+      any-glob-to-any-file:
+        - 'conda/**'
