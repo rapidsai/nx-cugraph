@@ -14,6 +14,7 @@
 import random
 from collections.abc import Mapping
 
+import cupy as cp
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -66,10 +67,22 @@ backend_param_values = ["cugraph", "cugraph-preconverted", None]
 def setup_module(module):
     """
     Trivial conversion call to force various one-time CUDA initialization
-    operations to happen outside of benchmarks.
+    operations to happen outside of benchmarks (if GPU is available).
     """
-    G = nx.karate_club_graph()
-    nxcg.from_networkx(G)
+    has_cuda_gpu = False
+    try:
+        has_cuda_gpu = cp.cuda.is_available()
+    except cp.cuda.runtime.CUDARuntimeError:
+        # Treat errors as no GPU available.
+        # xref: https://github.com/cupy/cupy/issues/9091
+        pass
+
+    if has_cuda_gpu:
+        print("CUDA is available, running one-time code to force initialization.")
+        G = nx.karate_club_graph()
+        nxcg.from_networkx(G)
+    else:
+        print("CUDA is not available, skipping one-time code to force initialization.")
 
 
 # Test IDs are generated using the lambda assigned to the ids arg to provide an

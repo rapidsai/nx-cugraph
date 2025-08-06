@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# Copyright (c) 2023-2025, NVIDIA CORPORATION.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import operator as op
+from collections import Counter
 
 import cupy as cp
 import networkx as nx
@@ -40,26 +41,56 @@ def _ensure_nonnegative_int(n):
 
 
 def _complete_graph_indices(n):
+    # returns complete adj matrix for graph with N nodes
     all_indices = cp.indices((n, n), dtype=index_dtype)
     src_indices = all_indices[0].ravel()
     dst_indices = all_indices[1].ravel()
     del all_indices
     mask = src_indices != dst_indices
+
     return (src_indices[mask], dst_indices[mask])
 
 
-def _common_small_graph(n, nodes, create_using, *, allow_directed=True):
+def _common_small_graph(
+    n, nodes, create_using, *, allow_directed=True, self_loops=None
+):
     """Create a "common graph" for small n.
 
     n == 0: empty graph
-    n == 1: empty graph
-    n == 2: complete graph
+    n == 1: empty graph (unless has self-loops)
+    n == 2: complete graph (may have self-loops)
     n > 2: undefined
     """
     graph_class, inplace = _create_using_class(create_using)
     if not allow_directed and graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
-    if n < 2:
+    if self_loops:
+        if n == 1:
+            G = graph_class.from_coo(
+                n,
+                cp.zeros(1, dtype=index_dtype),
+                cp.zeros(1, dtype=index_dtype),
+                id_to_key=nodes,
+            )
+        # n == 2
+        elif len(self_loops) == 2:
+            G = graph_class.from_coo(
+                n,
+                cp.ones(1, dtype=index_dtype),
+                cp.ones(1, dtype=index_dtype),
+                id_to_key=nodes,
+            )
+        else:
+            [self_loop] = self_loops
+            index = nodes.index(self_loop)
+            if index == 0:
+                src = cp.array([0, 0, 1], dtype=index_dtype)
+                dst = cp.array([0, 1, 0], dtype=index_dtype)
+            else:
+                src = cp.array([0, 1, 1], dtype=index_dtype)
+                dst = cp.array([1, 0, 1], dtype=index_dtype)
+            G = graph_class.from_coo(n, src, dst, id_to_key=nodes)
+    elif n < 2:
         G = graph_class.from_coo(
             n, cp.empty(0, index_dtype), cp.empty(0, index_dtype), id_to_key=nodes
         )
@@ -119,22 +150,44 @@ def _create_using_class(create_using, *, default=nx.Graph):
     return graph_class, inplace
 
 
-def _number_and_nodes(n_and_nodes):
+def _number_and_nodes(n_and_nodes, *, drop_duplicates=False, return_selfloops=False):
     n, nodes = n_and_nodes
     try:
         n = op.index(n)
     except TypeError:
         n = len(nodes)
-    if n < 0:
-        raise nx.NetworkXError(f"Negative number of nodes not valid: {n}")
-    if not isinstance(nodes, list):
-        nodes = list(nodes)
-    if not nodes:
+    else:
+        if n < 0:
+            raise nx.NetworkXError(f"Negative number of nodes not valid: {n}")
+    # `_nodes_or_number` from nx returns nodes of type:
+    #   - list: if generated from int as `list(range(n))`
+    #   - tuple: if user-provided as `tuple(n)`
+    if not nodes or isinstance(nodes, list):
+        if return_selfloops:
+            return (n, None, None)
         return (n, None)
+    if return_selfloops:
+        counter = Counter(nodes)
+        if len(counter) < n:
+            if drop_duplicates:
+                nodes = list(counter)
+                n = len(nodes)
+            self_loops = {k: v for k, v in counter.items() if v > 1}
+        else:
+            self_loops = None
+    elif drop_duplicates:
+        nodes = list(dict.fromkeys(nodes))  # Drop duplicates, keep order
+        n = len(nodes)
+    else:
+        nodes = list(nodes)
     if nodes[0] == 0 and nodes[n - 1] == n - 1:
         try:
             if nodes == list(range(n)):
+                if return_selfloops:
+                    return (n, None, self_loops)
                 return (n, None)
         except Exception:
             pass
+    if return_selfloops:
+        return (n, nodes, self_loops)
     return (n, nodes)

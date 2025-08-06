@@ -4,16 +4,15 @@ channels:
 - rapidsai
 - rapidsai-nightly
 - conda-forge
-- nvidia
 dependencies:
-- cuda-version=11.8
-- cudf==25.6.*
+- cuda-version=12.9
+- cudf==25.8.*,>=0.0.0a0
 - cupy>=12.0.0
 - networkx>=3.2
 - numpy>=1.23,<3.0a0
 - pandas
 - pre-commit
-- pylibcugraph==25.6.*
+- pylibcugraph==25.8.*,>=0.0.0a0
 - pytest
 - pytest-benchmark
 - pytest-cov
@@ -23,4 +22,4 @@ dependencies:
 - scipy
 - setuptools>=61.0.0
 - wheel
-name: all_cuda-118_arch-aarch64
+name: all_cuda-129_arch-aarch64

@@ -29,7 +29,7 @@ DocObject = namedtuple(
 
 
 def parse_docobject(line):
-    left, right = line.split(":")
+    left, right = line.split(":", 1)
     name, domain = left.rsplit(" ", 1)
     role, priority, uri, displayname = right.split(" ", 3)
     if displayname == "-":

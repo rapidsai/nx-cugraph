@@ -79,6 +79,7 @@ def compare(name, create_using, *args, is_vanilla=False):
 
 
 N = list(range(-1, 5))
+# N_AND_NODES = N + ["a", "aa", "aba", "bba", "abba", "abc", "abcb", [0, 1, 2]]
 CREATE_USING = [nx.Graph, nx.DiGraph, nx.MultiGraph, nx.MultiDiGraph]
 COMPLETE_CREATE_USING = [
     nx.Graph,
@@ -217,6 +218,19 @@ def test_generator_n(name, n, create_using):
 def test_generator_n_complete(name, n, create_using):
     print(name, n, create_using)
     compare(name, create_using, n)
+
+
+# TODO: finish these tests started in
+# https://github.com/rapidsai/nx-cugraph/pull/143/
+# GENERATORS_N_AND_STRINGS = list(GENERATORS_N)
+
+
+# @pytest.mark.parametrize("name", GENERATORS_N_AND_STRINGS)
+# @pytest.mark.parametrize("n", N_AND_NODES)
+# @pytest.mark.parametrize("create_using", CREATE_USING)
+# def test_generator_n_and_nodes(name, n, create_using):
+#     print(name, n, create_using)
+#     compare(name, create_using, n)
 
 
 @pytest.mark.parametrize("name", GENERATORS_M_N)
