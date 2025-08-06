@@ -1,3 +1,39 @@
+# nx-cugraph 25.08.00 (6 Aug 2025)
+
+## 🚨 Breaking Changes
+
+- Remove CUDA 11 from dependencies.yaml ([#151](https://github.com/rapidsai/nx-cugraph/pull/151)) [@KyleFromNVIDIA](https://github.com/KyleFromNVIDIA)
+- stop uploading packages to downloads.rapids.ai ([#145](https://github.com/rapidsai/nx-cugraph/pull/145)) [@jameslamb](https://github.com/jameslamb)
+
+## 🐛 Bug Fixes
+
+- Catch `CUDARuntimeError` in CuPy GPU check ([#166](https://github.com/rapidsai/nx-cugraph/pull/166)) [@jakirkham](https://github.com/jakirkham)
+- Temporarily skip certain tests to unblock CI ([#163](https://github.com/rapidsai/nx-cugraph/pull/163)) [@nv-rliu](https://github.com/nv-rliu)
+- Address Test Failures for NetworkX 3.5 ([#160](https://github.com/rapidsai/nx-cugraph/pull/160)) [@nv-rliu](https://github.com/nv-rliu)
+- Updates can_run function signature for forceatlas2_layout ([#158](https://github.com/rapidsai/nx-cugraph/pull/158)) [@rlratzel](https://github.com/rlratzel)
+
+## 📖 Documentation
+
+- add docs on CI workflow inputs ([#164](https://github.com/rapidsai/nx-cugraph/pull/164)) [@jameslamb](https://github.com/jameslamb)
+
+## 🛠️ Improvements
+
+- Disable codecov comments ([#170](https://github.com/rapidsai/nx-cugraph/pull/170)) [@bdice](https://github.com/bdice)
+- Removes references to CUDA 11 in docs, notebooks ([#169](https://github.com/rapidsai/nx-cugraph/pull/169)) [@rlratzel](https://github.com/rlratzel)
+- Updates benchmarks to allow for running in a CPU-only environment ([#165](https://github.com/rapidsai/nx-cugraph/pull/165)) [@rlratzel](https://github.com/rlratzel)
+- Use CUDA 12.9 in Conda, Devcontainers, Spark, GHA, etc. ([#161](https://github.com/rapidsai/nx-cugraph/pull/161)) [@jakirkham](https://github.com/jakirkham)
+- refactor(shellcheck): enable for all files and fix remaining warnings ([#156](https://github.com/rapidsai/nx-cugraph/pull/156)) [@gforsyth](https://github.com/gforsyth)
+- Remove nvidia and dask channels ([#155](https://github.com/rapidsai/nx-cugraph/pull/155)) [@vyasr](https://github.com/vyasr)
+- Add Colab Demo link to README ([#154](https://github.com/rapidsai/nx-cugraph/pull/154)) [@nv-rliu](https://github.com/nv-rliu)
+- Add Leiden to Notebook ([#152](https://github.com/rapidsai/nx-cugraph/pull/152)) [@nv-rliu](https://github.com/nv-rliu)
+- Remove CUDA 11 from dependencies.yaml ([#151](https://github.com/rapidsai/nx-cugraph/pull/151)) [@KyleFromNVIDIA](https://github.com/KyleFromNVIDIA)
+- Demo notebook for 25.06 features ([#150](https://github.com/rapidsai/nx-cugraph/pull/150)) [@rlratzel](https://github.com/rlratzel)
+- Use environment as default for RAPIDS_DATASET_ROOT_DIR, improve benchmark docs ([#148](https://github.com/rapidsai/nx-cugraph/pull/148)) [@bdice](https://github.com/bdice)
+- Remove CUDA 11 devcontainers and update CI scripts ([#146](https://github.com/rapidsai/nx-cugraph/pull/146)) [@bdice](https://github.com/bdice)
+- stop uploading packages to downloads.rapids.ai ([#145](https://github.com/rapidsai/nx-cugraph/pull/145)) [@jameslamb](https://github.com/jameslamb)
+- Forward-merge branch-25.06 into branch-25.08 ([#139](https://github.com/rapidsai/nx-cugraph/pull/139)) [@gforsyth](https://github.com/gforsyth)
+- Forward-merge branch-25.06 into branch-25.08 ([#134](https://github.com/rapidsai/nx-cugraph/pull/134)) [@gforsyth](https://github.com/gforsyth)
+
 # nx-cugraph 25.06.00 (5 Jun 2025)
 
 ## 🐛 Bug Fixes
