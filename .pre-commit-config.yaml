@@ -86,7 +86,7 @@ repos:
     rev: v1.20.0
     hooks:
         - id: rapids-dependency-file-generator
-          args: ["--clean"]
+          args: ["--clean", "--warn-all", "--strict"]
   - repo: local
     hooks:
       - id: nx-cugraph-meta-data-update
