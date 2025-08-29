@@ -83,10 +83,10 @@ repos:
         # Don't have strict linting for miscellaneous code
         args: [--extend-exclude, "benchmarks/,ci/,notebooks/"]
   - repo: https://github.com/rapidsai/dependency-file-generator
-    rev: v1.19.0
+    rev: v1.20.0
     hooks:
         - id: rapids-dependency-file-generator
-          args: ["--clean"]
+          args: ["--clean", "--warn-all", "--strict"]
   - repo: local
     hooks:
       - id: nx-cugraph-meta-data-update
