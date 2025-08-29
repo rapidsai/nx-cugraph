@@ -55,8 +55,9 @@ cd nx-cugraph
 #### Create conda environment and install dependencies
 
 ```bash
-# for CUDA 12 environments
+# for CUDA 13 environments
 conda env create --name nxcg-dev --file conda/environments/all_cuda-130_arch-x86_64.yaml
+
 # activate the environment
 conda activate nxcg-dev
 ```
