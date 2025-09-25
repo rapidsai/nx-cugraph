@@ -27,6 +27,7 @@ from nx_cugraph.utils import (
     _get_float_dtype,
     _seed_to_int,
     _update_cpu_gpu_graphs,
+    index_dtype,
     networkx_algorithm,
 )
 
@@ -118,9 +119,11 @@ def forceatlas2_layout(
                 seed.rand(num_missing, dim), dtype=np.float32
             ) * (xy_max - xy_min)
 
+        start_vertices = cp.arange(G._N, dtype=index_dtype)
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
     else:
+        start_vertices = None
         x_start = None
         y_start = None
 
@@ -131,11 +134,15 @@ def forceatlas2_layout(
         random_state=seed,
         graph=G_plc,
         max_iter=max_iter,
+        start_vertices=start_vertices,
         x_start=x_start,
         y_start=y_start,
         outbound_attraction_distribution=outbound_attraction_distribution,
         lin_log_mode=linlog,
         prevent_overlapping=dissuade_hubs,  # this might not be the right usage
+        vertex_radius_vertices=None,
+        vertex_radius_values=None,  # this might be `node_size`
+        overlap_scaling_ratio=100.0,
         edge_weight_influence=1,
         jitter_tolerance=jitter_tolerance,
         barnes_hut_optimize=False,
@@ -143,6 +150,8 @@ def forceatlas2_layout(
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
+        mobility_vertices=None,
+        mobility_values=None,
         verbose=False,
         do_expensive_check=False,
     )
