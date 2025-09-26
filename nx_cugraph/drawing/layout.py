@@ -162,8 +162,8 @@ def forceatlas2_layout(
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
-        mobility_vertices=None,
-        mobility_values=None,
+        vertex_mobility_vertices=None,
+        vertex_mobility_values=None,
         verbose=False,
         do_expensive_check=False,
     )
