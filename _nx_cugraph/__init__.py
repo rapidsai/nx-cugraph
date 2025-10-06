@@ -364,7 +364,7 @@ def get_info():
         update_env_var("NETWORKX_AUTOMATIC_BACKENDS")  # For NetworkX 3.2
         # Automatically create nx-cugraph Graph from graph generators
         update_env_var("NETWORKX_BACKEND_PRIORITY_GENERATORS")
-        # And for graph classes such as `nx.Graph()` for NetworkX >=3.5
+        # And for graph classes such as `nx.Graph()` for NetworkX >=3.6
         update_env_var("NETWORKX_BACKEND_PRIORITY_CLASSES")
         # Run default NetworkX implementation (in >=3.4) if not implemented by nx-cugraph
         if (varname := "NETWORKX_FALLBACK_TO_NX") not in os.environ:
