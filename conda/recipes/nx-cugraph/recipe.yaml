@@ -8,7 +8,7 @@ context:
   date_string: '${{ env.get("RAPIDS_DATE_STRING") }}'
   py_version: ${{ env.get("RAPIDS_PY_VERSION") }}
   py_buildstring: ${{ py_version | version_to_buildstring }}
-  head_rev: ${{ git.head_rev(".")[:8] }}
+  head_rev: '${{ git.head_rev(".")[:8] }}'
 
 package:
   name: nx-cugraph
@@ -27,10 +27,10 @@ requirements:
   host:
     - pip
     - python =${{ py_version }}
-    - rapids-build-backend >=0.3.0,<0.4.0.dev0
+    - rapids-build-backend >=0.4.0,<0.5.0.dev0
     - setuptools
   run:
-    - cupy >=12.0.0
+    - cupy >=13.6.0
     - networkx >=3.2
     - pylibcugraph =${{ minor_version }}
     - python

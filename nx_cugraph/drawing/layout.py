@@ -27,6 +27,7 @@ from nx_cugraph.utils import (
     _get_float_dtype,
     _seed_to_int,
     _update_cpu_gpu_graphs,
+    index_dtype,
     networkx_algorithm,
 )
 
@@ -36,14 +37,9 @@ __all__ = [
 
 
 @networkx_algorithm(
-    extra_params={
-        "outbound_attraction_distribution : bool, default True": (
-            "Distributes attraction along outbound edges. "
-            "Hubs attract less and thus are pushed to the borders."
-        ),
-        **_dtype_param,
-    },
-    is_incomplete=True,  # dim=2-only; no distributed_action, node_mass, or node_size
+    extra_params=_dtype_param,
+    is_incomplete=True,  # dim=2-only; no node_mass
+    is_different=True,  # node_size handled differently, different RNG and results
     version_added="25.04",
     _plc="forceatlas2_layout",
 )
@@ -66,13 +62,9 @@ def forceatlas2_layout(
     dim=2,
     store_pos_as=None,
     # nx_cugraph-only argument
-    outbound_attraction_distribution=True,
     dtype=None,
 ):
-    """
-    `distributed_action`, `node_mass`, and `node_size` parameters are currently ignored.
-    Only `dim=2` is supported.
-    """
+    """`node_mass` parameter is currently ignored. Only `dim=2` is supported."""
     if len(G) == 0:
         return {}
 
@@ -118,11 +110,33 @@ def forceatlas2_layout(
                 seed.rand(num_missing, dim), dtype=np.float32
             ) * (xy_max - xy_min)
 
+        start_vertices = cp.arange(G._N, dtype=index_dtype)
         x_start = start_pos_arr[:, 0]
         y_start = start_pos_arr[:, 1]
     else:
+        start_vertices = None
         x_start = None
         y_start = None
+
+    if node_size is not None:
+        # nx:node_size and plc:vertex_radius are very similar, but are implemented
+        # differently. For PLC, it's only used when `prevent_overlapping` is True,
+        # but NetworkX doesn't have the equivalent of `prevent_overlapping`.
+        # So, if we're given `node_size` argument, assume `prevent_overlapping=True`,
+        # which should more closely match user expectations.
+        vertex_radius_values = G._dict_to_nodearray(
+            node_size, default=1.0, dtype=np.float32
+        )
+        vertex_radius_vertices = (
+            start_vertices
+            if start_vertices is not None
+            else cp.arange(G._N, dtype=index_dtype)
+        )
+        prevent_overlapping = True
+    else:
+        vertex_radius_values = None
+        vertex_radius_vertices = None
+        prevent_overlapping = False
 
     seed = _seed_to_int(seed)
 
@@ -131,18 +145,25 @@ def forceatlas2_layout(
         random_state=seed,
         graph=G_plc,
         max_iter=max_iter,
+        start_vertices=start_vertices,
         x_start=x_start,
         y_start=y_start,
-        outbound_attraction_distribution=outbound_attraction_distribution,
+        outbound_attraction_distribution=distributed_action,
         lin_log_mode=linlog,
-        prevent_overlapping=dissuade_hubs,  # this might not be the right usage
+        prevent_overlapping=prevent_overlapping,
+        vertex_radius_vertices=vertex_radius_vertices,
+        vertex_radius_values=vertex_radius_values,
+        overlap_scaling_ratio=100.0,
         edge_weight_influence=1,
         jitter_tolerance=jitter_tolerance,
+        # We may want to expose barnes-hut--it's also surprising nx doesn't have it
         barnes_hut_optimize=False,
         barnes_hut_theta=0,
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
+        vertex_mobility_vertices=None,
+        vertex_mobility_values=None,
         verbose=False,
         do_expensive_check=False,
     )
@@ -192,7 +213,8 @@ def _(
     seed=None,
     dim=2,
     store_pos_as=None,
-    outbound_attraction_distribution=True,
+    # nx_cugraph-only argument
+    dtype=None,
 ):
     if dim != 2:
         return f"dim={dim} not supported; only dim=2 is currently supported"

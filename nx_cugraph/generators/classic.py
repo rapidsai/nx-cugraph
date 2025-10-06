@@ -89,11 +89,43 @@ def circular_ladder_graph(n, create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def complete_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(n, return_selfloops=True)
+
+    # For input n="abcb", create_using=nx.MultiGraph,
+    # NX returns:
+    # MultiEdgeDataView([('a', 'b'), ('a', 'b'), ('a', 'c'),
+    #                    ('b', 'c'), ('b', 'c'), ('b', 'b')])
+    # This code returns:
+    # MultiEdgeDataView([('a', 'b'), ('a', 'c'), ('b', 'c'),
+    #                    ('b', 'b')])
+    if (self_loops is not None) and (
+        create_using
+        in (nx.MultiGraph, nx.MultiDiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph)
+    ):
+        raise NotImplementedError(
+            "MultiGraph types not supported when cycles/repeated nodes present"
+        )
+
+    # TODO: this behavior is also used in path_graph. perhaps a util fxn can
+    # be created if more functions begin to rely on this
+    if nodes is None:
+        nodes = list(range(n))
+    else:
+        # if specified, nodes could be in any given order
+        nodes = sorted(set(nodes))
     if n < 3:
-        return _common_small_graph(n, nodes, create_using)
+        return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
     graph_class, inplace = _create_using_class(create_using)
+
+    n = len(nodes)
     src_indices, dst_indices = _complete_graph_indices(n)
+
+    if self_loops is not None:
+        mapping = dict(zip(nodes, range(len(nodes))))
+        self_loop_indcs = cp.asarray([mapping[i] for i in self_loops])
+        src_indices = cp.append(src_indices, self_loop_indcs)
+        dst_indices = cp.append(dst_indices, self_loop_indcs)
+
     G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
     if inplace:
         return create_using._become(G)
@@ -149,7 +181,13 @@ def complete_multipartite_graph(*subset_sizes):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def cycle_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("cycles/repeated nodes are not supported")
+
     graph_class, inplace = _create_using_class(create_using)
     if n == 1:
         src_indices = cp.zeros(1, index_dtype)
@@ -159,7 +197,7 @@ def cycle_graph(n, create_using=None):
         src_indices = cp.array([0, 0, 1, 1], index_dtype)
         dst_indices = cp.array([1, 1, 0, 0], index_dtype)
     elif n < 3:
-        return _common_small_graph(n, nodes, create_using)
+        return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
     elif graph_class.is_directed():
         src_indices = cp.arange(n, dtype=index_dtype)
         dst_indices = cp.arange(1, n + 1, dtype=index_dtype)
@@ -179,7 +217,7 @@ def cycle_graph(n, create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def empty_graph(n=0, create_using=None, default=nx.Graph):
-    n, nodes = _number_and_nodes(n)
+    n, nodes = _number_and_nodes(n, drop_duplicates=True)
     graph_class, inplace = _create_using_class(create_using, default=default)
     G = graph_class.from_coo(
         n, cp.empty(0, index_dtype), cp.empty(0, index_dtype), id_to_key=nodes
@@ -286,19 +324,34 @@ def null_graph(create_using=None):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def path_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("cycles/repeated nodes are not supported")
+
+    if nodes is None:
+        nodes = list(range(n))
+
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         src_indices = cp.arange(n - 1, dtype=index_dtype)
-        dst_indices = cp.arange(1, n, dtype=index_dtype)
+        mapping = dict(zip(nodes, range(len(nodes))))
+        dst_ids = [mapping[i] for i in nodes]
+        # disregard the first item when counting destination nodes
+        dst_indices = cp.asarray(dst_ids[1:], dtype=index_dtype)
     elif n < 3:
-        return _common_small_graph(n, nodes, create_using)
+        return _common_small_graph(
+            n, nodes, create_using, self_loops=self_loops if n == 2 else None
+        )
     else:
+        n = len(nodes)
         src_indices = cp.arange(1, 2 * n - 1, dtype=index_dtype) // 2
         dst_indices = (
             cp.arange(n, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
         ).ravel()[1:-1]
-    G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
+    G = graph_class.from_coo(len(nodes), src_indices, dst_indices, id_to_key=nodes)
     if inplace:
         return create_using._become(G)
     return G
@@ -307,14 +360,28 @@ def path_graph(n, create_using=None):
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def star_graph(n, create_using=None):
     orig_n, orig_nodes = n
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("cycles/repeated nodes are not supported")
+
     # star_graph behaves differently whether the input was an int or iterable
     if isinstance(orig_n, Integral):
         if nodes is not None:
             nodes.append(n)
         n += 1
+    if self_loops:
+        node0 = nodes[0]
+        if node0 in self_loops:
+            self_loops = {node0: self_loops[node0]}
+        else:
+            self_loops = None
     if n < 3:
-        return _common_small_graph(n, nodes, create_using, allow_directed=False)
+        return _common_small_graph(
+            n, nodes, create_using, allow_directed=False, self_loops=self_loops
+        )
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
@@ -382,39 +449,49 @@ def turan_graph(n, r):
 
 @networkx_algorithm(nodes_or_number=0, version_added="23.12", create_using_arg=1)
 def wheel_graph(n, create_using=None):
-    n, nodes = _number_and_nodes(n)
+    n, nodes, self_loops = _number_and_nodes(
+        n, drop_duplicates=True, return_selfloops=True
+    )
+    # Inputs such as n="abcb" result in graphs which do not match NX for the same input.
+    if self_loops is not None:
+        raise NotImplementedError("cycles/repeated nodes are not supported")
+
     graph_class, inplace = _create_using_class(create_using)
     if graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
     if n < 2:
+        return _common_small_graph(n, nodes, create_using, self_loops=self_loops)
+
         G = graph_class.from_coo(
-            n, cp.empty(0, index_dtype), cp.empty(0, index_dtype), id_to_key=nodes
+            n,
+            cp.empty(0, index_dtype),
+            cp.empty(0, index_dtype),
+            id_to_key=nodes,
+            self_loops=self_loops,
         )
+    # Like star_graph
+    flat = cp.zeros(n - 1, index_dtype)
+    ramp = cp.arange(1, n, dtype=index_dtype)
+    # Like cycle_graph
+    if n < 3:
+        src_indices = cp.empty(0, index_dtype)
+        dst_indices = cp.empty(0, index_dtype)
+    elif n > 3:
+        src_indices = cp.arange(2, 2 * n, dtype=index_dtype) // 2
+        dst_indices = (
+            cp.arange(1, n, dtype=index_dtype)[:, None] + cp.array([-1, 1], index_dtype)
+        ).ravel()
+        dst_indices[-1] = 1
+        dst_indices[0] = n - 1
+    elif graph_class.is_multigraph():
+        src_indices = cp.array([1, 1, 2, 2], index_dtype)
+        dst_indices = cp.array([2, 2, 1, 1], index_dtype)
     else:
-        # Like star_graph
-        flat = cp.zeros(n - 1, index_dtype)
-        ramp = cp.arange(1, n, dtype=index_dtype)
-        # Like cycle_graph
-        if n < 3:
-            src_indices = cp.empty(0, index_dtype)
-            dst_indices = cp.empty(0, index_dtype)
-        elif n > 3:
-            src_indices = cp.arange(2, 2 * n, dtype=index_dtype) // 2
-            dst_indices = (
-                cp.arange(1, n, dtype=index_dtype)[:, None]
-                + cp.array([-1, 1], index_dtype)
-            ).ravel()
-            dst_indices[-1] = 1
-            dst_indices[0] = n - 1
-        elif graph_class.is_multigraph():
-            src_indices = cp.array([1, 1, 2, 2], index_dtype)
-            dst_indices = cp.array([2, 2, 1, 1], index_dtype)
-        else:
-            src_indices = cp.array([1, 2], index_dtype)
-            dst_indices = cp.array([2, 1], index_dtype)
-        src_indices = cp.hstack((flat, ramp, src_indices))
-        dst_indices = cp.hstack((ramp, flat, dst_indices))
-        G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
+        src_indices = cp.array([1, 2], index_dtype)
+        dst_indices = cp.array([2, 1], index_dtype)
+    src_indices = cp.hstack((flat, ramp, src_indices))
+    dst_indices = cp.hstack((ramp, flat, dst_indices))
+    G = graph_class.from_coo(n, src_indices, dst_indices, id_to_key=nodes)
     if inplace:
         return create_using._become(G)
     return G

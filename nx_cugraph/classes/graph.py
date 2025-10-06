@@ -1263,6 +1263,46 @@ class CudaGraph:
             return cp.array(list(val_iter))
         return cp.fromiter(val_iter, dtype)
 
+    def _subgraph_indices(
+        self, nodelist: list[NodeKey] | None
+    ) -> tuple[cp.ndarray[IndexValue], cp.ndarray[IndexValue], cp.ndarray[bool] | None]:
+        if nodelist is None:
+            return self.src_indices, self.dst_indices, None
+
+        node_ids = self._nodekeys_to_nodearray(nodelist)
+        # Subgraph
+        if len(node_ids) < self._N:
+            mapper = cp.empty(self._N, dtype=index_dtype)
+            mapper[:] = -1  # Indicate nodes to exclude
+            mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
+            src_indices = mapper[self.src_indices]
+            dst_indices = mapper[self.dst_indices]
+            mask = (src_indices != -1) & (dst_indices != -1)
+            src_indices = src_indices[mask]
+            dst_indices = dst_indices[mask]
+        else:
+            mapper = cp.empty(self._N, dtype=index_dtype)
+            mapper[node_ids] = cp.arange(node_ids.size, dtype=index_dtype)
+            src_indices = mapper[self.src_indices]
+            dst_indices = mapper[self.dst_indices]
+            mask = None
+
+        return src_indices, dst_indices, mask
+
+    def _subgraph_weights(
+        self, mask: cp.ndarray[bool] | None, weight: AttrKey, default: EdgeValue = 1
+    ):
+        if weight in self.edge_values:
+            edge_array = self.edge_values[weight]
+            if weight in self.edge_masks:
+                edge_array = cp.where(self.edge_masks[weight], edge_array, default)
+        else:
+            edge_array = cp.repeat(cp.array(default), self.src_indices.size)
+        if mask is not None:
+            edge_array = edge_array[mask]
+
+        return edge_array
+
 
 @networkx_algorithm(version_added="25.06")
 def graph__new__(cls, incoming_graph_data=None, **attr):

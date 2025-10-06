@@ -14,7 +14,7 @@
 
 
 # location to store datasets used for benchmarking
-export RAPIDS_DATASET_ROOT_DIR=/datasets/cugraph
+export RAPIDS_DATASET_ROOT_DIR=${RAPIDS_DATASET_ROOT_DIR:-"/datasets/cugraph"}
 mkdir -p logs
 
 # list of algos, datasets, and back-ends to use in combinations
@@ -59,7 +59,7 @@ fi
 for algo in $algos; do
     for dataset in $datasets; do
         # this script can be used to download benchmarking datasets by name via cugraph.datasets
-        python get_graph_bench_dataset.py $dataset
+        python get_graph_bench_dataset.py "$dataset"
         for backend in $backends; do
             name="${backend}__${algo}__${dataset}"
             echo "Running: $backend, $dataset, bench_$algo"
