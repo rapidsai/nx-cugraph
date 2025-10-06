@@ -1304,7 +1304,7 @@ class CudaGraph:
         return edge_array
 
 
-@networkx_algorithm(version_added="25.06")
+@networkx_algorithm(version_added="25.12")
 def graph__new__(cls, incoming_graph_data=None, **attr):
     # Dispatched from `nx.Graph.__new__`. See details of `object.__new__` behavior here:
     # https://docs.python.org/3/reference/datamodel.html#object.__new__

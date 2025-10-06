@@ -87,8 +87,8 @@ def test_class_to_class():
 )
 @pytest.mark.parametrize("use_compat_graphs", [True, False])
 def test_dispatch_graph_classes(nxcg_class, use_compat_graphs):
-    if _nxver < (3, 5):
-        pytest.skip(reason="Dispatching graph classes requires nx >=3.5")
+    if _nxver < (3, 6):
+        pytest.skip(reason="Dispatching graph classes requires nx >=3.6")
     nx_class = nxcg_class.to_networkx_class()
     assert nx_class is not nxcg_class
     cuda_class = nxcg_class.to_cudagraph_class()

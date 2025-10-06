@@ -312,7 +312,7 @@ class CudaDiGraph(CudaGraph):
         return cp.bincount(src_indices, minlength=self._N)
 
 
-@networkx_algorithm(version_added="25.06")
+@networkx_algorithm(version_added="25.12")
 def digraph__new__(cls, incoming_graph_data=None, **attr):
     if nx.config.backends.cugraph.use_compat_graphs:
         return object.__new__(DiGraph)

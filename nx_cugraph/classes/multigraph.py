@@ -582,7 +582,7 @@ class CudaMultiGraph(CudaGraph):
             self.edge_keys = [edge_keys[i] for i in indices.tolist()]
 
 
-@networkx_algorithm(version_added="25.06")
+@networkx_algorithm(version_added="25.12")
 def multigraph__new__(cls, incoming_graph_data=None, multigraph_input=None, **attr):
     if nx.config.backends.cugraph.use_compat_graphs:
         return object.__new__(MultiGraph)
