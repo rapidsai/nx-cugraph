@@ -6,19 +6,19 @@ channels:
 - conda-forge
 dependencies:
 - cuda-version=12.9
-- cudf==25.8.*
-- cupy>=12.0.0
+- cudf==25.10.*,>=0.0.0a0
+- cupy>=13.6.0
 - networkx>=3.2
 - numpy>=1.23,<3.0a0
 - pandas
 - pre-commit
-- pylibcugraph==25.8.*
+- pylibcugraph==25.10.*,>=0.0.0a0
 - pytest
 - pytest-benchmark
 - pytest-cov
 - pytest-mpl
 - pytest-xdist
-- rapids-build-backend>=0.3.1,<0.4.0.dev0
+- rapids-build-backend>=0.4.0,<0.5.0.dev0
 - scipy
 - setuptools>=61.0.0
 - wheel

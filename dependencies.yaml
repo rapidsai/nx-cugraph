@@ -3,7 +3,7 @@ files:
   all:
     output: [conda]
     matrix:
-      cuda: ["12.9"]
+      cuda: ["12.9", "13.0"]
       arch: [x86_64, aarch64]
     includes:
       - checks
@@ -97,11 +97,15 @@ dependencies:
               cuda: "12.9"
             packages:
               - cuda-version=12.9
+          - matrix:
+              cuda: "13.0"
+            packages:
+              - cuda-version=13.0
   depends_on_nx_cugraph:
     common:
       - output_types: conda
         packages:
-          - nx-cugraph==25.8.*
+          - nx-cugraph==25.10.*,>=0.0.0a0
   py_version:
     specific:
       - output_types: [conda]
@@ -129,7 +133,7 @@ dependencies:
     common:
       - output_types: [conda, pyproject, requirements]
         packages:
-          - rapids-build-backend>=0.3.1,<0.4.0.dev0
+          - rapids-build-backend>=0.4.0,<0.5.0.dev0
   python_build_wheel:
     common:
       - output_types: [conda, pyproject, requirements]
@@ -168,21 +172,26 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - cupy>=12.0.0
+          - cupy>=13.6.0
     # NOTE: This is intentionally not broken into groups by a 'cuda_suffixed' selector like
     #       other packages with -cu{nn}x suffixes in this file.
     #       All RAPIDS wheel builds (including in devcontainers) expect cupy to be suffixed.
     specific:
       - output_types: [pyproject, requirements]
         matrices:
-          - matrix: # All CUDA 12 versions
+          - matrix:
+              cuda: "12.*"
             packages:
-              - cupy-cuda12x>=12.0.0
+              - cupy-cuda12x>=13.6.0
+          # fallback to CUDA 13 versions if 'cuda' is '13.*' or not provided
+          - matrix:
+            packages:
+              - cupy-cuda13x>=13.6.0
   depends_on_cudf:
     common:
       - output_types: conda
         packages:
-          - &cudf_unsuffixed cudf==25.8.*
+          - &cudf_unsuffixed cudf==25.10.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -195,13 +204,18 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu12==25.8.*
+              - cudf-cu12==25.10.*,>=0.0.0a0
+          - matrix:
+              cuda: "13.*"
+              cuda_suffixed: "true"
+            packages:
+              - cudf-cu13==25.10.*,>=0.0.0a0
           - {matrix: null, packages: [*cudf_unsuffixed]}
   depends_on_pylibcugraph:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==25.8.*
+          - &pylibcugraph_unsuffixed pylibcugraph==25.10.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -214,5 +228,10 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu12==25.8.*
+              - pylibcugraph-cu12==25.10.*,>=0.0.0a0
+          - matrix:
+              cuda: "13.*"
+              cuda_suffixed: "true"
+            packages:
+              - pylibcugraph-cu13==25.10.*,>=0.0.0a0
           - {matrix: null, packages: [*pylibcugraph_unsuffixed]}

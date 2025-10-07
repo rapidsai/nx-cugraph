@@ -18,7 +18,7 @@
 ## System Requirements
 
  * **GPU:** NVIDIA Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
- * **CUDA Version:** 12.0 - 12.9
+ * **CUDA Version:** 12.0 or higher
  * **Python Version:** 3.10 - 3.13
  * **NetworkX Version:** minimum 3.2 (version 3.5 or higher recommended)
 
@@ -34,22 +34,49 @@ nx-cugraph can be installed using either conda or pip with the following command
 ### conda
 
 nx-cugraph can be installed with conda (via [Miniforge](https://github.com/conda-forge/miniforge)) from the `rapidsai` channel.
-```
-conda install -c rapidsai -c conda-forge -c nvidia nx-cugraph
+
+```shell
+# CUDA 13
+conda install -c rapidsai -c conda-forge nx-cugraph cuda-version=13.0
+
+# CUDA 12
+conda install -c rapidsai -c conda-forge nx-cugraph cuda-verison=12.9
 ```
 
 We also provide [nightly Conda packages](https://anaconda.org/rapidsai-nightly/nx-cugraph) built from the HEAD of our latest development branch.
-```
-conda install -c rapidsai-nightly -c conda-forge -c nvidia nx-cugraph
+
+```shell
+# CUDA 13
+conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-version=13.0
+
+# CUDA 12
+conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-verison=12.9
 ```
 
 ### pip
 
 nx-cugraph can be installed via `pip` from the NVIDIA Python Package Index.
 
+#### For CUDA 13.x:
+
+Latest nightly version
+
+```
+python -m pip install nx-cugraph-cu13 --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
+```
+
+Latest stable version
+```
+python -m pip install nx-cugraph-cu13 --extra-index-url https://pypi.nvidia.com
+```
+
+Notes:
+ * Try out the [RAPIDS Install Selector Tool](https://docs.rapids.ai/install/#install-rapids) to install other RAPIDS packages.
+
 #### For CUDA 12.x:
 
 Latest nightly version
+
 ```
 python -m pip install nx-cugraph-cu12 --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
 ```
@@ -58,6 +85,7 @@ Latest stable version
 ```
 python -m pip install nx-cugraph-cu12 --extra-index-url https://pypi.nvidia.com
 ```
+
 Notes:
  * Try out the [RAPIDS Install Selector Tool](https://docs.rapids.ai/install/#install-rapids) to install other RAPIDS packages.
 
