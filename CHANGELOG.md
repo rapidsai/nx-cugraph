@@ -1,3 +1,18 @@
+# nx-cugraph 25.10.00 (8 Oct 2025)
+
+## 🛠️ Improvements
+
+- Update `forceatlas2_layout` to use updated `plc.force_atlas2` ([#191](https://github.com/rapidsai/nx-cugraph/pull/191)) [@eriknw](https://github.com/eriknw)
+- Configure repo for automatic release notes generation ([#186](https://github.com/rapidsai/nx-cugraph/pull/186)) [@AyodeAwe](https://github.com/AyodeAwe)
+- Adds Leiden notebook used in upcoming tech blog ([#185](https://github.com/rapidsai/nx-cugraph/pull/185)) [@rlratzel](https://github.com/rlratzel)
+- Use branch-25.10 again ([#184](https://github.com/rapidsai/nx-cugraph/pull/184)) [@jameslamb](https://github.com/jameslamb)
+- Update rapids-dependency-file-generator ([#183](https://github.com/rapidsai/nx-cugraph/pull/183)) [@KyleFromNVIDIA](https://github.com/KyleFromNVIDIA)
+- Build and test with CUDA 13.0.0 ([#182](https://github.com/rapidsai/nx-cugraph/pull/182)) [@jameslamb](https://github.com/jameslamb)
+- Use build cluster in devcontainers ([#181](https://github.com/rapidsai/nx-cugraph/pull/181)) [@trxcllnt](https://github.com/trxcllnt)
+- Update rapids-build-backend to 0.4.1 ([#178](https://github.com/rapidsai/nx-cugraph/pull/178)) [@KyleFromNVIDIA](https://github.com/KyleFromNVIDIA)
+- ci(labeler): update labeler action to [@v5 ([#175](https://github.com/rapidsai/nx-cugraph/pull/175)) @gforsyth](https://github.com/v5 ([#175](https://github.com/rapidsai/nx-cugraph/pull/175)) @gforsyth)
+- Allow latest OS in devcontainers ([#171](https://github.com/rapidsai/nx-cugraph/pull/171)) [@bdice](https://github.com/bdice)
+
 # nx-cugraph 25.08.00 (6 Aug 2025)
 
 ## 🚨 Breaking Changes
