@@ -198,7 +198,7 @@ _info = {
         "edge_betweenness_centrality": "`weight` parameter is not yet supported, and RNG with seed may be different.",
         "ego_graph": "Weighted ego_graph with negative cycles is not yet supported. `NotImplementedError` will be raised if there are negative `distance` edge weights.",
         "eigenvector_centrality": "`nstart` parameter is not used, but it is checked for validity.",
-        "forceatlas2_layout": "`node_mass` parameter is currently ignored. Only `dim=2` is supported.",
+        "forceatlas2_layout": "Only `dim=2` is supported, and there may be minor numeric differences.",
         "from_pandas_edgelist": "cudf.DataFrame inputs also supported; value columns with str is unsuppported.",
         "generic_bfs_edges": "`neighbors` parameter is not yet supported.",
         "katz_centrality": "`nstart` isn't used (but is checked), and `normalized=False` is not supported.",
