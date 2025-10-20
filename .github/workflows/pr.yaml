@@ -14,7 +14,7 @@ jobs:
     needs:
       - changed-files
       - checks
-      - devcontainer
+      # - devcontainer
       - conda-python-build
       - conda-python-tests
       - wheel-build-nx-cugraph
@@ -40,23 +40,23 @@ jobs:
           - '!README.md'
           - '!ci/release/update-version.sh'
           - '!notebooks/**'
-  devcontainer:
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@pure_wheels
-    with:
-      arch: '["amd64", "arm64"]'
-      cuda: '["13.0"]'
-      node_type: "cpu8"
-      rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
-      env: |
-        SCCACHE_DIST_MAX_RETRIES=inf
-        SCCACHE_SERVER_LOG=sccache=debug
-        SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
-        SCCACHE_DIST_AUTH_TOKEN_VAR=RAPIDS_AUX_SECRET_1
-      build_command: |
-        sccache --zero-stats;
-        build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
-        sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
+  # devcontainer:
+  #   secrets: inherit
+  #   uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@pure_wheels
+  #   with:
+  #     arch: '["amd64", "arm64"]'
+  #     cuda: '["13.0"]'
+  #     node_type: "cpu8"
+  #     rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
+  #     env: |
+  #       SCCACHE_DIST_MAX_RETRIES=inf
+  #       SCCACHE_SERVER_LOG=sccache=debug
+  #       SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
+  #       SCCACHE_DIST_AUTH_TOKEN_VAR=RAPIDS_AUX_SECRET_1
+  #     build_command: |
+  #       sccache --zero-stats;
+  #       build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
+  #       sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@pure_wheels
