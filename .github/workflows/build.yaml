@@ -41,6 +41,7 @@ jobs:
       date: ${{ inputs.date }}
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
+      noarch: true
   upload-conda:
     needs: conda-python-build
     secrets: inherit
