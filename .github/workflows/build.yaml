@@ -34,7 +34,7 @@ concurrency:
 jobs:
   conda-python-build:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@pure_wheels
     with:
       build_type: ${{ inputs.build_type || 'branch' }}
       branch: ${{ inputs.branch }}
@@ -44,7 +44,7 @@ jobs:
   upload-conda:
     needs: conda-python-build
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-upload-packages.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/conda-upload-packages.yaml@pure_wheels
     with:
       build_type: ${{ inputs.build_type || 'branch' }}
       branch: ${{ inputs.branch }}
@@ -52,22 +52,21 @@ jobs:
       sha: ${{ inputs.sha }}
   wheel-build-nx-cugraph:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@pure_wheels
     with:
       build_type: ${{ inputs.build_type || 'branch' }}
       branch: ${{ inputs.branch }}
       sha: ${{ inputs.sha }}
       date: ${{ inputs.date }}
       script: ci/build_wheel_nx-cugraph.sh
-      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
-      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
       package-name: nx-cugraph
       package-type: python
+      # when `pure-wheel == true` no matrix-filter is required (it's built-in upstream)
       pure-wheel: true
   wheel-publish-nx-cugraph:
     needs: wheel-build-nx-cugraph
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-publish.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-publish.yaml@pure_wheels
     with:
       build_type: ${{ inputs.build_type || 'branch' }}
       branch: ${{ inputs.branch }}
