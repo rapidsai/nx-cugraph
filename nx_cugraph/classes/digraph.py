@@ -25,7 +25,7 @@ from networkx.classes.digraph import (
 
 import nx_cugraph as nxcg
 
-from ..utils import index_dtype
+from ..utils import index_dtype, networkx_algorithm
 from .graph import CudaGraph, Graph, _GraphCache
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -310,3 +310,17 @@ class CudaDiGraph(CudaGraph):
         if src_indices.size == 0:
             return cp.zeros(self._N, dtype=np.int64)
         return cp.bincount(src_indices, minlength=self._N)
+
+
+@networkx_algorithm(version_added="25.12")
+def digraph__new__(cls, incoming_graph_data=None, **attr):
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(DiGraph)
+    return CudaDiGraph(incoming_graph_data=incoming_graph_data, **attr)
+
+
+@digraph__new__._can_run
+def _(cls, incoming_graph_data=None, **attr):
+    if cls is not nx.DiGraph:
+        return "Unknown subclasses of nx.DiGraph are not supported."
+    return True
