@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 #
 # Runs benchmarks for the 24.02 algos.
 # Pass either a or b or both. This is useful for separating batches of runs on different GPUs:
