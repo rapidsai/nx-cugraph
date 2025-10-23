@@ -41,6 +41,7 @@ jobs:
       date: ${{ inputs.date }}
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
+      # when `noarch == true` no matrix-filter is required (it's built-in upstream)
       noarch: true
   upload-conda:
     needs: conda-python-build
