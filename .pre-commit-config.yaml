@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
+
 # https://pre-commit.com/
 #
 # Before first use: `pre-commit install`
@@ -119,15 +122,23 @@ repos:
         # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
         exclude: .pre-commit-config.yaml
   - repo: https://github.com/rapidsai/pre-commit-hooks
-    rev: v0.6.0
+    rev: v1.2.0
     hooks:
       - id: verify-copyright
+        args: [--fix, --spdx]
         files: |
           (?x)
-              [.](sh|py)$|
-              [.]flake8[.]cython$|
-              meta[.]yaml$|
-              setup[.]cfg$
+            [.](sh|py)$|
+            [.]flake8([.]cython)?$|
+            meta[.]yaml$|
+            setup[.]cfg$|
+            ^[.]github/ISSUE_TEMPLATE/|
+            pytest[.]ini$|
+            Makefile$|
+            dependencies[.]yaml$|
+            pyproject[.]toml$|
+            ^[.]pre-commit-config[.]yaml$|
+            recipe[.]yaml$
       - id: verify-alpha-spec
         args: ["--fix"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
