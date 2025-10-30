@@ -69,7 +69,7 @@ jobs:
     with:
       build_type: pull-request
       script: ci/build_python.sh
-      matrix_filter: map(select(.ARCH == \"amd64\")) | [max_by([.CUDA_VER | split(\".\") | map(tonumber), .PY_VER | split(\".\") | map(tonumber)])]
+      matrix_filter: map(select(.ARCH == "amd64")) | [max_by([(.CUDA_VER|split(".")|map(tonumber)), (.PY_VER|split(".")|map(tonumber))])]
   conda-python-tests:
     needs: [conda-python-build, changed-files]
     secrets: inherit
