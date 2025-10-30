@@ -13,7 +13,7 @@ RAPIDS_PY_CUDA_SUFFIX="$(rapids-wheel-ctk-name-gen "${RAPIDS_CUDA_VERSION}")"
 
 # nx-cugraph is a pure wheel, which is part of generating the download path
 # $RAPIDS_PY_WHEEL_PURE is set in .github/workflows/pr.yaml and test.yaml
-NX_CUGRAPH_WHEELHOUSE=$(RAPIDS_PY_WHEEL_NAME="${package_name}_${RAPIDS_PY_CUDA_SUFFIX}" rapids-download-wheels-from-github python)
+NX_CUGRAPH_WHEELHOUSE=$(RAPIDS_PY_WHEEL_NAME="${package_name}_${RAPIDS_PY_CUDA_SUFFIX}" rapids-download-from-github "$(rapids-package-name "conda_python" nx-cugraph --pure)")
 
 # echo to expand wildcard before adding `[extra]` requires for pip
 rapids-pip-retry install \
