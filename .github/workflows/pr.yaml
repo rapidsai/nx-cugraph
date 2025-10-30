@@ -89,6 +89,8 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
+      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
+      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-tests-nx-cugraph:
     needs: [wheel-build-nx-cugraph, changed-files]
     secrets: inherit
