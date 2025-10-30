@@ -31,3 +31,6 @@ rattler-build build --recipe conda/recipes/nx-cugraph \
                     --test skip \
                     "${RATTLER_ARGS[@]}" \
                     "${RATTLER_CHANNELS[@]}"
+
+RAPIDS_PACKAGE_NAME="$(rapids-package-name conda_python nx-cugraph --pure)"
+export RAPIDS_PACKAGE_NAME
