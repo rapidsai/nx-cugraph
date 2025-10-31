@@ -18,7 +18,7 @@
 ## System Requirements
 
  * **GPU:** NVIDIA Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
- * **CUDA Version:** 12.0 or higher
+ * **CUDA Version:** 12.2 or higher
  * **Python Version:** 3.10 - 3.13
  * **NetworkX Version:** minimum 3.2 (version 3.5 or higher recommended)
 
