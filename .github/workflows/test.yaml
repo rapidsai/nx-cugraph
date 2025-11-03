@@ -35,7 +35,6 @@ jobs:
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
       run_codecov: false
       script: ci/test_python.sh
-      noarch: true
   wheel-tests-nx-cugraph:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@pure_wheels
@@ -45,6 +44,5 @@ jobs:
       date: ${{ inputs.date }}
       sha: ${{ inputs.sha }}
       script: ci/test_wheel_nx-cugraph.sh
-      pure-wheel: true
       # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
