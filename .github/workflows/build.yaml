@@ -41,8 +41,7 @@ jobs:
       date: ${{ inputs.date }}
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
-      # when `noarch == true` no matrix-filter is required (it's built-in upstream)
-      noarch: true
+      matrix_filter: map(select(.ARCH == "amd64")) | [max_by([(.CUDA_VER|split(".")|map(tonumber)), (.PY_VER|split(".")|map(tonumber))])]
   upload-conda:
     needs: conda-python-build
     secrets: inherit
@@ -63,8 +62,9 @@ jobs:
       script: ci/build_wheel_nx-cugraph.sh
       package-name: nx-cugraph
       package-type: python
-      # when `pure-wheel == true` no matrix-filter is required (it's built-in upstream)
       pure-wheel: true
+      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
+      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-publish-nx-cugraph:
     needs: wheel-build-nx-cugraph
     secrets: inherit
