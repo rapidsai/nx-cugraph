@@ -41,6 +41,7 @@ jobs:
       date: ${{ inputs.date }}
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
+      # noarch build -- select a single amd64 runner, with the latest CUDA and latest Python version
       matrix_filter: map(select(.ARCH == "amd64")) | [max_by([(.CUDA_VER|split(".")|map(tonumber)), (.PY_VER|split(".")|map(tonumber))])]
   upload-conda:
     needs: conda-python-build
@@ -63,7 +64,7 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
-      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
+      # pure Python wheel -- select amd64 x latest Python version, one build per major CUDA version
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-publish-nx-cugraph:
     needs: wheel-build-nx-cugraph

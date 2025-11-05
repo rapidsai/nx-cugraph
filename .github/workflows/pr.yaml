@@ -14,7 +14,7 @@ jobs:
     needs:
       - changed-files
       - checks
-      # - devcontainer
+      - devcontainer
       - conda-python-build
       - conda-python-tests
       - wheel-build-nx-cugraph
@@ -40,23 +40,23 @@ jobs:
           - '!README.md'
           - '!ci/release/update-version.sh'
           - '!notebooks/**'
-  # devcontainer:
-  #   secrets: inherit
-  #   uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
-  #   with:
-  #     arch: '["amd64", "arm64"]'
-  #     cuda: '["13.0"]'
-  #     node_type: "cpu8"
-  #     rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
-  #     env: |
-  #       SCCACHE_DIST_MAX_RETRIES=inf
-  #       SCCACHE_SERVER_LOG=sccache=debug
-  #       SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
-  #       SCCACHE_DIST_AUTH_TOKEN_VAR=RAPIDS_AUX_SECRET_1
-  #     build_command: |
-  #       sccache --zero-stats;
-  #       build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
-  #       sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
+  devcontainer:
+    secrets: inherit
+    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
+    with:
+      arch: '["amd64", "arm64"]'
+      cuda: '["13.0"]'
+      node_type: "cpu8"
+      rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
+      env: |
+        SCCACHE_DIST_MAX_RETRIES=inf
+        SCCACHE_SERVER_LOG=sccache=debug
+        SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
+        SCCACHE_DIST_AUTH_TOKEN_VAR=RAPIDS_AUX_SECRET_1
+      build_command: |
+        sccache --zero-stats;
+        build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
+        sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@main
@@ -69,6 +69,7 @@ jobs:
     with:
       build_type: pull-request
       script: ci/build_python.sh
+      # noarch build -- select a single amd64 runner, with the latest CUDA and latest Python version
       matrix_filter: map(select(.ARCH == "amd64")) | [max_by([(.CUDA_VER|split(".")|map(tonumber)), (.PY_VER|split(".")|map(tonumber))])]
   conda-python-tests:
     needs: [conda-python-build, changed-files]
@@ -89,7 +90,7 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
-      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
+      # pure Python wheel -- select amd64 x latest Python version, one build per major CUDA version
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-tests-nx-cugraph:
     needs: [wheel-build-nx-cugraph, changed-files]
