@@ -69,8 +69,7 @@ jobs:
     with:
       build_type: pull-request
       script: ci/build_python.sh
-      # noarch build -- select a single amd64 runner, with the latest CUDA and latest Python version
-      matrix_filter: map(select(.ARCH == "amd64")) | [max_by([(.CUDA_VER|split(".")|map(tonumber)), (.PY_VER|split(".")|map(tonumber))])]
+      pure-conda: true
   conda-python-tests:
     needs: [conda-python-build, changed-files]
     secrets: inherit
@@ -90,8 +89,6 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
-      # pure Python wheel -- select amd64 x latest Python version, one build per major CUDA version
-      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
   wheel-tests-nx-cugraph:
     needs: [wheel-build-nx-cugraph, changed-files]
     secrets: inherit
