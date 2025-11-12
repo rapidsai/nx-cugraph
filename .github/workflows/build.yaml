@@ -41,6 +41,7 @@ jobs:
       date: ${{ inputs.date }}
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
+      pure-conda: true
   upload-conda:
     needs: conda-python-build
     secrets: inherit
@@ -59,8 +60,6 @@ jobs:
       sha: ${{ inputs.sha }}
       date: ${{ inputs.date }}
       script: ci/build_wheel_nx-cugraph.sh
-      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
-      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
