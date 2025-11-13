@@ -74,3 +74,4 @@ jobs:
       date: ${{ inputs.date }}
       package-name: nx-cugraph
       package-type: python
+      publish-wheel-search-key: "nx-cugraph_wheel"
