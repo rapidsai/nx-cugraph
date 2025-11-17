@@ -20,13 +20,13 @@ jobs:
       - wheel-build-nx-cugraph
       - wheel-tests-nx-cugraph
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@release/25.12
     if: always()
     with:
       needs: ${{ toJSON(needs) }}
   changed-files:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@release/25.12
     with:
       files_yaml: |
         test_notebooks:
@@ -42,7 +42,7 @@ jobs:
           - '!notebooks/**'
   devcontainer:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@release/25.12
     with:
       arch: '["amd64", "arm64"]'
       cuda: '["13.0"]'
@@ -59,13 +59,13 @@ jobs:
         sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
   checks:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@release/25.12
     with:
       enable_check_generated_files: false
   conda-python-build:
     needs: [checks]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@release/25.12
     with:
       build_type: pull-request
       script: ci/build_python.sh
@@ -73,7 +73,7 @@ jobs:
   conda-python-tests:
     needs: [conda-python-build, changed-files]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@release/25.12
     if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
     with:
       build_type: pull-request
@@ -82,7 +82,7 @@ jobs:
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@release/25.12
     with:
       build_type: pull-request
       script: ci/build_wheel_nx-cugraph.sh
@@ -92,7 +92,7 @@ jobs:
   wheel-tests-nx-cugraph:
     needs: [wheel-build-nx-cugraph, changed-files]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@release/25.12
     if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
     with:
       build_type: pull-request
