@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 name: Bug Report
@@ -17,7 +17,7 @@ body:
     attributes:
       label: Version
       description: What version of nx-cugraph are you running?
-      placeholder: "example: 25.12"
+      placeholder: "example: 26.02"
     validations:
       required: true
 
