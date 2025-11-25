@@ -61,6 +61,10 @@ MANUAL_OBJECT_URLS = {
         "https://networkx.org/documentation/stable/reference/"
         "algorithms/component.html#weak-connectivity"
     ),
+    "networkx.algorithms.shortest_paths": (
+        "https://networkx.org/documentation/stable/reference/"
+        "algorithms/shortest_paths/index.html"
+    ),
     "networkx.classes": (
         "https://networkx.org/documentation/stable/reference/classes/index.html"
     ),
