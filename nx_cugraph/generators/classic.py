@@ -373,7 +373,7 @@ def star_graph(n, create_using=None):
             n, nodes, create_using, allow_directed=False, self_loops=self_loops
         )
     graph_class, inplace = _create_using_class(create_using)
-    if graph_class.is_directed():
+    if _nxver < (3, 6) and graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
     flat = cp.zeros(n - 1, index_dtype)
     ramp = cp.arange(1, n, dtype=index_dtype)
@@ -383,6 +383,32 @@ def star_graph(n, create_using=None):
     if inplace:
         return create_using._become(G)
     return G
+
+
+@star_graph._can_run
+def _(*args, **kwargs):
+    # networkx >= 3.6 supports directed create_using
+    if len(args) > 1:
+        create_using = args[star_graph.create_using_arg]
+    else:
+        create_using = kwargs.get("create_using")
+    if create_using in {
+        nx.DiGraph,
+        nx.MultiDiGraph,
+        nxcg.DiGraph,
+        nxcg.MultiDiGraph,
+        nxcg.CudaDiGraph,
+        nxcg.CudaMultiDiGraph,
+    } or create_using.__class__ in {
+        nx.DiGraph,
+        nx.MultiDiGraph,
+        nxcg.DiGraph,
+        nxcg.MultiDiGraph,
+        nxcg.CudaDiGraph,
+        nxcg.CudaMultiDiGraph,
+    }:
+        return "nx-cugraph.star_graph does not support create_using for directed graphs"
+    return star_graph._check_create_using_can_run(*args, **kwargs)
 
 
 @networkx_algorithm(nodes_or_number=[0, 1], version_added="23.12", create_using_arg=2)
