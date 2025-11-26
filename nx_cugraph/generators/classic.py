@@ -41,6 +41,15 @@ __all__ = [
 
 concat = itertools.chain.from_iterable
 
+_directed_graph_types = {
+    nx.DiGraph,
+    nx.MultiDiGraph,
+    nxcg.DiGraph,
+    nxcg.MultiDiGraph,
+    nxcg.CudaDiGraph,
+    nxcg.CudaMultiDiGraph,
+}
+
 
 @networkx_algorithm(version_added="23.12", create_using_arg=2)
 def barbell_graph(m1, m2, create_using=None):
@@ -392,21 +401,10 @@ def _(*args, **kwargs):
         create_using = args[star_graph.create_using_arg]
     else:
         create_using = kwargs.get("create_using")
-    if create_using in {
-        nx.DiGraph,
-        nx.MultiDiGraph,
-        nxcg.DiGraph,
-        nxcg.MultiDiGraph,
-        nxcg.CudaDiGraph,
-        nxcg.CudaMultiDiGraph,
-    } or create_using.__class__ in {
-        nx.DiGraph,
-        nx.MultiDiGraph,
-        nxcg.DiGraph,
-        nxcg.MultiDiGraph,
-        nxcg.CudaDiGraph,
-        nxcg.CudaMultiDiGraph,
-    }:
+    if (
+        create_using in _directed_graph_types
+        or create_using.__class__ in _directed_graph_types
+    ):
         return "nx-cugraph.star_graph does not support create_using for directed graphs"
     return star_graph._check_create_using_can_run(*args, **kwargs)
 
