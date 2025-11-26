@@ -40,6 +40,9 @@ def test_edge_bc():
     assert pytest.approx(bc_nx) == bc_cg
 
 
+@pytest.mark.skipif(
+    _nxver >= (3, 6), reason="Test only supported for BC results from networkx < 3.6"
+)
 def test_edge_bc_rng():
     G = nx.karate_club_graph()
     bc_nx = nx.edge_betweenness_centrality(G, k=4, seed=7)
