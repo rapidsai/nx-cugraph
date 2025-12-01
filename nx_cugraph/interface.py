@@ -63,6 +63,10 @@ class BackendInterface:
         different_iteration_order = "Different graph data iteration order"
         # For nx version <= 3.4
         bc_normalization_fixed = "BC normalization fixed in 3.5"
+        # For nx version >= 3.6
+        bc_results_different = (
+            "Betweenness centrality results computed differently in 3.6"
+        )
         # For all versions
         louvain_different = "Louvain may be different due to RNG"
         sssp_path_different = "sssp may choose a different valid path"
@@ -267,6 +271,19 @@ class BackendInterface:
                         "test_betweenness_centrality.py:"
                         "TestBetweennessCentrality.test_sample_from_P3"
                     ): bc_normalization_fixed,
+                }
+            )
+        if _nxver >= (3, 6):
+            xfail.update(
+                {
+                    key(
+                        "test_betweenness_centrality.py:"
+                        "TestEdgeBetweennessCentrality.test_edge_betweenness_k"
+                    ): bc_results_different,
+                    key(
+                        "test_betweenness_centrality_subset.py:"
+                        "test_equivalence_non_subset"
+                    ): bc_results_different,
                 }
             )
         xfail.update(
