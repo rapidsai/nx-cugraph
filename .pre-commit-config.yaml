@@ -99,7 +99,7 @@ repos:
         types: [python]
         language: python
         pass_filenames: false
-        additional_dependencies: ["networkx>=3.5"]
+        additional_dependencies: ["networkx>=3.6"]
   - repo: local
     hooks:
       - id: nx-cugraph-readme-update
@@ -109,7 +109,7 @@ repos:
         types_or: [python, markdown]
         language: python
         pass_filenames: false
-        additional_dependencies: ["networkx>=3.5"]
+        additional_dependencies: ["networkx>=3.6"]
   - repo: local
     hooks:
       - id: disallow-improper-nxver-comparison
