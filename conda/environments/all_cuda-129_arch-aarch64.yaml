@@ -9,7 +9,7 @@ dependencies:
 - cudf==26.2.*,>=0.0.0a0
 - cupy>=13.6.0
 - networkx>=3.2
-- numpy>=1.23,<3.0a0
+- numpy>=1.23,<3.0
 - pandas
 - pre-commit
 - pylibcugraph==26.2.*,>=0.0.0a0
@@ -18,7 +18,7 @@ dependencies:
 - pytest-cov
 - pytest-mpl
 - pytest-xdist
-- rapids-build-backend>=0.4.0,<0.5.0.dev0
+- rapids-build-backend>=0.4.0,<0.5.0
 - scipy
 - setuptools>=61.0.0
 - wheel
