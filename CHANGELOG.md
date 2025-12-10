@@ -1,3 +1,26 @@
+# nx-cugraph 25.12.00 (10 Dec 2025)
+
+### 🚨 Breaking Changes
+* Require CUDA 12.2+ by @jakirkham in https://github.com/rapidsai/nx-cugraph/pull/203
+### 🐛 Bug Fixes
+* refactored update-version.sh to handle new branching strategy by @rockhowse in https://github.com/rapidsai/nx-cugraph/pull/206
+* fix(wheels): override wheel artifact name in input to publish job by @gforsyth in https://github.com/rapidsai/nx-cugraph/pull/207
+### 📖 Documentation
+* Use current system architecture in conda environment creation command by @bdice in https://github.com/rapidsai/nx-cugraph/pull/205
+### 🛠️ Improvements
+* `forceatlas2_layout`: support `node_mass=` argument by @eriknw in https://github.com/rapidsai/nx-cugraph/pull/194
+* Enable `sccache-dist` connection pool by @trxcllnt in https://github.com/rapidsai/nx-cugraph/pull/197
+* Use main branch by @bdice in https://github.com/rapidsai/nx-cugraph/pull/199
+* Use main shared-workflows branch by @bdice in https://github.com/rapidsai/nx-cugraph/pull/200
+* Use SPDX for all copyright headers by @KyleFromNVIDIA in https://github.com/rapidsai/nx-cugraph/pull/202
+* ci(build): switch to pure wheel and noarch: python builds by @gforsyth in https://github.com/rapidsai/nx-cugraph/pull/198
+* remove unused pytest markers in benchmarks, update docs for networkx 3.6 by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/212
+
+## New Contributors
+* @rockhowse made their first contribution in https://github.com/rapidsai/nx-cugraph/pull/206
+
+**Full Changelog**: https://github.com/rapidsai/nx-cugraph/compare/v25.12.00a...release/25.12
+
 # nx-cugraph 25.10.00 (8 Oct 2025)
 
 ## 🛠️ Improvements
