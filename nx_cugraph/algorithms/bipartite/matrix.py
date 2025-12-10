@@ -4,11 +4,26 @@ import cupy as cp
 import networkx as nx
 import numpy as np
 
+from nx_cugraph import _nxver
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.generators._utils import _create_using_class
 from nx_cugraph.utils import index_dtype, networkx_algorithm
 
 __all__ = ["biadjacency_matrix", "from_biadjacency_matrix"]
+
+# row_order and column_order were added in networkx 3.6, treat them as extra params
+# for function signature checks when using networkx < 3.6.
+if _nxver < (3, 6):
+    _row_col_order_extra_params = {
+        "row_order : list, optional": (
+            "unused, for compatibility with networkx >= 3.6"
+        ),
+        "column_order : list, optional": (
+            "unused, for compatibility with networkx >= 3.6"
+        ),
+    }
+else:
+    _row_col_order_extra_params = {}
 
 
 @networkx_algorithm(version_added="25.06")
@@ -76,7 +91,12 @@ def biadjacency_matrix(
         raise nx.NetworkXError(f"Unknown sparse matrix format: {format}") from exc
 
 
-@networkx_algorithm(version_added="25.06", fallback=True, create_using_arg=1)
+@networkx_algorithm(
+    extra_params={**_row_col_order_extra_params},
+    fallback=True,
+    create_using_arg=1,
+    version_added="25.06",
+)
 def from_biadjacency_matrix(
     A, create_using=None, edge_attribute="weight", *, row_order=None, column_order=None
 ):
