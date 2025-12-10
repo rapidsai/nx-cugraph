@@ -223,6 +223,7 @@ def relabel_nodes(G, mapping, copy=True):
         use_compat_graph=is_compat_graph,
         **extra_kwargs,
     )
+    
     rv.graph.update(G.graph)
     if not copy:
         G_orig._become(rv)

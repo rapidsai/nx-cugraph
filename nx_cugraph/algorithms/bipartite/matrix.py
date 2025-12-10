@@ -77,7 +77,13 @@ def biadjacency_matrix(
 
 
 @networkx_algorithm(version_added="25.06", fallback=True, create_using_arg=1)
-def from_biadjacency_matrix(A, create_using=None, edge_attribute="weight"):
+def from_biadjacency_matrix(A, create_using=None, edge_attribute="weight", *, row_order=None, column_order=None):
+    if row_order is not None or column_order is not None:
+        breakpoint()
+        raise NotImplementedError(
+            f"row_order={row_order} and column_order={column_order} not supported;"
+            " only row_order=None and column_order=None are currently supported"
+        )
     graph_class, inplace = _create_using_class(create_using)
     nrows, ncols = A.shape
     if A.format != "coo":
@@ -115,3 +121,18 @@ def from_biadjacency_matrix(A, create_using=None, edge_attribute="weight"):
     if inplace:
         return create_using._become(G)
     return G
+
+
+@from_biadjacency_matrix._can_run
+def _(
+    A,
+    create_using=None,
+    edge_attribute="weight",
+    *,
+    row_order=None,
+    column_order=None,
+):
+    if row_order is not None or column_order is not None:
+        return (f"row_order={row_order} and column_order={column_order} not supported; "
+                "only row_order=None and column_order=None are currently supported")
+    return True
