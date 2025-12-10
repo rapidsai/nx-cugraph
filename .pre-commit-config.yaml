@@ -99,7 +99,7 @@ repos:
         types: [python]
         language: python
         pass_filenames: false
-        additional_dependencies: ["networkx>=3.6"]
+        additional_dependencies: ["networkx>=3.6.1"]
   - repo: local
     hooks:
       - id: nx-cugraph-readme-update
@@ -109,7 +109,7 @@ repos:
         types_or: [python, markdown]
         language: python
         pass_filenames: false
-        additional_dependencies: ["networkx>=3.6"]
+        additional_dependencies: ["networkx>=3.6.1"]
   - repo: local
     hooks:
       - id: disallow-improper-nxver-comparison
@@ -122,7 +122,7 @@ repos:
         # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
         exclude: .pre-commit-config.yaml
   - repo: https://github.com/rapidsai/pre-commit-hooks
-    rev: v1.2.0
+    rev: v1.2.1
     hooks:
       - id: verify-copyright
         args: [--fix, --spdx]
