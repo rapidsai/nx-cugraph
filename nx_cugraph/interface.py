@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 
 import networkx as nx
 
@@ -43,6 +44,10 @@ class BackendInterface:
             return
 
         def key(testpath):
+            # Allow testpath to be either a regex (useful for matching parameterized
+            # tests) or a formatted string to match specific tests.
+            if isinstance(testpath, re.Pattern):
+                return testpath
             filename, path = testpath.split(":")
             *names, testname = path.split(".")
             if names:
@@ -66,6 +71,11 @@ class BackendInterface:
         # For nx version >= 3.6
         bc_results_different = (
             "Betweenness centrality results computed differently in 3.6"
+        )
+        # For nx version == 3.6.1
+        undirected_edges_source_target_order_differs = (
+            "Source/target edge order may differ for undirected graph "
+            "and fail overly-strict comparison"
         )
         # For all versions
         louvain_different = "Louvain may be different due to RNG"
@@ -382,17 +392,43 @@ class BackendInterface:
                 )
             ] = too_slow
 
+        # Needed for new tests added in networkx 3.6.1, should not be needed in later
+        # versions.
+        if _nxver == (3, 6, 1):
+            skip.update(
+                {
+                    key(
+                        re.compile(
+                            r"test_matrix\.py:TestBiadjacencyMatrix\.test_from_biadjacency_nodelist\[.*\]"  # noqa: E501
+                        )
+                    ): undirected_edges_source_target_order_differs,
+                }
+            )
+
         if os.environ.get("PYTEST_NO_SKIP", ""):
             skip.clear()
 
         for item in items:
             kset = set(item.keywords)
-            for (test_name, keywords), reason in xfail.items():
-                if item.name == test_name and keywords.issubset(kset):
-                    item.add_marker(pytest.mark.xfail(reason=reason))
-            for (test_name, keywords), reason in skip.items():
-                if item.name == test_name and keywords.issubset(kset):
-                    item.add_marker(pytest.mark.skip(reason=reason))
+            item_test_path = f"{item.path.name}:{item.getmodpath()}"
+            # Xfail tests
+            for test_name, reason in xfail.items():
+                if isinstance(test_name, re.Pattern):
+                    if test_name.match(item_test_path):
+                        item.add_marker(pytest.mark.xfail(reason=reason))
+                else:
+                    (test_name, keywords) = test_name
+                    if item.name == test_name and keywords.issubset(kset):
+                        item.add_marker(pytest.mark.xfail(reason=reason))
+            # Skip tests
+            for test_name, reason in skip.items():
+                if isinstance(test_name, re.Pattern):
+                    if test_name.match(item_test_path):
+                        item.add_marker(pytest.mark.skip(reason=reason))
+                else:
+                    (test_name, keywords) = test_name
+                    if item.name == test_name and keywords.issubset(kset):
+                        item.add_marker(pytest.mark.skip(reason=reason))
 
     @classmethod
     def can_run(cls, name, args, kwargs):
