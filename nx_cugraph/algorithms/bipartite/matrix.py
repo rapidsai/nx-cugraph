@@ -11,15 +11,15 @@ from nx_cugraph.utils import index_dtype, networkx_algorithm
 
 __all__ = ["biadjacency_matrix", "from_biadjacency_matrix"]
 
-# row_order and column_order were added in networkx 3.6, treat them as extra params
-# for function signature checks when using networkx < 3.6.
-if _nxver < (3, 6):
+# row_order and column_order were added in networkx 3.6.1, treat them as extra params
+# for function signature checks when using networkx < 3.6.1.
+if _nxver < (3, 6, 1):
     _row_col_order_extra_params = {
         "row_order : list, optional": (
-            "unused, for compatibility with networkx >= 3.6"
+            "unused, for compatibility with networkx >= 3.6.1"
         ),
         "column_order : list, optional": (
-            "unused, for compatibility with networkx >= 3.6"
+            "unused, for compatibility with networkx >= 3.6.1"
         ),
     }
 else:
