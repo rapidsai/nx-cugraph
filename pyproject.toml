@@ -251,7 +251,7 @@ ignore = [
 "nx_cugraph/__init__.py" = ["E402"]  # Allow module level import not at top of file
 "nx_cugraph/algorithms/**/*py" = ["D205", "D401"]  # Allow flexible docstrings for algorithms
 "nx_cugraph/generators/**/*py" = ["D205", "D401"]  # Allow flexible docstrings for generators
-"nx_cugraph/interface.py" = ["D401"]  # Flexible docstrings
+"nx_cugraph/interface.py" = ["D401", "RUF100"]  # Flexible docstrings, allow noqas for other tools
 "nx_cugraph/convert.py" = ["E721"]  # Allow `dtype == object`
 "scripts/update_readme.py" = ["INP001"]  # Not part of a package
 "nx_cugraph/tests/test_generators.py" = ["RUF005"]
