@@ -55,12 +55,12 @@ repos:
     rev: 25.1.0
     hooks:
       - id: black
-      # - id: black-jupyter  # Consider adding this
+        # - id: black-jupyter  # Consider adding this
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.5
     hooks:
       - id: ruff
-        args: [--fix-only, --show-fixes]  # --unsafe-fixes]
+        args: [--fix-only, --show-fixes] # --unsafe-fixes]
   - repo: https://github.com/PyCQA/flake8
     rev: 7.2.0
     hooks:
@@ -70,7 +70,7 @@ repos:
           # These versions need updated manually
           - flake8==7.2.0
           - flake8-bugbear==24.12.12
-          - flake8-simplify==0.21.0  # Not maintained, so consider deleting
+          - flake8-simplify==0.21.0 # Not maintained, so consider deleting
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
@@ -88,8 +88,8 @@ repos:
   - repo: https://github.com/rapidsai/dependency-file-generator
     rev: v1.20.0
     hooks:
-        - id: rapids-dependency-file-generator
-          args: ["--clean", "--warn-all", "--strict"]
+      - id: rapids-dependency-file-generator
+        args: ["--clean", "--warn-all", "--strict"]
   - repo: local
     hooks:
       - id: nx-cugraph-meta-data-update
@@ -140,7 +140,7 @@ repos:
             ^[.]pre-commit-config[.]yaml$|
             recipe[.]yaml$
       - id: verify-alpha-spec
-        args: ["--fix"]
+        args: [--fix, --mode, release]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
