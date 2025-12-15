@@ -5,7 +5,7 @@ channels:
 - rapidsai
 - conda-forge
 dependencies:
-- cuda-version=13.0
+- cuda-version=13.1
 - cudf==26.2.*,>=0.0.0a0
 - cupy>=13.6.0
 - networkx>=3.2
@@ -22,4 +22,4 @@ dependencies:
 - scipy
 - setuptools>=61.0.0
 - wheel
-name: all_cuda-130_arch-x86_64
+name: all_cuda-131_arch-x86_64
