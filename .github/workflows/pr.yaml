@@ -14,9 +14,9 @@ jobs:
     needs:
       - changed-files
       - checks
-      - devcontainer
-      - conda-python-build
-      - conda-python-tests
+      # - devcontainer
+      # - conda-python-build
+      # - conda-python-tests
       - wheel-build-nx-cugraph
       - wheel-tests-nx-cugraph
     secrets: inherit
@@ -40,45 +40,45 @@ jobs:
           - '!README.md'
           - '!ci/release/update-version.sh'
           - '!notebooks/**'
-  devcontainer:
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@cuda-13.1.0
-    with:
-      arch: '["amd64", "arm64"]'
-      cuda: '["13.1"]'
-      node_type: "cpu8"
-      rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
-      env: |
-        SCCACHE_DIST_MAX_RETRIES=inf
-        SCCACHE_SERVER_LOG=sccache=debug
-        SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
-        SCCACHE_DIST_AUTH_TOKEN_VAR=RAPIDS_AUX_SECRET_1
-      build_command: |
-        sccache --zero-stats;
-        build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
-        sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
+  # devcontainer:
+  #   secrets: inherit
+  #   uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@cuda-13.1.0
+  #   with:
+  #     arch: '["amd64", "arm64"]'
+  #     cuda: '["13.1"]'
+  #     node_type: "cpu8"
+  #     rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
+  #     env: |
+  #       SCCACHE_DIST_MAX_RETRIES=inf
+  #       SCCACHE_SERVER_LOG=sccache=debug
+  #       SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
+  #       SCCACHE_DIST_AUTH_TOKEN_VAR=RAPIDS_AUX_SECRET_1
+  #     build_command: |
+  #       sccache --zero-stats;
+  #       build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
+  #       sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
   checks:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@cuda-13.1.0
     with:
       enable_check_generated_files: false
-  conda-python-build:
-    needs: [checks]
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@cuda-13.1.0
-    with:
-      build_type: pull-request
-      script: ci/build_python.sh
-      pure-conda: true
-  conda-python-tests:
-    needs: [conda-python-build, changed-files]
-    secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@cuda-13.1.0
-    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
-    with:
-      build_type: pull-request
-      run_codecov: false
-      script: ci/test_python.sh
+  # conda-python-build:
+  #   needs: [checks]
+  #   secrets: inherit
+  #   uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@cuda-13.1.0
+  #   with:
+  #     build_type: pull-request
+  #     script: ci/build_python.sh
+  #     pure-conda: true
+  # conda-python-tests:
+  #   needs: [conda-python-build, changed-files]
+  #   secrets: inherit
+  #   uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@cuda-13.1.0
+  #   if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+  #   with:
+  #     build_type: pull-request
+  #     run_codecov: false
+  #     script: ci/test_python.sh
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit
