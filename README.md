@@ -37,7 +37,7 @@ nx-cugraph can be installed with conda (via [Miniforge](https://github.com/conda
 
 ```shell
 # CUDA 13
-conda install -c rapidsai -c conda-forge nx-cugraph cuda-version=13.0
+conda install -c rapidsai -c conda-forge nx-cugraph cuda-version=13.1
 
 # CUDA 12
 conda install -c rapidsai -c conda-forge nx-cugraph cuda-verison=12.9
@@ -47,7 +47,7 @@ We also provide [nightly Conda packages](https://anaconda.org/rapidsai-nightly/n
 
 ```shell
 # CUDA 13
-conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-version=13.0
+conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-version=13.1
 
 # CUDA 12
 conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-verison=12.9
