@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 
 # this is to prevent ruff from complaining about newlines in docstrings
@@ -66,6 +66,7 @@ def forceatlas2_layout(
     # nx_cugraph-only argument
     dtype=None,
 ):
+    """Only `dim=2` is supported, and there may be minor numeric differences."""
     # networkx 3.6 dropped the dissuade_hubs parameter because it was unused.
     # See https://github.com/networkx/networkx/pull/8293 for more details.
     # nx-cugraph still supports it for compatibility with networkx < 3.6 (where it is
@@ -73,7 +74,6 @@ def forceatlas2_layout(
     if dissuade_hubs is not _dissuade_hubs_default and _nxver >= (3, 6):
         raise nx.NetworkXError("dissuade_hubs is not supported for networkx >= 3.6")
 
-    """Only `dim=2` is supported, and there may be minor numeric differences."""
     if len(G) == 0:
         return {}
 
