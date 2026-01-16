@@ -119,15 +119,6 @@ for FILE in .github/workflows/*.yaml; do
   sed_runner "/shared-workflows/ s|@.*|@${RAPIDS_BRANCH_NAME}|g" "${FILE}"
 done
 
-# Documentation references - context-aware
-if [[ "${RUN_CONTEXT}" == "main" ]]; then
-  # In main context, keep documentation on main (no changes needed)
-  :
-elif [[ "${RUN_CONTEXT}" == "release" ]]; then
-  # In release context, use release branch for documentation links (word boundaries to avoid partial matches)
-  sed_runner "s|\\bmain\\b|release/${NEXT_SHORT_TAG}|g" notebooks/demo/nx_cugraph_demo.ipynb
-fi
-
 # .devcontainer files
 find .devcontainer/ -type f -name devcontainer.json -print0 | while IFS= read -r -d '' filename; do
     sed_runner "s@rapidsai/devcontainers:[0-9.]*@rapidsai/devcontainers:${NEXT_SHORT_TAG}@g" "${filename}"
