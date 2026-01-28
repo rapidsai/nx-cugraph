@@ -32,14 +32,62 @@ jobs:
         test_notebooks:
           - '**'
           - '!.devcontainer/**'
+          - '!.github/ISSUE_TEMPLATE/**'
+          - '!.github/copy-pr-bot.yaml'
+          - '!.github/labeler.yml'
+          - '!.github/ops-bot.yaml'
+          - '!.github/release.yml'
+          - '!.flake8'
+          - '!.pre-commit-config.yaml'
+          - '!.shellcheckrc'
           - '!README.md'
+          - '!ci/build_wheel*.sh'
+          - '!ci/check_style.sh'
           - '!ci/release/update-version.sh'
-        test_python:
+          - '!ci/validate_wheel.sh'
+          - '!scripts/update_readme.py'
+        test_python_conda:
           - '**'
           - '!.devcontainer/**'
+          - '!.flake8'
+          - '!.github/ISSUE_TEMPLATE/**'
+          - '!.github/copy-pr-bot.yaml'
+          - '!.github/labeler.yml'
+          - '!.github/ops-bot.yaml'
+          - '!.github/release.yml'
+          - '!.pre-commit-config.yaml'
+          - '!.shellcheckrc'
           - '!README.md'
+          - '!ci/build_wheel*.sh'
+          - '!ci/check_style.sh'
           - '!ci/release/update-version.sh'
+          - '!ci/validate_wheel.sh'
+          - '!conftest.py'
+          - '!img/'
           - '!notebooks/**'
+          - '!scripts/update_readme.py'
+        test_python_wheels:
+          - '**'
+          - '!.devcontainer/**'
+          - '!.flake8'
+          - '!.github/ISSUE_TEMPLATE/**'
+          - '!.github/copy-pr-bot.yaml'
+          - '!.github/labeler.yml'
+          - '!.github/ops-bot.yaml'
+          - '!.github/release.yml'
+          - '!.pre-commit-config.yaml'
+          - '!.shellcheckrc'
+          - '!README.md'
+          - '!ci/build_python.sh'
+          - '!ci/check_style.sh'
+          - '!ci/release/update-version.sh'
+          - '!ci/test_python.sh'
+          - '!codecov.yml'
+          - '!conda/**'
+          - '!conftest.py'
+          - '!img/'
+          - '!notebooks/**'
+          - '!scripts/update_readme.py'
   devcontainer:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
@@ -74,7 +122,7 @@ jobs:
     needs: [conda-python-build, changed-files]
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@main
-    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_conda
     with:
       build_type: pull-request
       run_codecov: false
@@ -93,7 +141,7 @@ jobs:
     needs: [wheel-build-nx-cugraph, changed-files]
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@main
-    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_wheels
     with:
       build_type: pull-request
       script: ci/test_wheel_nx-cugraph.sh
