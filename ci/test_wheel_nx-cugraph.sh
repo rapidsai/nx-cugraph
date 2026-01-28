@@ -15,7 +15,11 @@ python_package_name=${package_name//-/_}
 NX_CUGRAPH_WHEELHOUSE=$(rapids-download-from-github "$(rapids-package-name "wheel_python" "$package_name" --pure --cuda "$RAPIDS_CUDA_VERSION")")
 
 # echo to expand wildcard before adding `[extra]` requires for pip
+#
+# '--extra-index-url pypi.nvidia.com' can be removed when 'pylibcugraph' and
+# its dependencies are available from pypi.org
 rapids-pip-retry install \
+    --extra-index-url https://pypi.nvidia.com \
     "$(echo "${NX_CUGRAPH_WHEELHOUSE}"/"${python_package_name}"*.whl)[test]"
 
 # Run smoke tests for aarch64 pull requests
