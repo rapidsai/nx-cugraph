@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 
 # https://pre-commit.com/
@@ -50,7 +50,7 @@ repos:
     rev: v3.19.1
     hooks:
       - id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
   - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:

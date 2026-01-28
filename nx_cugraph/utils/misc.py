@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -19,17 +19,6 @@ if TYPE_CHECKING:
     import networkx as nx
 
     from ..typing import Dtype, EdgeKey
-
-try:
-    from itertools import pairwise  # Python >=3.10
-except ImportError:
-
-    def pairwise(it):
-        it = iter(it)
-        for prev in it:
-            for cur in it:
-                yield (prev, cur)
-                prev = cur
 
 
 __all__ = [
@@ -100,7 +89,7 @@ def _groupby(
         sorted_values = [vals[sort_indices] for vals in values]
     else:
         sorted_values = values[sort_indices]
-    boundaries = pairwise(itertools.chain(left_bounds.tolist(), [size]))
+    boundaries = itertools.pairwise(itertools.chain(left_bounds.tolist(), [size]))
     if groups_are_canonical:
         it = enumerate(boundaries)
     elif isinstance(groups, list):
