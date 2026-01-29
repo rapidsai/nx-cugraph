@@ -6,6 +6,8 @@ set -euo pipefail
 
 package_dir=$1
 
+RAPIDS_INIT_PIP_REMOVE_NVIDIA_INDEX="true"
+export RAPIDS_INIT_PIP_REMOVE_NVIDIA_INDEX
 source rapids-date-string
 source rapids-init-pip
 
@@ -18,7 +20,6 @@ RAPIDS_PIP_WHEEL_ARGS=(
   -v
   --no-deps
   --disable-pip-version-check
-  --extra-index-url https://pypi.nvidia.com
 )
 
 # unset PIP_CONSTRAINT (set by rapids-init-pip)... it doesn't affect builds as of pip 25.3, and
