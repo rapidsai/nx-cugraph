@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ import nx_cugraph as nxcg
 from nx_cugraph import _nxver
 
 from .utils import index_dtype, networkx_algorithm
-from .utils.misc import _And_NotImplementedError, pairwise
+from .utils.misc import _And_NotImplementedError
 
 if _nxver >= (3, 4):
     from networkx.utils.backends import _get_cache_key, _get_from_cache, _set_to_cache
@@ -861,7 +861,9 @@ def to_dict_of_lists(G, nodelist=None):
     elif compressed_srcs.size != G._N:
         rv = {key: [] for key in G}
     # We use `boundaries` like this in `_groupby` too
-    boundaries = pairwise(itertools.chain(left_bounds.tolist(), [src_indices.size]))
+    boundaries = itertools.pairwise(
+        itertools.chain(left_bounds.tolist(), [src_indices.size])
+    )
     dst_indices = dst_indices.tolist()
     if G.key_to_id is None:
         it = zip(compressed_srcs.tolist(), boundaries)
