@@ -20,12 +20,11 @@ authors = [
 ]
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -80,7 +79,7 @@ matrix-entry = "cuda_suffixed=true"
 
 [tool.black]
 line-length = 88
-target-version = ["py310", "py311", "py312", "py313"]
+target-version = ["py311", "py312", "py313"]
 
 [tool.isort]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
@@ -148,13 +147,13 @@ select = [
     "distro-too-large-compressed",
 ]
 
-# PyPI limit is 100 MiB, fail CI before we get too close to that
-max_allowed_size_compressed = '75M'
+# PyPI hard limit is 1GiB, but try to keep these as small as possible
+max_allowed_size_compressed = '10Mi'
 
 [tool.ruff]
 # https://github.com/charliermarsh/ruff/
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 [tool.ruff.lint]
 unfixable = [
     "F841",  # unused-variable (Note: can leave useless expression)

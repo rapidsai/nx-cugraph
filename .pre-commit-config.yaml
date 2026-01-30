@@ -50,7 +50,7 @@ repos:
     rev: v3.19.1
     hooks:
       - id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
   - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
@@ -141,6 +141,7 @@ repos:
             recipe[.]yaml$
       - id: verify-alpha-spec
         args: ["--fix"]
+      - id: verify-pyproject-license
       - id: verify-hardcoded-version
         exclude: |
           (?x)
