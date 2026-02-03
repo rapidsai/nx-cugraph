@@ -6,8 +6,6 @@ set -euo pipefail
 
 package_dir=$1
 
-RAPIDS_INIT_PIP_REMOVE_NVIDIA_INDEX="true"
-export RAPIDS_INIT_PIP_REMOVE_NVIDIA_INDEX
 source rapids-date-string
 source rapids-init-pip
 
