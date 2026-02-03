@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
+
 # https://pre-commit.com/
 #
 # Before first use: `pre-commit install`
@@ -47,7 +50,7 @@ repos:
     rev: v3.19.1
     hooks:
       - id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
   - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
@@ -96,7 +99,7 @@ repos:
         types: [python]
         language: python
         pass_filenames: false
-        additional_dependencies: ["networkx>=3.5"]
+        additional_dependencies: ["networkx>=3.6.1"]
   - repo: local
     hooks:
       - id: nx-cugraph-readme-update
@@ -106,7 +109,7 @@ repos:
         types_or: [python, markdown]
         language: python
         pass_filenames: false
-        additional_dependencies: ["networkx>=3.5"]
+        additional_dependencies: ["networkx>=3.6.1"]
   - repo: local
     hooks:
       - id: disallow-improper-nxver-comparison
@@ -119,17 +122,38 @@ repos:
         # Use e.g. `_nxver < ...` or `_nxver >= ...` instead
         exclude: .pre-commit-config.yaml
   - repo: https://github.com/rapidsai/pre-commit-hooks
-    rev: v0.6.0
+    rev: v1.3.3
     hooks:
       - id: verify-copyright
+        args: [--fix, --spdx]
         files: |
           (?x)
-              [.](sh|py)$|
-              [.]flake8[.]cython$|
-              meta[.]yaml$|
-              setup[.]cfg$
+            [.](sh|py)$|
+            [.]flake8([.]cython)?$|
+            meta[.]yaml$|
+            setup[.]cfg$|
+            ^[.]github/ISSUE_TEMPLATE/|
+            pytest[.]ini$|
+            Makefile$|
+            dependencies[.]yaml$|
+            pyproject[.]toml$|
+            ^[.]pre-commit-config[.]yaml$|
+            recipe[.]yaml$
       - id: verify-alpha-spec
         args: ["--fix"]
+      - id: verify-pyproject-license
+      - id: verify-hardcoded-version
+        exclude: |
+          (?x)
+            devcontainer[.]json$|
+            dependencies[.]yaml$|
+            ^[.]github/workflows/|
+            [.]md$|
+            pom[.]xml$|
+            ^[.]pre-commit-config[.]yaml$|
+            [.]rst$|
+            ^conda/environments/|
+            ^[.]github/ISSUE_TEMPLATE/
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:

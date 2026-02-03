@@ -1,15 +1,5 @@
-# Copyright (c) 2023-2025, NVIDIA CORPORATION.
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 import functools
@@ -27,7 +17,7 @@ import nx_cugraph as nxcg
 from nx_cugraph import _nxver
 
 from .utils import index_dtype, networkx_algorithm
-from .utils.misc import _And_NotImplementedError, pairwise
+from .utils.misc import _And_NotImplementedError
 
 if _nxver >= (3, 4):
     from networkx.utils.backends import _get_cache_key, _get_from_cache, _set_to_cache
@@ -871,7 +861,9 @@ def to_dict_of_lists(G, nodelist=None):
     elif compressed_srcs.size != G._N:
         rv = {key: [] for key in G}
     # We use `boundaries` like this in `_groupby` too
-    boundaries = pairwise(itertools.chain(left_bounds.tolist(), [src_indices.size]))
+    boundaries = itertools.pairwise(
+        itertools.chain(left_bounds.tolist(), [src_indices.size])
+    )
     dst_indices = dst_indices.tolist()
     if G.key_to_id is None:
         it = zip(compressed_srcs.tolist(), boundaries)

@@ -1,15 +1,5 @@
-# Copyright (c) 2023-2025, NVIDIA CORPORATION.
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 import itertools
 from numbers import Integral
 
@@ -50,6 +40,15 @@ __all__ = [
 ]
 
 concat = itertools.chain.from_iterable
+
+_directed_graph_types = {
+    nx.DiGraph,
+    nx.MultiDiGraph,
+    nxcg.DiGraph,
+    nxcg.MultiDiGraph,
+    nxcg.CudaDiGraph,
+    nxcg.CudaMultiDiGraph,
+}
 
 
 @networkx_algorithm(version_added="23.12", create_using_arg=2)
@@ -383,7 +382,7 @@ def star_graph(n, create_using=None):
             n, nodes, create_using, allow_directed=False, self_loops=self_loops
         )
     graph_class, inplace = _create_using_class(create_using)
-    if graph_class.is_directed():
+    if _nxver < (3, 6) and graph_class.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
     flat = cp.zeros(n - 1, index_dtype)
     ramp = cp.arange(1, n, dtype=index_dtype)
@@ -393,6 +392,21 @@ def star_graph(n, create_using=None):
     if inplace:
         return create_using._become(G)
     return G
+
+
+@star_graph._can_run
+def _(*args, **kwargs):
+    # networkx >= 3.6 supports directed create_using
+    if len(args) > 1:
+        create_using = args[star_graph.create_using_arg]
+    else:
+        create_using = kwargs.get("create_using")
+    if (
+        create_using in _directed_graph_types
+        or create_using.__class__ in _directed_graph_types
+    ):
+        return "nx-cugraph.star_graph does not support create_using for directed graphs"
+    return star_graph._check_create_using_can_run(*args, **kwargs)
 
 
 @networkx_algorithm(nodes_or_number=[0, 1], version_added="23.12", create_using_arg=2)

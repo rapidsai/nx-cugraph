@@ -1,15 +1,5 @@
-# Copyright (c) 2025, NVIDIA CORPORATION.
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 
 # this is to prevent ruff from complaining about newlines in docstrings
 # the docstring should show up properly in the nx docs
@@ -21,6 +11,7 @@ import numpy as np
 import pylibcugraph as plc
 from networkx.utils import create_random_state
 
+from nx_cugraph import _nxver
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.utils import (
     _dtype_param,
@@ -35,9 +26,20 @@ __all__ = [
     "forceatlas2_layout",
 ]
 
+if _nxver >= (3, 6):
+    _dissuade_hubs_param = {
+        "dissuade_hubs : bool, optional": (
+            "unused, for compatibility with networkx < 3.6"
+        )
+    }
+    _dissuade_hubs_default = None
+else:
+    _dissuade_hubs_param = {}
+    _dissuade_hubs_default = False
+
 
 @networkx_algorithm(
-    extra_params=_dtype_param,
+    extra_params={**_dtype_param, **_dissuade_hubs_param},
     is_incomplete=True,  # dim=2-only
     is_different=True,  # node_size handled differently, different RNG and results
     version_added="25.04",
@@ -56,7 +58,7 @@ def forceatlas2_layout(
     node_mass=None,
     node_size=None,
     weight=None,
-    dissuade_hubs=False,
+    dissuade_hubs=_dissuade_hubs_default,
     linlog=False,
     seed=None,
     dim=2,
@@ -65,6 +67,13 @@ def forceatlas2_layout(
     dtype=None,
 ):
     """Only `dim=2` is supported, and there may be minor numeric differences."""
+    # networkx 3.6 dropped the dissuade_hubs parameter because it was unused.
+    # See https://github.com/networkx/networkx/pull/8293 for more details.
+    # nx-cugraph still supports it for compatibility with networkx < 3.6 (where it is
+    # also ignored) but should raise an exception if it is set from networkx >= 3.6.
+    if dissuade_hubs is not _dissuade_hubs_default and _nxver >= (3, 6):
+        raise nx.NetworkXError("dissuade_hubs is not supported for networkx >= 3.6")
+
     if len(G) == 0:
         return {}
 
@@ -229,7 +238,7 @@ def _(
     node_mass=None,
     node_size=None,
     weight=None,
-    dissuade_hubs=False,
+    dissuade_hubs=_dissuade_hubs_default,
     linlog=False,
     seed=None,
     dim=2,

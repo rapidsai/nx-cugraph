@@ -1,10 +1,14 @@
 #!/bin/bash
-# Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 
 set -euo pipefail
 
 rapids-logger "Create checks conda environment"
 . /opt/conda/etc/profile.d/conda.sh
+
+rapids-logger "Configuring conda strict channel priority"
+conda config --set channel_priority strict
 
 rapids-dependency-file-generator \
   --output conda \

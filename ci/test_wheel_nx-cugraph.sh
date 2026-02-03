@@ -1,20 +1,25 @@
 #!/bin/bash
-# Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 
 set -eoxu pipefail
 
+RAPIDS_INIT_PIP_REMOVE_NVIDIA_INDEX="true"
+export RAPIDS_INIT_PIP_REMOVE_NVIDIA_INDEX
 source rapids-init-pip
 
 package_name="nx-cugraph"
 python_package_name=${package_name//-/_}
 
-RAPIDS_PY_CUDA_SUFFIX="$(rapids-wheel-ctk-name-gen "${RAPIDS_CUDA_VERSION}")"
-
 # nx-cugraph is a pure wheel, which is part of generating the download path
-NX_CUGRAPH_WHEELHOUSE=$(RAPIDS_PY_WHEEL_NAME="${package_name}_${RAPIDS_PY_CUDA_SUFFIX}" RAPIDS_PY_WHEEL_PURE="1" rapids-download-wheels-from-github python)
+NX_CUGRAPH_WHEELHOUSE=$(rapids-download-from-github "$(rapids-package-name "wheel_python" "$package_name" --pure --cuda "$RAPIDS_CUDA_VERSION")")
 
 # echo to expand wildcard before adding `[extra]` requires for pip
+#
+# '--extra-index-url pypi.nvidia.com' can be removed when 'pylibcugraph' and
+# its dependencies are available from pypi.org
 rapids-pip-retry install \
+    --extra-index-url https://pypi.nvidia.com \
     "$(echo "${NX_CUGRAPH_WHEELHOUSE}"/"${python_package_name}"*.whl)[test]"
 
 # Run smoke tests for aarch64 pull requests

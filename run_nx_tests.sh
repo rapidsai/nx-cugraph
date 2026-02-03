@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 #
 # NETWORKX_TEST_BACKEND=cugraph
 #   Replaces NETWORKX_GRAPH_CONVERT for networkx versions >=3.2

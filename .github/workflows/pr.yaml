@@ -20,32 +20,80 @@ jobs:
       - wheel-build-nx-cugraph
       - wheel-tests-nx-cugraph
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@branch-25.12
+    uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@main
     if: always()
     with:
       needs: ${{ toJSON(needs) }}
   changed-files:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@branch-25.12
+    uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@main
     with:
       files_yaml: |
         test_notebooks:
           - '**'
           - '!.devcontainer/**'
+          - '!.github/ISSUE_TEMPLATE/**'
+          - '!.github/copy-pr-bot.yaml'
+          - '!.github/labeler.yml'
+          - '!.github/ops-bot.yaml'
+          - '!.github/release.yml'
+          - '!.flake8'
+          - '!.pre-commit-config.yaml'
+          - '!.shellcheckrc'
           - '!README.md'
+          - '!ci/build_wheel*.sh'
+          - '!ci/check_style.sh'
           - '!ci/release/update-version.sh'
-        test_python:
+          - '!ci/validate_wheel.sh'
+          - '!scripts/update_readme.py'
+        test_python_conda:
           - '**'
           - '!.devcontainer/**'
+          - '!.flake8'
+          - '!.github/ISSUE_TEMPLATE/**'
+          - '!.github/copy-pr-bot.yaml'
+          - '!.github/labeler.yml'
+          - '!.github/ops-bot.yaml'
+          - '!.github/release.yml'
+          - '!.pre-commit-config.yaml'
+          - '!.shellcheckrc'
           - '!README.md'
+          - '!ci/build_wheel*.sh'
+          - '!ci/check_style.sh'
           - '!ci/release/update-version.sh'
+          - '!ci/validate_wheel.sh'
+          - '!conftest.py'
+          - '!img/'
           - '!notebooks/**'
+          - '!scripts/update_readme.py'
+        test_python_wheels:
+          - '**'
+          - '!.devcontainer/**'
+          - '!.flake8'
+          - '!.github/ISSUE_TEMPLATE/**'
+          - '!.github/copy-pr-bot.yaml'
+          - '!.github/labeler.yml'
+          - '!.github/ops-bot.yaml'
+          - '!.github/release.yml'
+          - '!.pre-commit-config.yaml'
+          - '!.shellcheckrc'
+          - '!README.md'
+          - '!ci/build_python.sh'
+          - '!ci/check_style.sh'
+          - '!ci/release/update-version.sh'
+          - '!ci/test_python.sh'
+          - '!codecov.yml'
+          - '!conda/**'
+          - '!conftest.py'
+          - '!img/'
+          - '!notebooks/**'
+          - '!scripts/update_readme.py'
   devcontainer:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@branch-25.12
+    uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
     with:
       arch: '["amd64", "arm64"]'
-      cuda: '["13.0"]'
+      cuda: '["13.1"]'
       node_type: "cpu8"
       rapids-aux-secret-1: GIST_REPO_READ_ORG_GITHUB_TOKEN
       env: |
@@ -59,21 +107,22 @@ jobs:
         sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
   checks:
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@branch-25.12
+    uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@main
     with:
       enable_check_generated_files: false
   conda-python-build:
     needs: [checks]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@branch-25.12
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@main
     with:
       build_type: pull-request
       script: ci/build_python.sh
+      pure-conda: true
   conda-python-tests:
     needs: [conda-python-build, changed-files]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@branch-25.12
-    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@main
+    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_conda
     with:
       build_type: pull-request
       run_codecov: false
@@ -81,20 +130,18 @@ jobs:
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@branch-25.12
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@main
     with:
       build_type: pull-request
       script: ci/build_wheel_nx-cugraph.sh
-      # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
-      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
   wheel-tests-nx-cugraph:
     needs: [wheel-build-nx-cugraph, changed-files]
     secrets: inherit
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@branch-25.12
-    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@main
+    if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_wheels
     with:
       build_type: pull-request
       script: ci/test_wheel_nx-cugraph.sh

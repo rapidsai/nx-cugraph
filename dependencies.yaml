@@ -1,9 +1,12 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
+
 # Dependency list for https://github.com/rapidsai/dependency-file-generator
 files:
   all:
     output: [conda]
     matrix:
-      cuda: ["12.9", "13.0"]
+      cuda: ["12.9", "13.1"]
       arch: [x86_64, aarch64]
     includes:
       - checks
@@ -64,8 +67,8 @@ files:
       - test_python_common
       - test_python_nx_cugraph
 channels:
-  - rapidsai
   - rapidsai-nightly
+  - rapidsai
   - conda-forge
 dependencies:
   checks:
@@ -77,10 +80,6 @@ dependencies:
     specific:
       - output_types: conda
         matrices:
-          - matrix:
-              cuda: "12.0"
-            packages:
-              - cuda-version=12.0
           - matrix:
               cuda: "12.2"
             packages:
@@ -101,19 +100,19 @@ dependencies:
               cuda: "13.0"
             packages:
               - cuda-version=13.0
+          - matrix:
+              cuda: "13.1"
+            packages:
+              - cuda-version=13.1
   depends_on_nx_cugraph:
     common:
       - output_types: conda
         packages:
-          - nx-cugraph==25.12.*,>=0.0.0a0
+          - nx-cugraph==26.4.*,>=0.0.0a0
   py_version:
     specific:
       - output_types: [conda]
         matrices:
-          - matrix:
-              py: "3.10"
-            packages:
-              - python=3.10
           - matrix:
               py: "3.11"
             packages:
@@ -128,17 +127,17 @@ dependencies:
               - python=3.13
           - matrix:
             packages:
-              - python>=3.10,<3.14
+              - python>=3.11,<3.14
   python_build_rapids:
     common:
       - output_types: [conda, pyproject, requirements]
         packages:
-          - rapids-build-backend>=0.4.0,<0.5.0.dev0
+          - rapids-build-backend>=0.4.0,<0.5.0
   python_build_wheel:
     common:
       - output_types: [conda, pyproject, requirements]
         packages:
-          - setuptools>=61.0.0
+          - setuptools>=77.0.0
           - wheel
   test_notebook:
     common:
@@ -161,10 +160,12 @@ dependencies:
       - output_types: [conda, pyproject, requirements]
         packages:
           - networkx>=3.2
-          - &numpy numpy>=1.23,<3.0a0
+          - &numpy numpy>=1.23,<3.0
   test_python_nx_cugraph:
     common:
-      - output_types: [conda, pyproject, requirements]
+      # This is intentionally only defined for [conda], to avoid unnecessarily installing 'pytest-mpl'
+      # in wheel-based CI (where the networkx tests are not run).
+      - output_types: [conda]
         packages:
           # not needed by nx-cugraph tests, but is required for running networkx tests
           - pytest-mpl
@@ -191,11 +192,10 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - &cudf_unsuffixed cudf==25.12.*,>=0.0.0a0
+          - &cudf_unsuffixed cudf==26.4.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
-          - --extra-index-url=https://pypi.nvidia.com
           - --extra-index-url=https://pypi.anaconda.org/rapidsai-wheels-nightly/simple
     specific:
       - output_types: [pyproject, requirements]
@@ -204,18 +204,18 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu12==25.12.*,>=0.0.0a0
+              - cudf-cu12==26.4.*,>=0.0.0a0
           - matrix:
               cuda: "13.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu13==25.12.*,>=0.0.0a0
+              - cudf-cu13==26.4.*,>=0.0.0a0
           - {matrix: null, packages: [*cudf_unsuffixed]}
   depends_on_pylibcugraph:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==25.12.*,>=0.0.0a0
+          - &pylibcugraph_unsuffixed pylibcugraph==26.4.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -228,10 +228,10 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu12==25.12.*,>=0.0.0a0
+              - pylibcugraph-cu12==26.4.*,>=0.0.0a0
           - matrix:
               cuda: "13.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu13==25.12.*,>=0.0.0a0
+              - pylibcugraph-cu13==26.4.*,>=0.0.0a0
           - {matrix: null, packages: [*pylibcugraph_unsuffixed]}

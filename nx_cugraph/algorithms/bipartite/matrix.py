@@ -1,24 +1,29 @@
-# Copyright (c) 2023-2025, NVIDIA CORPORATION.
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: Apache-2.0
 import cupy as cp
 import networkx as nx
 import numpy as np
 
+from nx_cugraph import _nxver
 from nx_cugraph.convert import _to_graph
 from nx_cugraph.generators._utils import _create_using_class
 from nx_cugraph.utils import index_dtype, networkx_algorithm
 
 __all__ = ["biadjacency_matrix", "from_biadjacency_matrix"]
+
+# row_order and column_order were added in networkx 3.6.1, treat them as extra params
+# for function signature checks when using networkx < 3.6.1.
+if _nxver < (3, 6, 1):
+    _row_col_order_extra_params = {
+        "row_order : list, optional": (
+            "unused, for compatibility with networkx >= 3.6.1"
+        ),
+        "column_order : list, optional": (
+            "unused, for compatibility with networkx >= 3.6.1"
+        ),
+    }
+else:
+    _row_col_order_extra_params = {}
 
 
 @networkx_algorithm(version_added="25.06")
@@ -86,8 +91,20 @@ def biadjacency_matrix(
         raise nx.NetworkXError(f"Unknown sparse matrix format: {format}") from exc
 
 
-@networkx_algorithm(version_added="25.06", fallback=True, create_using_arg=1)
-def from_biadjacency_matrix(A, create_using=None, edge_attribute="weight"):
+@networkx_algorithm(
+    extra_params={**_row_col_order_extra_params},
+    fallback=True,
+    create_using_arg=1,
+    version_added="25.06",
+)
+def from_biadjacency_matrix(
+    A, create_using=None, edge_attribute="weight", *, row_order=None, column_order=None
+):
+    if row_order is not None or column_order is not None:
+        raise NotImplementedError(
+            f"row_order={row_order} and column_order={column_order} not supported;"
+            " only row_order=None and column_order=None are currently supported"
+        )
     graph_class, inplace = _create_using_class(create_using)
     nrows, ncols = A.shape
     if A.format != "coo":
@@ -125,3 +142,20 @@ def from_biadjacency_matrix(A, create_using=None, edge_attribute="weight"):
     if inplace:
         return create_using._become(G)
     return G
+
+
+@from_biadjacency_matrix._can_run
+def _(
+    A,
+    create_using=None,
+    edge_attribute="weight",
+    *,
+    row_order=None,
+    column_order=None,
+):
+    if row_order is not None or column_order is not None:
+        return (
+            f"row_order={row_order} and column_order={column_order} not supported; "
+            "only row_order=None and column_order=None are currently supported"
+        )
+    return True
