@@ -142,18 +142,6 @@ repos:
       - id: verify-alpha-spec
         args: ["--fix"]
       - id: verify-pyproject-license
-      - id: verify-hardcoded-version
-        exclude: |
-          (?x)
-            devcontainer[.]json$|
-            dependencies[.]yaml$|
-            ^[.]github/workflows/|
-            [.]md$|
-            pom[.]xml$|
-            ^[.]pre-commit-config[.]yaml$|
-            [.]rst$|
-            ^conda/environments/|
-            ^[.]github/ISSUE_TEMPLATE/
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
