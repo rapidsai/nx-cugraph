@@ -1,3 +1,27 @@
+# nx-cugraph 26.02.00 (4 Feb 2026)
+
+### 🐛 Bug Fixes
+* Update nx-cugraph metadata, README generation, from_biadjacency_matrix for networkx 3.6.1 compat by @KyleFromNVIDIA in https://github.com/rapidsai/nx-cugraph/pull/218
+* Fix docstring of `forceatlas2_layout` by @eriknw in https://github.com/rapidsai/nx-cugraph/pull/226
+### 🛠️ Improvements
+* Use strict priority in CI conda tests by @bdice in https://github.com/rapidsai/nx-cugraph/pull/211
+* Use strict priority in CI conda tests by @bdice in https://github.com/rapidsai/nx-cugraph/pull/215
+* Remove alpha specs from non-RAPIDS dependencies by @bdice in https://github.com/rapidsai/nx-cugraph/pull/216
+* Enable merge barriers by @KyleFromNVIDIA in https://github.com/rapidsai/nx-cugraph/pull/217
+* Use SPDX license identifiers in pyproject.toml, bump build dependency floors by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/223
+* Add CUDA 13.1 support by @bdice in https://github.com/rapidsai/nx-cugraph/pull/220
+* build and test against CUDA 13.1.0 by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/224
+* Use main shared-workflows branch by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/227
+* avoid 'pytest-mpl' in wheels CI by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/222
+* Fix update-version.sh modifying external repo link by @AyodeAwe in https://github.com/rapidsai/nx-cugraph/pull/228
+* wheel builds: react to changes in pip's handling of build constraints by @mmccarty in https://github.com/rapidsai/nx-cugraph/pull/230
+* fix(build): build package on merge to `release/*` branch by @gforsyth in https://github.com/rapidsai/nx-cugraph/pull/233
+
+## New Contributors
+* @mmccarty made their first contribution in https://github.com/rapidsai/nx-cugraph/pull/230
+
+**Full Changelog**: https://github.com/rapidsai/nx-cugraph/compare/v26.02.00a...release/26.02
+
 # nx-cugraph 25.12.00 (10 Dec 2025)
 
 ### 🚨 Breaking Changes
