@@ -73,6 +73,7 @@ _info = {
         "descendants",
         "descendants_at_distance",
         "diamond_graph",
+        "digraph__new__",
         "dijkstra_path",
         "dijkstra_path_length",
         "dodecahedral_graph",
@@ -88,6 +89,7 @@ _info = {
         "from_scipy_sparse_array",
         "frucht_graph",
         "generic_bfs_edges",
+        "graph__new__",
         "has_path",
         "heawood_graph",
         "hits",
@@ -116,6 +118,8 @@ _info = {
         "louvain_communities",
         "lowest_common_ancestor",
         "moebius_kantor_graph",
+        "multidigraph__new__",
+        "multigraph__new__",
         "node_connected_component",
         "null_graph",
         "number_connected_components",
@@ -351,6 +355,8 @@ def get_info():
         update_env_var("NETWORKX_AUTOMATIC_BACKENDS")  # For NetworkX 3.2
         # Automatically create nx-cugraph Graph from graph generators
         update_env_var("NETWORKX_BACKEND_PRIORITY_GENERATORS")
+        # And for graph classes such as `nx.Graph()` for NetworkX >=3.6
+        update_env_var("NETWORKX_BACKEND_PRIORITY_CLASSES")
         # Run default NetworkX implementation (in >=3.4) if not implemented by nx-cugraph
         if (varname := "NETWORKX_FALLBACK_TO_NX") not in os.environ:
             os.environ[varname] = "true"

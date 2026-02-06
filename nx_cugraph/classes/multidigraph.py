@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import networkx as nx
 
 import nx_cugraph as nxcg
 
+from ..utils import networkx_algorithm
 from .digraph import CudaDiGraph, DiGraph
 from .graph import Graph, _GraphCache
 from .multigraph import CudaMultiGraph, MultiGraph
@@ -83,3 +84,18 @@ class CudaMultiDiGraph(CudaMultiGraph, CudaDiGraph):
     @networkx_api
     def to_undirected(self, reciprocal=False, as_view=False):
         raise NotImplementedError
+
+
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
+@networkx_algorithm(name="multidigraph__new__", version_added="26.04")
+def __new__(cls, *args, **kwargs):
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(MultiDiGraph)
+    return CudaMultiDiGraph(*args, **kwargs)
+
+
+@__new__._can_run
+def _(cls, *args, **kwargs):
+    if cls is not nx.MultiDiGraph:
+        return "Unknown subclasses of nx.MultiDiGraph are not supported."
+    return True

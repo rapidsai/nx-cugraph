@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from networkx.classes.digraph import (
 
 import nx_cugraph as nxcg
 
-from ..utils import index_dtype
+from ..utils import index_dtype, networkx_algorithm
 from .graph import CudaGraph, Graph, _GraphCache
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -300,3 +300,18 @@ class CudaDiGraph(CudaGraph):
         if src_indices.size == 0:
             return cp.zeros(self._N, dtype=np.int64)
         return cp.bincount(src_indices, minlength=self._N)
+
+
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
+@networkx_algorithm(name="digraph__new__", version_added="26.04")
+def __new__(cls, *args, **kwargs):
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(DiGraph)
+    return CudaDiGraph(*args, **kwargs)
+
+
+@__new__._can_run
+def _(cls, *args, **kwargs):
+    if cls is not nx.DiGraph:
+        return "Unknown subclasses of nx.DiGraph are not supported."
+    return True

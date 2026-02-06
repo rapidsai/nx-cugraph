@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# SPDX-FileCopyrightText: Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 import argparse
 import sys
@@ -133,7 +133,8 @@ def create_tree(
             incomplete=incomplete,
             different=different,
         )
-        assoc_in(tree, path.split("."), payload)
+        if payload is not None:
+            assoc_in(tree, path.split("."), payload)
     return tree
 
 

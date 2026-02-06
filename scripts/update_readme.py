@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 import argparse
 import re
@@ -108,6 +108,9 @@ def main(readme_file, objects_filename):
     def get_payload(info, **kwargs):
         path = "networkx." + info.networkx_path
         subpath, name = path.rsplit(".", 1)
+        if "__" in name:
+            # Don't include e.g. Graph.__new__
+            return None
         # Many objects are referred to in modules above where they are defined.
         while True:
             path = f"{subpath}.{name}"

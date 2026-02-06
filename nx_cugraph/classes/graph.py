@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from networkx.classes.graph import (
 import nx_cugraph as nxcg
 from nx_cugraph import _nxver
 
-from ..utils import index_dtype
+from ..utils import index_dtype, networkx_algorithm
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable, Iterator
@@ -1292,3 +1292,22 @@ class CudaGraph:
             edge_array = edge_array[mask]
 
         return edge_array
+
+
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
+@networkx_algorithm(name="graph__new__", version_added="26.04")
+def __new__(cls, *args, **kwargs):
+    # Dispatched from `nx.Graph.__new__`. See details of `object.__new__` behavior here:
+    # https://docs.python.org/3/reference/datamodel.html#object.__new__
+    if nx.config.backends.cugraph.use_compat_graphs:
+        # Because `issubclass(Graph, nx.Graph)`, Graph.__init__ will be called next
+        return object.__new__(Graph)
+    # Because `not issubclass(CudaGraph, nx.Graph)`, CudaGraph.__init__ WON'T be called
+    return CudaGraph(*args, **kwargs)
+
+
+@__new__._can_run
+def _(cls, *args, **kwargs):
+    if cls is not nx.Graph:
+        return "Unknown subclasses of nx.Graph are not supported."
+    return True

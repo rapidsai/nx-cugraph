@@ -1,8 +1,10 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
+import networkx as nx
 import pytest
 
 import nx_cugraph as nxcg
+from nx_cugraph import _nxver
 from nx_cugraph.classes.graph import _GraphCache
 
 
@@ -68,6 +70,65 @@ def test_class_to_class():
                 assert val.to_cudagraph_class() is cls
                 assert cls.is_directed() == G.is_directed() == val.is_directed()
                 assert cls.is_multigraph() == G.is_multigraph() == val.is_multigraph()
+
+
+@pytest.mark.parametrize(
+    "nxcg_class", [nxcg.Graph, nxcg.DiGraph, nxcg.MultiGraph, nxcg.MultiDiGraph]
+)
+@pytest.mark.parametrize("use_compat_graphs", [True, False])
+def test_dispatch_graph_classes(nxcg_class, use_compat_graphs):
+    if _nxver < (3, 6):
+        pytest.skip(reason="Dispatching graph classes requires nx >=3.6")
+    nx_class = nxcg_class.to_networkx_class()
+    assert nx_class is not nxcg_class
+    cuda_class = nxcg_class.to_cudagraph_class()
+    assert cuda_class is not nxcg_class
+
+    expected_nxcg_class = nxcg_class if use_compat_graphs else cuda_class
+
+    class NxGraphSubclass(nx_class):
+        pass
+
+    class NxcgGraphSubclass(nxcg_class):
+        pass
+
+    with (
+        nx.config.backend_priority(classes=[]),
+        nx.config.backends.cugraph(use_compat_graphs=use_compat_graphs),
+    ):
+        G = nx_class()
+        assert type(G) is nx_class
+        G = nx_class(backend="cugraph")
+        assert type(G) is expected_nxcg_class
+        G = NxGraphSubclass()
+        assert type(G) is NxGraphSubclass
+        with pytest.raises(NotImplementedError, match="not implemented by 'cugraph'"):
+            # can_run is False for unknown subclasses
+            NxGraphSubclass(backend="cugraph")
+        G = NxcgGraphSubclass()
+        assert type(G) is NxcgGraphSubclass
+        with pytest.raises(NotImplementedError, match="not implemented by 'cugraph'"):
+            NxcgGraphSubclass(backend="cugraph")
+
+    with (
+        nx.config.backend_priority(classes=["cugraph"]),
+        nx.config.backends.cugraph(use_compat_graphs=use_compat_graphs),
+    ):
+        G = nx_class()
+        assert type(G) is expected_nxcg_class
+        G = nx_class(backend="networkx")
+        assert type(G) is nx_class
+
+        # can_run is False for unknown subclasses
+        G = NxGraphSubclass()
+        assert type(G) is NxGraphSubclass
+        G = NxGraphSubclass(backend="networkx")
+        assert type(G) is NxGraphSubclass
+
+        G = NxcgGraphSubclass()
+        assert type(G) is NxcgGraphSubclass
+        G = NxcgGraphSubclass(backend="networkx")
+        assert type(G) is NxcgGraphSubclass  # Perhaps odd, but the correct behavior
 
 
 @pytest.mark.parametrize(

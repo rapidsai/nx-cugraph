@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import numpy as np
 
 import nx_cugraph as nxcg
 
-from ..utils import index_dtype
+from ..utils import index_dtype, networkx_algorithm
 from .graph import CudaGraph, Graph, _GraphCache
 
 if TYPE_CHECKING:
@@ -570,3 +570,18 @@ class CudaMultiGraph(CudaGraph):
         if self.edge_keys is not None:
             edge_keys = self.edge_keys
             self.edge_keys = [edge_keys[i] for i in indices.tolist()]
+
+
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
+@networkx_algorithm(name="multigraph__new__", version_added="26.04")
+def __new__(cls, *args, **kwargs):
+    if nx.config.backends.cugraph.use_compat_graphs:
+        return object.__new__(MultiGraph)
+    return CudaMultiGraph(*args, **kwargs)
+
+
+@__new__._can_run
+def _(cls, *args, **kwargs):
+    if cls is not nx.MultiGraph:
+        return "Unknown subclasses of nx.MultiGraph are not supported."
+    return True
