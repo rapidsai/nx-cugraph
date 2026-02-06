@@ -86,6 +86,7 @@ class CudaMultiDiGraph(CudaMultiGraph, CudaDiGraph):
         raise NotImplementedError
 
 
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
 @networkx_algorithm(name="multidigraph__new__", version_added="26.04")
 def __new__(cls, *args, **kwargs):
     if nx.config.backends.cugraph.use_compat_graphs:
