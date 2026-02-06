@@ -1294,6 +1294,7 @@ class CudaGraph:
         return edge_array
 
 
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
 @networkx_algorithm(name="graph__new__", version_added="26.04")
 def __new__(cls, *args, **kwargs):
     # Dispatched from `nx.Graph.__new__`. See details of `object.__new__` behavior here:
