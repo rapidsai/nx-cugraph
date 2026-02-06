@@ -572,6 +572,7 @@ class CudaMultiGraph(CudaGraph):
             self.edge_keys = [edge_keys[i] for i in indices.tolist()]
 
 
+# rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
 @networkx_algorithm(name="multigraph__new__", version_added="26.04")
 def __new__(cls, *args, **kwargs):
     if nx.config.backends.cugraph.use_compat_graphs:
