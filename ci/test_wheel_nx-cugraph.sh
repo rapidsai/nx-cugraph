@@ -12,11 +12,20 @@ python_package_name=${package_name//-/_}
 # nx-cugraph is a pure wheel, which is part of generating the download path
 NX_CUGRAPH_WHEELHOUSE=$(rapids-download-from-github "$(rapids-package-name "wheel_python" "$package_name" --pure --cuda "$RAPIDS_CUDA_VERSION")")
 
-# echo to expand wildcard before adding `[extra]` requires for pip
+# generate constraints (possibly pinning to oldest supported versions of dependencies)
+rapids-generate-pip-constraints test_python "${PIP_CONSTRAINT}"
+
+# notes:
 #
-# '--extra-index-url pypi.nvidia.com' can be removed when 'pylibcugraph' and
-# its dependencies are available from pypi.org
+#   * echo to expand wildcard before adding `[test]` requires for pip
+#   * just providing --constraint="${PIP_CONSTRAINT}" to be explicit, and because
+#     that environment variable is ignored if any other --constraint are passed via the CLI
+#   * '--extra-index-url pypi.nvidia.com' can be removed when 'pylibcugraph' and
+#     its dependencies are available from pypi.org
+#
 rapids-pip-retry install \
+    --prefer-binary \
+    --constraint "${PIP_CONSTRAINT}" \
     --extra-index-url https://pypi.nvidia.com \
     "$(echo "${NX_CUGRAPH_WHEELHOUSE}"/"${python_package_name}"*.whl)[test]"
 
