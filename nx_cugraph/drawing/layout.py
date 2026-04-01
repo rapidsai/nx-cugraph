@@ -65,6 +65,8 @@ def forceatlas2_layout(
     store_pos_as=None,
     # nx_cugraph-only argument
     dtype=None,
+    barnes_hut_optimize=False,
+    barnes_hut_theta=0,
 ):
     """Only `dim=2` is supported, and there may be minor numeric differences."""
     # networkx 3.6 dropped the dissuade_hubs parameter because it was unused.
@@ -184,9 +186,8 @@ def forceatlas2_layout(
         overlap_scaling_ratio=100.0,
         edge_weight_influence=1,
         jitter_tolerance=jitter_tolerance,
-        # We may want to expose barnes-hut--it's also surprising nx doesn't have it
-        barnes_hut_optimize=False,
-        barnes_hut_theta=0,
+        barnes_hut_optimize=barnes_hut_optimize,
+        barnes_hut_theta=barnes_hut_theta,
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
@@ -245,6 +246,8 @@ def _(
     store_pos_as=None,
     # nx_cugraph-only argument
     dtype=None,
+    barnes_hut_optimize=False,
+    barnes_hut_theta=0,
 ):
     if dim != 2:
         return f"dim={dim} not supported; only dim=2 is currently supported"
