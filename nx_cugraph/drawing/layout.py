@@ -131,8 +131,8 @@ def forceatlas2_layout(
             ) * (xy_max - xy_min)
 
         start_vertices = all_vertices
-        x_start = start_pos_arr[:, 0]
-        y_start = start_pos_arr[:, 1]
+        x_start = start_pos_arr[:, 0].copy()
+        y_start = start_pos_arr[:, 1].copy()
     else:
         start_vertices = None
         x_start = None
