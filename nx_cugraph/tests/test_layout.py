@@ -37,9 +37,7 @@ def test_forceatlas2_extra_params():
     )
 
     assert len(res_cg) == len(Gcg)
-    assert res_cg.keys() == nx.nodes(Gcg)
-
-
+    assert set(res_cg.keys()) == set(nx.nodes(Gnx))
 
 def test_forceatlas2_max_iter_0():
     G = nx.cycle_graph(5)
