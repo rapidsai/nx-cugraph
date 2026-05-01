@@ -142,6 +142,9 @@ jobs:
       build_type: pull-request
       run_codecov: false
       script: ci/test_python.sh
+      # TODO(#5498): Drop this filter once libcugraph no longer requires a CUDA >= 12.8
+      # cudart at runtime (ideally by statically linking libcudart again).
+      matrix_filter: map(select(.CUDA_VER | split(".") | map(tonumber) >= [12, 9]))
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit
@@ -161,4 +164,7 @@ jobs:
       build_type: pull-request
       script: ci/test_wheel_nx-cugraph.sh
       # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
-      matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+      # TODO(#5498): Drop the CUDA version filter once libcugraph no longer requires a CUDA >= 12.8
+      # cudart at runtime (ideally by statically linking libcudart again).
+      # matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+      matrix_filter: map(select(.ARCH == "amd64" and (.CUDA_VER | split(".") | map(tonumber) >= [12, 9]))) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
