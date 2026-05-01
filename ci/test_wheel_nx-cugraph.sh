@@ -38,8 +38,6 @@ else
     # FIXME: Adding PY_IGNORE_IMPORTMISMATCH=1 to workaround conftest.py import
     # mismatch error seen by nx-cugraph after using pytest 8 and
     # --import-mode=append.
-    # FIXME: Temporarily skipping test_k_truss[les_miserables_graph] due to upstream problem in cugraph on RTX 6000
-    # xref: https://github.com/rapidsai/cugraph/pull/5487
     RAPIDS_DATASET_ROOT_DIR=$(pwd)/datasets \
     PY_IGNORE_IMPORTMISMATCH=1 \
     NX_CUGRAPH_USE_COMPAT_GRAPHS=False \
@@ -47,6 +45,5 @@ else
        -v \
        --import-mode=append \
        --benchmark-disable \
-       -k "not test_k_truss[les_miserables_graph]" \
        ./"${python_package_name}"/tests
 fi
