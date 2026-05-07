@@ -18,7 +18,6 @@ jobs:
       - conda-python-tests
       - wheel-build-nx-cugraph
       - wheel-tests-nx-cugraph
-    secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/pr-builder.yaml@main
     if: always()
     with:
@@ -42,7 +41,6 @@ jobs:
           repo: ${{ github.repository }}
           target-branch: ${{ fromJSON(steps.get-pr-info.outputs.pr-info).base.ref }}
   changed-files:
-    secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@main
     with:
       files_yaml: |
@@ -111,7 +109,7 @@ jobs:
       packages: read
       pull-requests: read
   devcontainer:
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
     with:
       arch: '["amd64", "arm64"]'
@@ -132,7 +130,6 @@ jobs:
       packages: read
       pull-requests: read
   checks:
-    secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/checks.yaml@main
     with:
       enable_check_generated_files: false
@@ -140,7 +137,7 @@ jobs:
       contents: read
   conda-python-build:
     needs: [checks]
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@main
     with:
       build_type: pull-request
@@ -154,7 +151,7 @@ jobs:
       pull-requests: read
   conda-python-tests:
     needs: [conda-python-build, changed-files]
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@main
     if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_conda
     with:
@@ -169,7 +166,7 @@ jobs:
       pull-requests: read
   wheel-build-nx-cugraph:
     needs: [checks]
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@main
     with:
       build_type: pull-request
@@ -185,7 +182,7 @@ jobs:
       pull-requests: read
   wheel-tests-nx-cugraph:
     needs: [wheel-build-nx-cugraph, changed-files]
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@main
     if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_wheels
     with:
