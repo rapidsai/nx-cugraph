@@ -1,5 +1,4 @@
 name: build
-
 on:
   push:
     branches:
@@ -27,11 +26,10 @@ on:
         description: "build_type: one of [branch, nightly, pull-request]"
         type: string
         default: nightly
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
-
+permissions: {}
 jobs:
   conda-python-build:
     secrets: inherit
@@ -43,6 +41,12 @@ jobs:
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
       pure-conda: true
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      packages: read
+      pull-requests: read
   upload-conda:
     needs: conda-python-build
     secrets: inherit
@@ -52,6 +56,12 @@ jobs:
       branch: ${{ inputs.branch }}
       date: ${{ inputs.date }}
       sha: ${{ inputs.sha }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      packages: read
+      pull-requests: read
   wheel-build-nx-cugraph:
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@main
@@ -64,6 +74,12 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      packages: read
+      pull-requests: read
   wheel-publish-nx-cugraph:
     needs: wheel-build-nx-cugraph
     secrets: inherit
@@ -76,3 +92,9 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       publish-wheel-search-key: "nx-cugraph_wheel"
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      packages: read
+      pull-requests: read
