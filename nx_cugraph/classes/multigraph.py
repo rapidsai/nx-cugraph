@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 import cupy as cp
 import networkx as nx
-import numpy as np
 
 import nx_cugraph as nxcg
 
@@ -132,9 +131,13 @@ class MultiGraph(nx.MultiGraph, Graph):
         **attr,
     ) -> MultiGraph | CudaMultiGraph:
         N = indptr.size - 1
-        src_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(np.arange(N, dtype=index_dtype), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(cp.arange(N, dtype=index_dtype), cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        src_indices = (
+            cp.searchsorted(
+                indptr, cp.arange(dst_indices.size, dtype=index_dtype), side="right"
+            ).astype(index_dtype)
+            - 1
         )
         return cls.from_coo(
             N,
@@ -170,9 +173,13 @@ class MultiGraph(nx.MultiGraph, Graph):
         **attr,
     ) -> MultiGraph | CudaMultiGraph:
         N = indptr.size - 1
-        dst_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(np.arange(N, dtype=index_dtype), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(cp.arange(N, dtype=index_dtype), cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        dst_indices = (
+            cp.searchsorted(
+                indptr, cp.arange(src_indices.size, dtype=index_dtype), side="right"
+            ).astype(index_dtype)
+            - 1
         )
         return cls.from_coo(
             N,
@@ -209,10 +216,15 @@ class MultiGraph(nx.MultiGraph, Graph):
         use_compat_graph: bool | None = None,
         **attr,
     ) -> MultiGraph | CudaMultiGraph:
-        src_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(compressed_srcs.get(), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(compressed_srcs, cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        compressed_idx = (
+            cp.searchsorted(
+                indptr, cp.arange(dst_indices.size, dtype=index_dtype), side="right"
+            )
+            - 1
         )
+        src_indices = compressed_srcs[compressed_idx]
         return cls.from_coo(
             N,
             src_indices,
@@ -248,10 +260,15 @@ class MultiGraph(nx.MultiGraph, Graph):
         use_compat_graph: bool | None = None,
         **attr,
     ) -> MultiGraph | CudaGraph:
-        dst_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(compressed_dsts.get(), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(compressed_dsts, cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        compressed_idx = (
+            cp.searchsorted(
+                indptr, cp.arange(src_indices.size, dtype=index_dtype), side="right"
+            )
+            - 1
         )
+        dst_indices = compressed_dsts[compressed_idx]
         return cls.from_coo(
             N,
             src_indices,

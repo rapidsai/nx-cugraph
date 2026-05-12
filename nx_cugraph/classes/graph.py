@@ -408,9 +408,13 @@ class Graph(nx.Graph):
         **attr,
     ) -> Graph | CudaGraph:
         N = indptr.size - 1
-        src_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(np.arange(N, dtype=index_dtype), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(cp.arange(N, dtype=index_dtype), cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        src_indices = (
+            cp.searchsorted(
+                indptr, cp.arange(dst_indices.size, dtype=index_dtype), side="right"
+            ).astype(index_dtype)
+            - 1
         )
         return cls.from_coo(
             N,
@@ -442,9 +446,13 @@ class Graph(nx.Graph):
         **attr,
     ) -> Graph | CudaGraph:
         N = indptr.size - 1
-        dst_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(np.arange(N, dtype=index_dtype), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(cp.arange(N, dtype=index_dtype), cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        dst_indices = (
+            cp.searchsorted(
+                indptr, cp.arange(src_indices.size, dtype=index_dtype), side="right"
+            ).astype(index_dtype)
+            - 1
         )
         return cls.from_coo(
             N,
@@ -477,10 +485,15 @@ class Graph(nx.Graph):
         use_compat_graph: bool | None = None,
         **attr,
     ) -> Graph | CudaGraph:
-        src_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(compressed_srcs.get(), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(compressed_srcs, cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        compressed_idx = (
+            cp.searchsorted(
+                indptr, cp.arange(dst_indices.size, dtype=index_dtype), side="right"
+            )
+            - 1
         )
+        src_indices = compressed_srcs[compressed_idx]
         return cls.from_coo(
             N,
             src_indices,
@@ -512,10 +525,15 @@ class Graph(nx.Graph):
         use_compat_graph: bool | None = None,
         **attr,
     ) -> Graph | CudaGraph:
-        dst_indices = cp.array(
-            # cp.repeat is slow to use here, so use numpy instead
-            np.repeat(compressed_dsts.get(), cp.diff(indptr).get())
+        # Equivalent to: cp.repeat(compressed_dsts, cp.diff(indptr))
+        # but cp.repeat doesn't support ndarray repeats (see cupy/cupy#9828).
+        compressed_idx = (
+            cp.searchsorted(
+                indptr, cp.arange(src_indices.size, dtype=index_dtype), side="right"
+            )
+            - 1
         )
+        dst_indices = compressed_dsts[compressed_idx]
         return cls.from_coo(
             N,
             src_indices,
