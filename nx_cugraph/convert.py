@@ -353,7 +353,8 @@ def from_networkx(
         num_multiedges, is_dicts = _iterate_values(
             None, adj, is_dicts, lambda it: np.fromiter(map(len, it), index_dtype)
         )
-        # cp.repeat is slow to use here, so use numpy instead
+        # Data originates from CPU (Python iteration), so numpy repeat
+        # is appropriate here.
         dst_indices = cp.array(np.repeat(dst_indices, num_multiedges))
         # Determine edge keys and edge ids for multigraphs
         if is_dicts:
@@ -439,7 +440,8 @@ def from_networkx(
                     edge_values[edge_attr] = cp.fromiter(iter_values, dtype)
             # if vals.ndim > 1: ...
 
-    # cp.repeat is slow to use here, so use numpy instead
+    # Data originates from CPU (Python iteration), so numpy repeat
+    # is appropriate here.
     src_indices = np.repeat(
         np.arange(N, dtype=index_dtype),
         np.fromiter(map(len, adj.values()), index_dtype),
@@ -794,8 +796,9 @@ def from_dict_of_lists(d, create_using=None):
 
     graph_class, inplace = _create_using_class(create_using)
     key_to_id = defaultdict(itertools.count().__next__)
+    # Data originates from CPU (Python iterators), so numpy repeat is
+    # appropriate here.
     src_indices = cp.array(
-        # cp.repeat is slow to use here, so use numpy instead
         np.repeat(
             np.fromiter(map(key_to_id.__getitem__, d), index_dtype),
             np.fromiter(map(len, d.values()), index_dtype),

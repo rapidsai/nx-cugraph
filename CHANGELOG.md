@@ -1,3 +1,24 @@
+# nx-cugraph 26.04.00 (8 Apr 2026)
+
+### 🐛 Bug Fixes
+### 📖 Documentation
+* update docs and pre-commit for new RAPIDS branching strategy by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/243
+* remove references to 'nvidia' conda channel by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/244
+### 🛠️ Improvements
+* tighten wheel size limits, expand CI-skipping logic, other small build changes by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/237
+* Drop Python 3.10 support by @gforsyth in https://github.com/rapidsai/nx-cugraph/pull/236
+* Use verify-hardcoded-version pre-commit hook by @KyleFromNVIDIA in https://github.com/rapidsai/nx-cugraph/pull/235
+* remove pip.conf migration code in CI scripts by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/239
+* dispatch for e.g. `nx.Graph(backend="cugraph")` by @eriknw in https://github.com/rapidsai/nx-cugraph/pull/92
+* Use GHA id-token for `sccache-dist` auth token by @trxcllnt in https://github.com/rapidsai/nx-cugraph/pull/242
+* add PR CI job checking that nightly tests are passing by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/245
+* feat: add support for Python 3.14 by @gforsyth in https://github.com/rapidsai/nx-cugraph/pull/246
+* test wheels with mix of CTK versions by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/248
+
+## New Contributors
+
+**Full Changelog**: https://github.com/rapidsai/nx-cugraph/compare/v26.04.00a...release/26.04
+
 # nx-cugraph 26.02.00 (4 Feb 2026)
 
 ### 🐛 Bug Fixes

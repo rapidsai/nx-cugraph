@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 
 import random
@@ -253,6 +253,22 @@ def possible_to_fail(exception, function):
 # Benchmarks
 def bench_from_networkx(benchmark, graph_obj):
     benchmark(nxcg.from_networkx, graph_obj)
+
+
+def bench_from_csr(benchmark, graph_obj):
+    """Benchmark building a CudaGraph from GPU-resident CSR arrays.
+
+    This exercises the `from_csr` code path that expands `indptr` to COO row
+    indices. Inputs are pre-built on the GPU so the benchmark isolates the
+    expansion step.
+    """
+    A = nx.to_scipy_sparse_array(graph_obj, format="csr")
+    indptr = cp.asarray(A.indptr, dtype=np.int32)
+    dst_indices = cp.asarray(A.indices, dtype=np.int32)
+    cp.cuda.Stream.null.synchronize()
+
+    graph_cls = nxcg.DiGraph if graph_obj.is_directed() else nxcg.Graph
+    benchmark(graph_cls.from_csr, indptr, dst_indices)
 
 
 # normalized_param_values = [True, False]
