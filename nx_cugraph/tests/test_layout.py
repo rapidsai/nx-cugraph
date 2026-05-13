@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 
 import networkx as nx
@@ -27,7 +27,7 @@ def test_forceatlas2_extra_params():
     Gnx = nx.karate_club_graph()
     Gcg = nxcg.from_networkx(Gnx, preserve_all_attrs=True)
 
-    node_mobility = {n: 1.0 for n in Gcg}
+    node_mobility = dict.fromkeys(Gcg, 1.0)
 
     res_cg = nxcg.forceatlas2_layout(
         Gcg,
@@ -39,6 +39,7 @@ def test_forceatlas2_extra_params():
     assert len(res_cg) == len(Gcg)
     assert set(res_cg.keys()) == set(nx.nodes(Gnx))
 
+
 def test_forceatlas2_max_iter_0():
     G = nx.cycle_graph(5)
     Gcg = nxcg.from_networkx(G, preserve_all_attrs=True)
@@ -48,7 +49,7 @@ def test_forceatlas2_max_iter_0():
         1: (2.0, 3.0),
         2: (4.0, 5.0),
         3: (6.0, 7.0),
-        4: (8.0, 9.0)
+        4: (8.0, 9.0),
     }
 
     final_positions = nxcg.forceatlas2_layout(

@@ -42,9 +42,17 @@ else:
     extra_params={
         **_dtype_param,
         **_dissuade_hubs_param,
-        "barnes_hut_optimize : bool, optional": "Whether to use the Barnes-Hut algorithm to speed up repulsion force calculations.",
-        "barnes_hut_theta : float, optional": "Theta parameter for the Barnes-Hut algorithm.",
-        "node_mobility : dict, optional": "Dictionary of node mobility values. A higher value means the node moves faster. Default is 1.0.",
+        "barnes_hut_optimize : bool, optional": (
+            "Whether to use the Barnes-Hut algorithm to speed up repulsion "
+            "force calculations."
+        ),
+        "barnes_hut_theta : float, optional": (
+            "Theta parameter for the Barnes-Hut algorithm."
+        ),
+        "node_mobility : dict, optional": (
+            "Dictionary of node mobility values. A higher value means the "
+            "node moves faster. Default is 1.0."
+        ),
     },
     is_incomplete=True,  # dim=2-only
     is_different=True,  # node_size handled differently, different RNG and results
