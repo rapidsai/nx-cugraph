@@ -39,7 +39,21 @@ else:
 
 
 @networkx_algorithm(
-    extra_params={**_dtype_param, **_dissuade_hubs_param},
+    extra_params={
+        **_dtype_param,
+        **_dissuade_hubs_param,
+        "barnes_hut_optimize : bool, optional": (
+            "Whether to use the Barnes-Hut algorithm to speed up repulsion "
+            "force calculations."
+        ),
+        "barnes_hut_theta : float, optional": (
+            "Theta parameter for the Barnes-Hut algorithm."
+        ),
+        "node_mobility : dict, optional": (
+            "Dictionary of node mobility values. A higher value means the "
+            "node moves faster. Default is 1.0."
+        ),
+    },
     is_incomplete=True,  # dim=2-only
     is_different=True,  # node_size handled differently, different RNG and results
     version_added="25.04",
@@ -65,6 +79,9 @@ def forceatlas2_layout(
     store_pos_as=None,
     # nx_cugraph-only argument
     dtype=None,
+    barnes_hut_optimize=False,
+    barnes_hut_theta=0,
+    node_mobility=None,
 ):
     """Only `dim=2` is supported, and there may be minor numeric differences."""
     # networkx 3.6 dropped the dissuade_hubs parameter because it was unused.
@@ -95,6 +112,8 @@ def forceatlas2_layout(
         G_plc = G._get_plc_graph()
 
     # Split dict into cupy arrays of XY coords for PLC
+    all_vertices = cp.arange(G._N, dtype=index_dtype)
+
     if pos is not None:
         # NOTE currently only x & y (dim=2) coordinated are supported by PLC
         #   greater dimensions should be supported in the future to align with nx
@@ -119,9 +138,9 @@ def forceatlas2_layout(
                 seed.rand(num_missing, dim), dtype=np.float32
             ) * (xy_max - xy_min)
 
-        start_vertices = cp.arange(G._N, dtype=index_dtype)
-        x_start = start_pos_arr[:, 0]
-        y_start = start_pos_arr[:, 1]
+        start_vertices = all_vertices
+        x_start = start_pos_arr[:, 0].copy()
+        y_start = start_pos_arr[:, 1].copy()
     else:
         start_vertices = None
         x_start = None
@@ -136,11 +155,7 @@ def forceatlas2_layout(
         vertex_radius_values = G._dict_to_nodearray(
             node_size, default=1.0, dtype=np.float32
         )
-        vertex_radius_vertices = (
-            start_vertices
-            if start_vertices is not None
-            else cp.arange(G._N, dtype=index_dtype)
-        )
+        vertex_radius_vertices = all_vertices
         prevent_overlapping = True
     else:
         vertex_radius_values = None
@@ -157,14 +172,19 @@ def forceatlas2_layout(
             vertex_mass_values = cp.where(
                 isnan, (G._degrees_array() + 1).astype(np.float32), vertex_mass_values
             )
-        vertex_mass_vertices = (
-            start_vertices
-            if start_vertices is not None
-            else cp.arange(G._N, dtype=index_dtype)
-        )
+        vertex_mass_vertices = all_vertices
     else:
         vertex_mass_values = None
         vertex_mass_vertices = None
+
+    if node_mobility is not None:
+        vertex_mobility_values = G._dict_to_nodearray(
+            node_mobility, default=1.0, dtype=np.float32
+        )
+        vertex_mobility_vertices = all_vertices
+    else:
+        vertex_mobility_values = None
+        vertex_mobility_vertices = None
 
     seed = _seed_to_int(seed)
 
@@ -184,14 +204,13 @@ def forceatlas2_layout(
         overlap_scaling_ratio=100.0,
         edge_weight_influence=1,
         jitter_tolerance=jitter_tolerance,
-        # We may want to expose barnes-hut--it's also surprising nx doesn't have it
-        barnes_hut_optimize=False,
-        barnes_hut_theta=0,
+        barnes_hut_optimize=barnes_hut_optimize,
+        barnes_hut_theta=barnes_hut_theta,
         scaling_ratio=scaling_ratio,
         strong_gravity_mode=strong_gravity,
         gravity=gravity,
-        vertex_mobility_vertices=None,
-        vertex_mobility_values=None,
+        vertex_mobility_vertices=vertex_mobility_vertices,
+        vertex_mobility_values=vertex_mobility_values,
         vertex_mass_vertices=vertex_mass_vertices,
         vertex_mass_values=vertex_mass_values,
         verbose=False,
@@ -245,6 +264,9 @@ def _(
     store_pos_as=None,
     # nx_cugraph-only argument
     dtype=None,
+    barnes_hut_optimize=False,
+    barnes_hut_theta=0,
+    node_mobility=None,
 ):
     if dim != 2:
         return f"dim={dim} not supported; only dim=2 is currently supported"

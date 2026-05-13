@@ -244,8 +244,11 @@ _info = {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
         "forceatlas2_layout": {
+            "barnes_hut_optimize : bool, optional": "Whether to use the Barnes-Hut algorithm to speed up repulsion force calculations.",
+            "barnes_hut_theta : float, optional": "Theta parameter for the Barnes-Hut algorithm.",
             "dissuade_hubs : bool, optional": "unused, for compatibility with networkx < 3.6",
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+            "node_mobility : dict, optional": "Dictionary of node mobility values. A higher value means the node moves faster. Default is 1.0.",
         },
         "hits": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
