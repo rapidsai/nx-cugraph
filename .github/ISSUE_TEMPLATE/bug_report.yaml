@@ -17,7 +17,7 @@ body:
     attributes:
       label: Version
       description: What version of nx-cugraph are you running?
-      placeholder: "example: 26.06"
+      placeholder: "example: 26.08"
     validations:
       required: true
 
