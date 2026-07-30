@@ -173,7 +173,7 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - nx-cugraph==26.8.*,>=0.0.0a0
+          - nx-cugraph==26.10.*,>=0.0.0a0
   py_version:
     specific:
       - output_types: [conda]
@@ -229,7 +229,7 @@ dependencies:
       - output_types: [conda, pyproject, requirements]
         packages:
           - networkx>=3.2
-          - &numpy numpy>=2.0,<3.0
+          - numpy>=2.0,<3.0
   test_python_nx_cugraph:
     common:
       # This is intentionally only defined for [conda], to avoid unnecessarily installing 'pytest-mpl'
@@ -281,7 +281,7 @@ dependencies:
     common:
       - output_types: conda
         packages:
-          - &cudf_unsuffixed cudf==26.8.*,>=0.0.0a0
+          - &cudf_unsuffixed cudf==26.10.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -293,18 +293,18 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu12==26.8.*,>=0.0.0a0
+              - cudf-cu12==26.10.*,>=0.0.0a0
           - matrix:
               cuda: "13.*"
               cuda_suffixed: "true"
             packages:
-              - cudf-cu13==26.8.*,>=0.0.0a0
+              - cudf-cu13==26.10.*,>=0.0.0a0
           - {matrix: null, packages: [*cudf_unsuffixed]}
   depends_on_pylibcugraph:
     common:
       - output_types: conda
         packages:
-          - &pylibcugraph_unsuffixed pylibcugraph==26.8.*,>=0.0.0a0
+          - &pylibcugraph_unsuffixed pylibcugraph==26.10.*,>=0.0.0a0
       - output_types: requirements
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
@@ -317,10 +317,10 @@ dependencies:
               cuda: "12.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu12==26.8.*,>=0.0.0a0
+              - pylibcugraph-cu12==26.10.*,>=0.0.0a0
           - matrix:
               cuda: "13.*"
               cuda_suffixed: "true"
             packages:
-              - pylibcugraph-cu13==26.8.*,>=0.0.0a0
+              - pylibcugraph-cu13==26.10.*,>=0.0.0a0
           - {matrix: null, packages: [*pylibcugraph_unsuffixed]}
