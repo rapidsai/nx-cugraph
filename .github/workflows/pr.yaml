@@ -144,11 +144,13 @@ jobs:
   conda-python-build:
     needs: [checks]
     secrets: inherit # zizmor: ignore[secrets-inherit]
-    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/conda-python-build.yaml@codex/release-build-output-manifests
     with:
       build_type: pull-request
       script: ci/build_python.sh
       pure-conda: true
+      release-build-output: true
+      release-unit: conda:nx-cugraph
     permissions:
       actions: read
       contents: read
@@ -173,13 +175,15 @@ jobs:
   wheel-build-nx-cugraph:
     needs: [checks]
     secrets: inherit # zizmor: ignore[secrets-inherit]
-    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@main
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@codex/release-build-output-manifests
     with:
       build_type: pull-request
       script: ci/build_wheel_nx-cugraph.sh
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
+      release-build-output: true
+      release-unit: wheel:nx-cugraph
     permissions:
       actions: read
       contents: read
