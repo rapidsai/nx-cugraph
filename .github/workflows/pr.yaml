@@ -24,6 +24,8 @@ jobs:
       needs: ${{ toJSON(needs) }}
     permissions:
       contents: read
+  build-details:
+    uses: rapidsai/shared-workflows/.github/workflows/compute-build-details.yaml@main
   check-nightly-ci:
     runs-on: ubuntu-latest
     permissions:

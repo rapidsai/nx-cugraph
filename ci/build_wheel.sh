@@ -6,10 +6,11 @@ set -euo pipefail
 
 package_dir=$1
 
-source rapids-date-string
+source rapids-datetime-string
 source rapids-init-pip
 
-rapids-generate-version > ./VERSION
+RAPIDS_VERSION_SUFFIX=".post${RAPIDS_DATETIME_STRING}" \
+  rapids-generate-version > ./VERSION
 
 cd "${package_dir}"
 
