@@ -41,8 +41,6 @@ jobs:
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
       pure-conda: true
-      release-build-output: true
-      release-unit: conda:nx-cugraph
     permissions:
       actions: read
       contents: read
@@ -78,8 +76,6 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
-      release-build-output: true
-      release-unit: wheel:nx-cugraph
     permissions:
       actions: read
       contents: read
