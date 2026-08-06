@@ -172,7 +172,7 @@ jobs:
     with:
       build_type: pull-request
       build-datetime: ${{ needs.build-details.outputs.build-datetime }}
-      script: ci/build_python.sh
+      script: /bin/false
       pure-conda: true
     permissions:
       actions: read
@@ -202,7 +202,7 @@ jobs:
     with:
       build_type: pull-request
       build-datetime: ${{ needs.build-details.outputs.build-datetime }}
-      script: ci/build_wheel_nx-cugraph.sh
+      script: /bin/false
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
