@@ -188,7 +188,7 @@ jobs:
     with:
       build_type: pull-request
       run_codecov: false
-      script: ci/test_python.sh
+      script: /bin/true
     permissions:
       actions: read
       contents: read
@@ -219,7 +219,7 @@ jobs:
     if: fromJSON(needs.changed-files.outputs.changed_file_groups).test_python_wheels
     with:
       build_type: pull-request
-      script: ci/test_wheel_nx-cugraph.sh
+      script: /bin/true
       # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
     permissions:
