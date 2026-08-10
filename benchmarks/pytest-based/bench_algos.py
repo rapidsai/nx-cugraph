@@ -563,7 +563,7 @@ def bench_single_target_shortest_path_length(benchmark, graph_obj, backend_wrapp
     # conversion in the benchmark), but is not needed for this algo in NX 3.3+
     # since it returns a dict instead of an iterator. Forcing eval does not
     # change the benchmark timing.
-    assert type(result) is list
+    assert type(result) is dict
 
 
 def bench_ancestors(benchmark, graph_obj, backend_wrapper):
