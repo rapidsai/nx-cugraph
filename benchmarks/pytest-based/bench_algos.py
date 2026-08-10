@@ -561,11 +561,7 @@ def bench_single_target_shortest_path_length(benchmark, graph_obj, backend_wrapp
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    # force_unlazy_eval=True forces iterators and other containers to generate
-    # a complete set of results (in order to include any deferred compute or
-    # conversion in the benchmark), but is not needed for this algo in NX 3.3+
-    # since it returns a dict instead of an iterator. Forcing eval does not
-    # change the benchmark timing.
+    # NetworkX 3.5+ returns a dict (previously an iterator); keep assert in sync.
     assert type(result) is dict
 
 
