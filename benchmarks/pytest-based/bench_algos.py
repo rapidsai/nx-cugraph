@@ -381,8 +381,8 @@ def bench_eigenvector_centrality(benchmark, graph_obj, backend_wrapper):
     result = benchmark.pedantic(
         target=backend_wrapper(nx.eigenvector_centrality),
         args=(G,),
-        # NetworkX/nx-cugraph default is max_iter=100, but NetworkX now fails to
-        # converge on amazon0302 at that limit; 150 works for both backends.
+        # On amazon0302, max_iter=100 did not converge for NetworkX or nx-cugraph;
+        # both converged with 150 in testing.
         kwargs=dict(max_iter=150),
         rounds=rounds,
         iterations=iterations,
