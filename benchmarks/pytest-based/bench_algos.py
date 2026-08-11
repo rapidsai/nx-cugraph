@@ -12,6 +12,7 @@ import pytest
 from cugraph import datasets
 
 import nx_cugraph as nxcg
+from nx_cugraph import _nxver
 
 ################################################################################
 # Fixtures and params
@@ -561,8 +562,12 @@ def bench_single_target_shortest_path_length(benchmark, graph_obj, backend_wrapp
         iterations=iterations,
         warmup_rounds=warmup_rounds,
     )
-    # NetworkX 3.5+ returns a dict (previously an iterator); keep assert in sync.
-    assert type(result) is dict
+    # NetworkX 3.5+ returns a dict; older versions return an iterator that
+    # force_unlazy_eval materializes to a list.
+    if _nxver >= (3, 5):
+        assert type(result) is dict
+    else:
+        assert type(result) is list
 
 
 def bench_ancestors(benchmark, graph_obj, backend_wrapper):
