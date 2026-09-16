@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 # Dependency list for https://github.com/rapidsai/dependency-file-generator
@@ -42,6 +42,9 @@ files:
   py_build_nx_cugraph:
     output: pyproject
     pyproject_dir: .
+    matrix:
+      use_cuda_wheels: ["true"]
+      cuda_suffixed: ["false"]
     extras:
       table: build-system
     includes:
@@ -50,6 +53,9 @@ files:
   py_run_nx_cugraph:
     output: pyproject
     pyproject_dir: .
+    matrix:
+      use_cuda_wheels: ["true"]
+      cuda_suffixed: ["false"]
     extras:
       table: project
     includes:
@@ -59,6 +65,9 @@ files:
   py_test_nx_cugraph:
     output: pyproject
     pyproject_dir: .
+    matrix:
+      use_cuda_wheels: ["true"]
+      cuda_suffixed: ["false"]
     extras:
       table: project.optional-dependencies
       key: test
@@ -271,10 +280,12 @@ dependencies:
               - *cupy_cu13
           - matrix:
               cuda: "12.*"
+              use_cuda_wheels: "true"
             packages:
               - cupy-cuda12x[ctk]>=14.0.1,!=14.1.0
           # fallback to CUDA 13 versions if 'cuda' is '13.*' or not provided
           - matrix:
+              use_cuda_wheels: "true"
             packages:
               - cupy-cuda13x[ctk]>=14.0.1,!=14.1.0
   depends_on_cudf:
@@ -299,7 +310,10 @@ dependencies:
               cuda_suffixed: "true"
             packages:
               - cudf-cu13==26.12.*,>=0.0.0a0
-          - {matrix: null, packages: [*cudf_unsuffixed]}
+          - matrix:
+              cuda_suffixed: "false"
+            packages:
+              - *cudf_unsuffixed
   depends_on_pylibcugraph:
     common:
       - output_types: conda
@@ -323,4 +337,7 @@ dependencies:
               cuda_suffixed: "true"
             packages:
               - pylibcugraph-cu13==26.12.*,>=0.0.0a0
-          - {matrix: null, packages: [*pylibcugraph_unsuffixed]}
+          - matrix:
+              cuda_suffixed: "false"
+            packages:
+              - *pylibcugraph_unsuffixed
