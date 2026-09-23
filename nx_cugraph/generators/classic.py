@@ -228,7 +228,7 @@ def empty_graph(n=0, create_using=None, default=nx.Graph):
 
 def _ladder_graph(n, create_using, *, is_circular=False):
     # Like path path_graph with extra arange, and middle link missing
-    if is_circular and n < 2:
+    if _nxver >= (3, 7) and is_circular and n < 2:
         raise ValueError("n must be at least 2 for circular_ladder_graph")
     n = _ensure_nonnegative_int(n)
     if n < 2:
