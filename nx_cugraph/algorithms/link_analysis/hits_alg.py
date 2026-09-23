@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 import cupy as cp
 import networkx as nx
@@ -34,9 +34,14 @@ def hits(
     nstart=None,
     normalized=True,
     *,
+    method="power_iteration",
     weight="weight",
     dtype=None,
 ):
+    if method != "power_iteration":
+        raise NotImplementedError(
+            "nx-cugraph only supports method='power_iteration' for hits"
+        )
     G = _to_graph(G, weight, 1, np.float32)
     if (N := len(G)) == 0:
         return {}, {}
@@ -67,3 +72,20 @@ def hits(
         G._nodearrays_to_dict(node_ids, hubs),
         G._nodearrays_to_dict(node_ids, authorities),
     )
+
+
+@hits._can_run
+def _(
+    G,
+    max_iter=100,
+    tol=1.0e-8,
+    nstart=None,
+    normalized=True,
+    *,
+    method="power_iteration",
+    weight="weight",
+    dtype=None,
+):
+    if method != "power_iteration":
+        return "nx-cugraph only supports method='power_iteration' for hits"
+    return True
