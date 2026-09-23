@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 import itertools
 from numbers import Integral
@@ -229,6 +229,8 @@ def empty_graph(n=0, create_using=None, default=nx.Graph):
 def _ladder_graph(n, create_using, *, is_circular=False):
     # Like path path_graph with extra arange, and middle link missing
     n = _ensure_nonnegative_int(n)
+    if is_circular and n < 2:
+        raise ValueError("n must be at least 2 for circular_ladder_graph")
     if n < 2:
         if not is_circular:
             return _common_small_graph(2 * n, None, create_using, allow_directed=False)
