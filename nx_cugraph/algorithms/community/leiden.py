@@ -146,4 +146,8 @@ else:
         theta=0.01,
         dtype=None,
     ):
-        return _leiden_can_run(metric)
+        # NetworkX 3.7 added the Leiden algorithms with semantics that are not
+        # implemented by nx-cugraph, including directed graphs and the CPM
+        # metric. Do not dispatch to the partial implementation: when fallback
+        # is enabled, NetworkX will use its implementation instead.
+        return "NetworkX 3.7 Leiden algorithm semantics are not supported"

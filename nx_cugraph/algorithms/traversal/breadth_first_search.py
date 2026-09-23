@@ -1,5 +1,6 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
+import warnings
 from itertools import repeat
 
 import cupy as cp
@@ -237,6 +238,13 @@ def bfs_layers(G, sources):
 @networkx_algorithm(is_incomplete=True, version_added="24.02", _plc="bfs")
 def bfs_predecessors(G, source, depth_limit=None, sort_neighbors=None):
     """`sort_neighbors` parameter is not yet supported."""
+    if _nxver >= (3, 7):
+        warnings.warn(
+            "bfs_predecessors is deprecated and will be removed in NetworkX 3.9; "
+            "use bfs_edges instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
     if sort_neighbors is not None:
         raise NotImplementedError(
             "sort_neighbors argument in bfs_predecessors is not currently supported"

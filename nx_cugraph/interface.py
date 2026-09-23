@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -112,10 +112,6 @@ class BackendInterface:
                 "test_cycles.py:TestMinimumCycleBasis."
                 "test_gh6787_and_edge_attribute_names"
             ): sssp_path_different,
-            key(
-                "test_relabel.py:"
-                "test_relabel_preserve_node_order_partial_mapping_with_copy_false"
-            ): "Node order is preserved when relabeling with partial mapping",
             key(
                 "test_gml.py:"
                 "TestPropertyLists.test_reading_graph_with_single_element_list_property"
@@ -294,6 +290,19 @@ class BackendInterface:
                         "test_betweenness_centrality_subset.py:"
                         "test_equivalence_non_subset"
                     ): bc_results_different,
+                }
+            )
+        if _nxver < (3, 7):
+            xfail[
+                key(
+                    "test_relabel.py:"
+                    "test_relabel_preserve_node_order_partial_mapping_with_copy_false"
+                )
+            ] = "Node order is preserved when relabeling with partial mapping"
+        else:
+            xfail.update(
+                {
+                    key("test_louvain.py:test_petersen"): louvain_different,
                 }
             )
         xfail.update(
