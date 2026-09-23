@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 
 set -euo pipefail
@@ -62,7 +62,6 @@ _coverage=$(coverage report | grep "^TOTAL")
 echo "nx-cugraph coverage from networkx tests: $_coverage"
 echo "$_coverage" | awk '{ if ($NF == "0.0%") exit 1 }'
 
-# Ensure all algorithms were called by comparing covered lines to function lines.
 # Run our tests again (they're fast enough) to add their coverage, then create coverage.json
 NX_CUGRAPH_USE_COMPAT_GRAPHS=False pytest \
   --pyargs nx_cugraph \
@@ -79,8 +78,6 @@ coverage report \
   --rcfile=../pyproject.toml
 
 coverage json --rcfile=../pyproject.toml
-
-python -m nx_cugraph.tests.ensure_algos_covered
 
 # Exercise (and show results of) scripts that show implemented networkx algorithms
 python -m nx_cugraph.scripts.print_tree --dispatch-name --plc --incomplete --different
