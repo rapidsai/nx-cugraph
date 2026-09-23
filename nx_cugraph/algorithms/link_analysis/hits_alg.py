@@ -17,13 +17,20 @@ from nx_cugraph.utils import (
 __all__ = ["hits"]
 
 
+_hits_extra_params = {
+    'weight : string or None, optional (default="weight")': (
+        "The edge attribute to use as the edge weight."
+    ),
+    **_dtype_param,
+}
+if _nxver < (3, 7):
+    _hits_extra_params["method : str, optional (default='power_iteration')"] = (
+        "The HITS implementation to use. Only 'power_iteration' is supported."
+    )
+
+
 @networkx_algorithm(
-    extra_params={
-        'weight : string or None, optional (default="weight")': (
-            "The edge attribute to use as the edge weight."
-        ),
-        **_dtype_param,
-    },
+    extra_params=_hits_extra_params,
     version_added="23.12",
     _plc="hits",
 )

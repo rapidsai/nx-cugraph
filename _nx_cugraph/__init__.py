@@ -210,6 +210,9 @@ _info = {
     },
     "additional_parameters": {
         # BEGIN: additional_parameters
+        "adjacency_matrix": {
+            "format : str, optional (default='csr')": "The type of matrix to return. See `to_scipy_sparse_array` for supported values.",
+        },
         "all_pairs_bellman_ford_path": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
         },
@@ -252,6 +255,7 @@ _info = {
         },
         "hits": {
             "dtype : dtype or None, optional": "The data type (np.float32, np.float64, or None) to use for the edge weights in the algorithm. If None, then dtype is determined by the edge values.",
+            "method : str, optional (default='power_iteration')": "The HITS implementation to use. Only 'power_iteration' is supported.",
             'weight : string or None, optional (default="weight")': "The edge attribute to use as the edge weight.",
         },
         "katz_centrality": {
