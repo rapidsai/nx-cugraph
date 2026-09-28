@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 import cupy as cp
 import networkx as nx
@@ -17,13 +17,20 @@ from nx_cugraph.utils import (
 __all__ = ["hits"]
 
 
+_hits_extra_params = {
+    'weight : string or None, optional (default="weight")': (
+        "The edge attribute to use as the edge weight."
+    ),
+    **_dtype_param,
+}
+if _nxver < (3, 7):
+    _hits_extra_params["method : str, optional (default='power_iteration')"] = (
+        "The HITS implementation to use. Only 'power_iteration' is supported."
+    )
+
+
 @networkx_algorithm(
-    extra_params={
-        'weight : string or None, optional (default="weight")': (
-            "The edge attribute to use as the edge weight."
-        ),
-        **_dtype_param,
-    },
+    extra_params=_hits_extra_params,
     version_added="23.12",
     _plc="hits",
 )
@@ -34,9 +41,14 @@ def hits(
     nstart=None,
     normalized=True,
     *,
+    method="power_iteration",
     weight="weight",
     dtype=None,
 ):
+    if method != "power_iteration":
+        raise NotImplementedError(
+            "nx-cugraph only supports method='power_iteration' for hits"
+        )
     G = _to_graph(G, weight, 1, np.float32)
     if (N := len(G)) == 0:
         return {}, {}
@@ -67,3 +79,20 @@ def hits(
         G._nodearrays_to_dict(node_ids, hubs),
         G._nodearrays_to_dict(node_ids, authorities),
     )
+
+
+@hits._can_run
+def _(
+    G,
+    max_iter=100,
+    tol=1.0e-8,
+    nstart=None,
+    normalized=True,
+    *,
+    method="power_iteration",
+    weight="weight",
+    dtype=None,
+):
+    if method != "power_iteration":
+        return "nx-cugraph only supports method='power_iteration' for hits"
+    return True
