@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 [flake8]
@@ -15,4 +15,5 @@ per-file-ignores =
     __init__.py:F401,F403,
     _nx_cugraph/__init__.py:E501,
     nx_cugraph/__init__.py:E402,F401,F403,
+    scripts/update_readme.py:E501,
     benchmarks/pytest-based/create_results_summary_page.py:E501,W605

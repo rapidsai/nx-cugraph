@@ -1,15 +1,19 @@
 #!/usr/bin/env python
-# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 import argparse
+import os
 import re
+import urllib.error
 import urllib.request
 import zlib
 from collections import namedtuple
+from email.utils import formatdate, parsedate_to_datetime
 from pathlib import Path
 from warnings import warn
 
 _objs_file_url = "https://networkx.org/documentation/stable/objects.inv"
+_objs_file_header = b"# Sphinx inventory version 2\n"
 
 # See: https://sphobjinv.readthedocs.io/en/stable/syntax.html
 DocObject = namedtuple(
@@ -84,7 +88,7 @@ def main(readme_file, objects_filename):
     # We might be better off using a library like that, but roll our own for now.
     with Path(objects_filename).open("rb") as objects_file:
         line = objects_file.readline()
-        if line != b"# Sphinx inventory version 2\n":
+        if line != _objs_file_header:
             raise RuntimeError(f"Bad line in objects.inv:\n\n{line}")
         line = objects_file.readline()
         if line != b"# Project: NetworkX\n":
@@ -199,19 +203,49 @@ def main(readme_file, objects_filename):
     return text
 
 
+def download_objs_file(request):
+    """Return the contents and the Last-Modified header of the requested objects.inv."""
+    with urllib.request.urlopen(request, timeout=30) as response:
+        data = response.read()
+        last_modified = response.headers.get("Last-Modified")
+    if not data.startswith(_objs_file_header):
+        raise RuntimeError(f"Bad objects.inv downloaded from {request.full_url}")
+    return data, last_modified
+
+
 def find_or_download_objs_file(objs_file_dir):
     """Return the path to <objs_file_dir>/objects.inv and download it if necessary.
 
-    Download objects.inv from _objs_file_url if it does not already exist.
+    Download objects.inv from _objs_file_url if it does not already exist, and
+    replace an existing copy when the one at _objs_file_url is newer. CI always
+    starts without a copy, so a stale one makes this script generate a different
+    README.md locally than in CI. If the download fails, an existing copy is
+    used as it is.
     """
     objs_file_path = objs_file_dir / "objects.inv"
-    if not objs_file_path.exists():
-        request = urllib.request.Request(_objs_file_url)
-        with (
-            urllib.request.urlopen(request) as response,
-            Path(objs_file_path).open("wb") as out,
-        ):
-            out.write(response.read())
+    request = urllib.request.Request(_objs_file_url)
+    if objs_file_path.exists():
+        # The modification time is the server's Last-Modified (set below), so
+        # the server answers "304 Not Modified" unless it has a newer file.
+        mtime = objs_file_path.stat().st_mtime
+        request.add_header("If-Modified-Since", formatdate(mtime, usegmt=True))
+    try:
+        data, last_modified = download_objs_file(request)
+    except (OSError, RuntimeError) as exc:
+        if not objs_file_path.exists():
+            raise
+        # urllib raises for "304 Not Modified" too, which is not a failure.
+        if not (isinstance(exc, urllib.error.HTTPError) and exc.code == 304):
+            warn(
+                f"Unable to update {objs_file_path} ({exc}); using the existing "
+                "copy, which may be out of date.",
+                stacklevel=0,
+            )
+        return objs_file_path
+    objs_file_path.write_bytes(data)
+    if last_modified is not None:
+        mtime = parsedate_to_datetime(last_modified).timestamp()
+        os.utime(objs_file_path, (mtime, mtime))
     return objs_file_path
 
 
