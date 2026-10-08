@@ -49,7 +49,7 @@ repos:
     rev: v3.19.1
     hooks:
       - id: pyupgrade
-        args: [--py311-plus]
+        args: [--py312-plus]
   - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
