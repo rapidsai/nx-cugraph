@@ -51,7 +51,7 @@ repos:
       - id: pyupgrade
         args: [--py312-plus]
   - repo: https://github.com/psf/black
-    rev: 25.1.0
+    rev: 26.10.0
     hooks:
       - id: black
       # - id: black-jupyter  # Consider adding this

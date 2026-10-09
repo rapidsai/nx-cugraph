@@ -79,7 +79,7 @@ matrix-entry = "cuda_suffixed=true;use_cuda_wheels=true"
 
 [tool.black]
 line-length = 88
-target-version = ["py312", "py313"]
+target-version = ["py312", "py313", "py314"]
 
 [tool.isort]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
