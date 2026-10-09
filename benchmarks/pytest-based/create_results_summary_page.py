@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 
@@ -167,8 +167,7 @@ if __name__ == "__main__":
         "soc-livejournal1": ["4,847,571", "68,993,773", "Yes"],
     }
 
-    print(
-        """
+    print("""
     <html>
     <head>
     <style>
@@ -215,18 +214,15 @@ if __name__ == "__main__":
     <table>
     <thead>
     <tr>
-        <th>Dataset<br>Nodes<br>Edges<Br>Directed</th>"""
-    )
+        <th>Dataset<br>Nodes<br>Edges<Br>Directed</th>""")
     for ds in ordered_datasets:
         print(
             f"      <th>{ds}<br>{dataset_meta[ds][0]}<br>{dataset_meta[ds][1]}<br>{dataset_meta[ds][2]}<br></th>"
         )
-    print(
-        """   </tr>
+    print("""   </tr>
     </thead>
     <tbody>
-    """
-    )
+    """)
     for algo_name in sorted(benchmarks):
         algo_runs = benchmarks[algo_name]
         print("   <tr>")
@@ -244,7 +240,7 @@ if __name__ == "__main__":
                 if dataset in datasets_in_both:
                     cugraph_runtime = cugraph_algo_runs[dataset]
                     networkx_runtime = networkx_algo_runs[dataset]
-                    (speedup, runtime_delta) = compute_perf_vals(
+                    speedup, runtime_delta = compute_perf_vals(
                         cugraph_runtime=cugraph_runtime,
                         networkx_runtime=networkx_runtime,
                     )
@@ -262,8 +258,7 @@ if __name__ == "__main__":
             for _ in range(len(ordered_datasets)):
                 print("      <td></td>")
         print("   </tr>")
-    print(
-        """
+    print("""
     </tbody>\n</table>
     <div class="footer-main">
         <div class="box1">
@@ -273,7 +268,6 @@ if __name__ == "__main__":
                 <li><strong>Speed-up of using nx-cugraph</strong></li>
                 <li><strong>Time-delta</strong></li>
             </ul>
-        </div>"""
-    )
+        </div>""")
     get_system_info()
     print("""</div>\n</div>\n</html>""")

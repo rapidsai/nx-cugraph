@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 import itertools
 from collections import defaultdict
@@ -152,7 +152,7 @@ def relabel_nodes(G, mapping, copy=True):
                 # Drop duplicates. This relies heavily on `_groupby`.
                 # It has not been compared to alternative implementations.
                 # I wonder if there are ways to use assignment using duplicate indices.
-                (stacked, ind, inv) = cp.unique(
+                stacked, ind, inv = cp.unique(
                     stacked_dup, axis=1, return_index=True, return_inverse=True
                 )
                 if ind.dtype != int_dtype:

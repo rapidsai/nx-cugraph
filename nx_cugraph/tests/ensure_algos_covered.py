@@ -1,9 +1,10 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 """Ensure that all functions wrapped by @networkx_algorithm were called.
 
 This file is run by CI and should not normally be run manually.
 """
+
 import inspect
 import json
 from pathlib import Path

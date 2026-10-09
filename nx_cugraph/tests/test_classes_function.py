@@ -1,6 +1,7 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 """Test functions from nx_cugraph/classes/function.py"""
+
 import networkx as nx
 
 import nx_cugraph as nxcg
