@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -426,7 +426,7 @@ class BackendInterface:
                     if test_name.match(item_test_path):
                         item.add_marker(pytest.mark.xfail(reason=reason))
                 else:
-                    (test_name, keywords) = test_name
+                    test_name, keywords = test_name
                     if item.name == test_name and keywords.issubset(kset):
                         item.add_marker(pytest.mark.xfail(reason=reason))
             # Skip tests
@@ -435,7 +435,7 @@ class BackendInterface:
                     if test_name.match(item_test_path):
                         item.add_marker(pytest.mark.skip(reason=reason))
                 else:
-                    (test_name, keywords) = test_name
+                    test_name, keywords = test_name
                     if item.name == test_name and keywords.issubset(kset):
                         item.add_marker(pytest.mark.skip(reason=reason))
 

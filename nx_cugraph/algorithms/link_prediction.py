@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 import cupy as cp
 import networkx as nx
@@ -31,7 +31,7 @@ def jaccard_coefficient(G, ebunch=None):
         v_indices = v_indices.astype(index_dtype)
 
     else:
-        (u, v) = zip(*ebunch)
+        u, v = zip(*ebunch)
         try:
             # Convert the ebunch lists to cupy arrays for passing to PLC, possibly
             # mapping to integers if the Graph was renumbered.
@@ -42,7 +42,7 @@ def jaccard_coefficient(G, ebunch=None):
         except (KeyError, ValueError) as n:
             raise nx.NodeNotFound(f"Node {n} not in G.")
 
-    (u, v, p) = plc.jaccard_coefficients(
+    u, v, p = plc.jaccard_coefficients(
         resource_handle=plc.ResourceHandle(),
         graph=G._get_plc_graph(),
         first=u_indices,
