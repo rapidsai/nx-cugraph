@@ -452,6 +452,8 @@ def bench_k_truss(benchmark, graph_obj, backend_wrapper):
     # DiGraphs are not supported
     if G.is_directed():
         G = G.to_undirected()
+    # k_truss rejects self-loops; strip them so the timed call can run
+    G.remove_edges_from(nx.selfloop_edges(G))
     result = benchmark.pedantic(
         target=backend_wrapper(nx.k_truss),
         args=(G,),
@@ -718,6 +720,8 @@ def bench_core_number(benchmark, graph_obj, backend_wrapper):
     # DiGraphs are not supported by nx-cugraph
     if G.is_directed():
         G = G.to_undirected()
+    # core_number rejects self-loops; strip them so the timed call can run
+    G.remove_edges_from(nx.selfloop_edges(G))
     result = benchmark.pedantic(
         target=backend_wrapper(nx.core_number),
         args=(G,),
