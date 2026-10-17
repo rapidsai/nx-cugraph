@@ -1029,6 +1029,13 @@ def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
 def bench_to_numpy_array(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
 
+    # FIXME: no GPU impl; falls back to a dense NxN float64 host array.
+    # amazon0302 (262k nodes) => 512 GiB, which OOM-kills the whole run.
+    n = G.number_of_nodes()
+    dense_gib = n * n * 8 / 1024**3
+    if dense_gib > 32:
+        pytest.skip(reason=f"dense {n}x{n} float64 array = {dense_gib:.0f} GiB too large")
+
     result = benchmark.pedantic(
         target=backend_wrapper(nx.to_numpy_array),
         args=(G,),
