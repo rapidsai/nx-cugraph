@@ -402,6 +402,8 @@ def bench_hits(benchmark, graph_obj, backend_wrapper, normalized):
         args=(G,),
         kwargs=dict(
             normalized=normalized,
+            # FIXME: cugraph HITS needs ~975+ iters to reach tol=1e-8 (NX converges <100)
+            max_iter=1000,
         ),
         rounds=rounds,
         iterations=iterations,
