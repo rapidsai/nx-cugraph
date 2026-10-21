@@ -1012,7 +1012,16 @@ def bench_jaccard(benchmark, graph_obj, backend_wrapper):
     assert type(result) is list
 
 
-def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
+# Datasets where cugraph force_atlas2 is infeasible: a single iteration on
+# cit-Patents (3.77M nodes) runs >9 min and never returns (not OOM, not
+# iteration-count). Skip so a timeout kill doesn't lose the dataset's results.
+FORCEATLAS2_SKIP_DATASETS = {"cit-patents"}
+
+
+def bench_forceatlas2(benchmark, graph_obj, backend_wrapper, request):
+    ds = str(request.node.callspec.params["graph_obj"])
+    if ds in FORCEATLAS2_SKIP_DATASETS:
+        pytest.skip(reason=f"force_atlas2 infeasible on {ds} (cugraph scaling cliff)")
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
 
     result = benchmark.pedantic(
