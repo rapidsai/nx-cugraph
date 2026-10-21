@@ -1013,10 +1013,16 @@ def bench_jaccard(benchmark, graph_obj, backend_wrapper):
 
 
 # Datasets where cugraph force_atlas2 is infeasible: a single iteration on
-# cit-Patents (3.77M nodes) / soc-LiveJournal1 (4.85M nodes) runs for many
-# minutes and never returns (not OOM, not iteration-count). Skip so a timeout
-# kill doesn't lose the dataset's results.
-FORCEATLAS2_SKIP_DATASETS = {"cit-patents", "soc-livejournal1"}
+# multi-million-node graphs runs for many minutes and never returns (not OOM,
+# not iteration-count). Skip so a timeout kill doesn't lose the dataset's
+# results. cit-Patents (3.77M) and soc-LiveJournal1 (4.85M) are confirmed;
+# hollywood (1.14M) and europe_osm (50.9M) hit the same cliff.
+FORCEATLAS2_SKIP_DATASETS = {
+    "cit-patents",
+    "soc-livejournal1",
+    "hollywood",
+    "europe_osm",
+}
 
 
 def bench_forceatlas2(benchmark, graph_obj, backend_wrapper, request):
