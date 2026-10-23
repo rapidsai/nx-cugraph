@@ -82,7 +82,7 @@ channels:
 dependencies:
   checks:
     common:
-      - output_types: [conda, requirements]
+      - output_types: [conda, requirements, constraints]
         packages:
           - pre-commit
   # 'cuda_version' intentionally does not contain fallback entries... we want
@@ -123,7 +123,7 @@ dependencies:
               cuda: "13.3"
             packages:
               - cuda-version=13.3
-      - output_types: requirements
+      - output_types: [requirements, constraints]
         matrices:
           # if use_cuda_wheels=false is provided, do not add dependencies on any CUDA wheels
           # (e.g. for DLFW and pip devcontainers)
@@ -204,24 +204,24 @@ dependencies:
               - python>=3.12
   python_build_rapids:
     common:
-      - output_types: [conda, pyproject, requirements]
+      - output_types: [conda, pyproject, requirements, constraints]
         packages:
           - rapids-build-backend>=0.4.0,<0.5.0
   python_build_wheel:
     common:
-      - output_types: [conda, pyproject, requirements]
+      - output_types: [conda, pyproject, requirements, constraints]
         packages:
           - setuptools>=77.0.0
           - wheel
   test_notebook:
     common:
-      - output_types: [conda, requirements]
+      - output_types: [conda, requirements, constraints]
         packages:
           - ipython
           - notebook>=0.5.0
   test_python_common:
     common:
-      - output_types: [conda, pyproject, requirements]
+      - output_types: [conda, pyproject, requirements, constraints]
         packages:
           - pandas
           - pytest
@@ -231,7 +231,7 @@ dependencies:
           - scipy
   python_run_nx_cugraph:
     common:
-      - output_types: [conda, pyproject, requirements]
+      - output_types: [conda, pyproject, requirements, constraints]
         packages:
           - networkx>=3.2
           - numpy>=2.0,<3.0
@@ -252,7 +252,7 @@ dependencies:
     #       other packages with -cu{nn}x suffixes in this file.
     #       All RAPIDS wheel builds (including in devcontainers) expect cupy to be suffixed.
     specific:
-      - output_types: requirements
+      - output_types: constraints
         matrices:
           - matrix:
               cuda: "12.*"
@@ -262,7 +262,7 @@ dependencies:
           - matrix:
             packages:
               - &cupy_cu13 cupy-cuda13x>=14.0.1,!=14.1.0
-      - output_types: pyproject
+      - output_types: [pyproject, requirements]
         matrices:
           - matrix:
               cuda: "12.*"
@@ -290,7 +290,7 @@ dependencies:
         packages:
           - &cudf_unsuffixed cudf==26.12.*,>=0.0.0a0
     specific:
-      - output_types: [pyproject, requirements]
+      - output_types: [pyproject, requirements, constraints]
         matrices:
           - matrix:
               cuda: "12.*"
@@ -311,12 +311,12 @@ dependencies:
       - output_types: conda
         packages:
           - &pylibcugraph_unsuffixed pylibcugraph==26.12.*,>=0.0.0a0
-      - output_types: requirements
+      - output_types: [requirements, constraints]
         packages:
           # pip recognizes the index as a global option for the requirements.txt file
           - --extra-index-url=https://pypi.nvidia.com
     specific:
-      - output_types: [pyproject, requirements]
+      - output_types: [pyproject, requirements, constraints]
         matrices:
           - matrix:
               cuda: "12.*"
