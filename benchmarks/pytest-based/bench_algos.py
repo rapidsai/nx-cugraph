@@ -402,6 +402,8 @@ def bench_hits(benchmark, graph_obj, backend_wrapper, normalized):
         args=(G,),
         kwargs=dict(
             normalized=normalized,
+            # FIXME: cugraph HITS needs ~975+ iters to reach tol=1e-8 (NX converges <100)
+            max_iter=1000,
         ),
         rounds=rounds,
         iterations=iterations,
@@ -452,6 +454,8 @@ def bench_k_truss(benchmark, graph_obj, backend_wrapper):
     # DiGraphs are not supported
     if G.is_directed():
         G = G.to_undirected()
+    # k_truss rejects self-loops; strip them so the timed call can run
+    G.remove_edges_from(nx.selfloop_edges(G))
     result = benchmark.pedantic(
         target=backend_wrapper(nx.k_truss),
         args=(G,),
@@ -718,6 +722,8 @@ def bench_core_number(benchmark, graph_obj, backend_wrapper):
     # DiGraphs are not supported by nx-cugraph
     if G.is_directed():
         G = G.to_undirected()
+    # core_number rejects self-loops; strip them so the timed call can run
+    G.remove_edges_from(nx.selfloop_edges(G))
     result = benchmark.pedantic(
         target=backend_wrapper(nx.core_number),
         args=(G,),
@@ -1006,7 +1012,23 @@ def bench_jaccard(benchmark, graph_obj, backend_wrapper):
     assert type(result) is list
 
 
-def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
+# Datasets where cugraph force_atlas2 is infeasible: a single iteration on
+# high-node-count graphs runs for many minutes and never returns (not OOM, not
+# iteration-count). The cliff tracks node count, not edges: cit-Patents (3.77M
+# nodes) and soc-LiveJournal1 (4.85M) hang, while hollywood (1.14M nodes, 57.5M
+# edges) completes in ~88s. Skip so a timeout kill doesn't lose the dataset's
+# results. europe_osm (50.9M nodes) is well past the confirmed threshold.
+FORCEATLAS2_SKIP_DATASETS = {
+    "cit-patents",
+    "soc-livejournal1",
+    "europe_osm",
+}
+
+
+def bench_forceatlas2(benchmark, graph_obj, backend_wrapper, request):
+    ds = str(request.node.callspec.params["graph_obj"])
+    if ds in FORCEATLAS2_SKIP_DATASETS:
+        pytest.skip(reason=f"force_atlas2 infeasible on {ds} (cugraph scaling cliff)")
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
 
     result = benchmark.pedantic(
@@ -1022,6 +1044,13 @@ def bench_forceatlas2(benchmark, graph_obj, backend_wrapper):
 
 def bench_to_numpy_array(benchmark, graph_obj, backend_wrapper):
     G = get_graph_obj_for_benchmark(graph_obj, backend_wrapper)
+
+    # FIXME: no GPU impl; falls back to a dense NxN float64 host array.
+    # amazon0302 (262k nodes) => 512 GiB, which OOM-kills the whole run.
+    n = G.number_of_nodes()
+    dense_gib = n * n * 8 / 1024**3
+    if dense_gib > 32:
+        pytest.skip(reason=f"dense {n}x{n} float64 array = {dense_gib:.0f} GiB too large")
 
     result = benchmark.pedantic(
         target=backend_wrapper(nx.to_numpy_array),
