@@ -1,3 +1,19 @@
+# nx-cugraph 26.10.00 (7 Oct 2026)
+
+### 🐛 Bug Fixes
+* Fix NetworkX 3.5+ benchmark assert and eigenvector max_iter by @jnke2016 in https://github.com/rapidsai/nx-cugraph/pull/280
+* Fix devcontainer cache version updates by @bdice in https://github.com/rapidsai/nx-cugraph/pull/281
+* Fix NetworkX 3.7 compatibility by @rlratzel in https://github.com/rapidsai/nx-cugraph/pull/288
+### 🛠️ Improvements
+* enforce 'yamllint' checks by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/273
+* ensure nightly builds always produce new packages, expand 'changed-files' lists by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/275
+* ci: avoid triggered-by-schedule and triggered-by-merge builds cancelling each other by @jameslamb in https://github.com/rapidsai/nx-cugraph/pull/282
+
+## New Contributors
+* @jnke2016 made their first contribution in https://github.com/rapidsai/nx-cugraph/pull/280
+
+**Full Changelog**: https://github.com/rapidsai/nx-cugraph/compare/v26.10.00a...release/26.10
+
 # nx-cugraph 26.08.00 (5 Aug 2026)
 
 ### 🛠️ Improvements
