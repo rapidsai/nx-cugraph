@@ -13,7 +13,7 @@ python_package_name=${package_name//-/_}
 NX_CUGRAPH_WHEELHOUSE=$(rapids-download-from-github "$(rapids-package-name "wheel_python" "$package_name" --pure --cuda "$RAPIDS_CUDA_VERSION")")
 
 # generate constraints (possibly pinning to oldest supported versions of dependencies)
-rapids-generate-pip-constraints test_python "${PIP_CONSTRAINT}" constraints
+rapids-generate-pip-constraints test_python "${PIP_CONSTRAINT}"
 
 # notes:
 #
