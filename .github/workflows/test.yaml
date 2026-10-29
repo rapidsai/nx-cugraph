@@ -34,6 +34,7 @@ jobs:
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
       run_codecov: false
       script: ci/test_python.sh
+      matrix_type: cuda-13-4-nightly,nightly
     permissions:
       actions: read
       contents: read
@@ -51,6 +52,7 @@ jobs:
       script: ci/test_wheel_nx-cugraph.sh
       # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+      matrix_type: cuda-13-4-nightly,nightly
     permissions:
       actions: read
       contents: read
