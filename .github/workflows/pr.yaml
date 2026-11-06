@@ -143,7 +143,7 @@ jobs:
     uses: rapidsai/shared-workflows/.github/workflows/build-in-devcontainer.yaml@main
     with:
       arch: '["amd64", "arm64"]'
-      cuda: '["13.3"]'
+      cuda: '["13.4"]'
       node_type: "cpu8"
       env: |
         SCCACHE_DIST_MAX_RETRIES=inf
@@ -151,8 +151,8 @@ jobs:
         SCCACHE_DIST_FALLBACK_TO_LOCAL_COMPILE=false
       build_command: |
         sccache --zero-stats;
-        build-all -j0 --verbose 2>&1 | tee telemetry-artifacts/build.log;
-        sccache --show-adv-stats | tee telemetry-artifacts/sccache-stats.txt;
+        build-all -j0 --verbose;
+        sccache --show-adv-stats;
     permissions:
       actions: read
       contents: read
@@ -177,6 +177,7 @@ jobs:
       build-datetime: ${{ needs.build-details.outputs.build-datetime }}
       script: ci/build_python.sh
       pure-conda: true
+      matrix_type: pull-request
     permissions:
       actions: read
       contents: read
@@ -192,6 +193,7 @@ jobs:
       build_type: pull-request
       run_codecov: false
       script: ci/test_python.sh
+      matrix_type: pull-request
     permissions:
       actions: read
       contents: read
@@ -209,6 +211,7 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
+      matrix_type: pull-request
     permissions:
       actions: read
       contents: read
@@ -225,6 +228,7 @@ jobs:
       script: ci/test_wheel_nx-cugraph.sh
       # This selects "ARCH=amd64 + the latest supported Python, 1 job per major CUDA version".
       matrix_filter: map(select(.ARCH == "amd64")) | group_by(.CUDA_VER|split(".")|map(tonumber)|.[0]) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+      matrix_type: pull-request
     permissions:
       actions: read
       contents: read

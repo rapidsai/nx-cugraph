@@ -19,7 +19,7 @@
 
  * **GPU:** NVIDIA Volta architecture or later, with [compute capability](https://developer.nvidia.com/cuda-gpus) 7.0+
  * **CUDA Version:** 12.2 or higher
- * **Python Version:** 3.11 - 3.13
+ * **Python Version:** 3.12 - 3.14
  * **NetworkX Version:** minimum 3.2 (version 3.5 or higher recommended)
 
 Note: nx-cugraph is supported only on Linux
@@ -37,7 +37,7 @@ nx-cugraph can be installed with conda (via [Miniforge](https://github.com/conda
 
 ```shell
 # CUDA 13
-conda install -c rapidsai -c conda-forge nx-cugraph cuda-version=13.3
+conda install -c rapidsai -c conda-forge nx-cugraph cuda-version=13.4
 
 # CUDA 12
 conda install -c rapidsai -c conda-forge nx-cugraph cuda-verison=12.9
@@ -47,7 +47,7 @@ We also provide [nightly Conda packages](https://anaconda.org/rapidsai-nightly/n
 
 ```shell
 # CUDA 13
-conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-version=13.3
+conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-version=13.4
 
 # CUDA 12
 conda install -c rapidsai-nightly -c conda-forge nx-cugraph cuda-verison=12.9

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 """Tell NetworkX about the cugraph backend. This file can update itself:
 
@@ -12,6 +12,7 @@ or
 
 $ python _nx_cugraph/__init__.py
 """
+
 import os
 
 from _nx_cugraph._version import __version__
@@ -19,7 +20,7 @@ from _nx_cugraph._version import __version__
 # This is normally handled by packaging.version.Version, but instead of adding
 # an additional runtime dependency on "packaging", assume __version__ will
 # always be in <major>.<minor>.<build> format.
-(_version_major, _version_minor) = __version__.split(".")[:2]
+_version_major, _version_minor = __version__.split(".")[:2]
 
 # Entries between BEGIN and END are automatically generated
 _info = {

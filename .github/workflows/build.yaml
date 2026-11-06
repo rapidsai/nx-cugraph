@@ -59,6 +59,7 @@ jobs:
       script: ci/build_python.sh
       sha: ${{ inputs.sha }}
       pure-conda: true
+      matrix_type: nightly
     permissions:
       actions: read
       contents: read
@@ -96,6 +97,7 @@ jobs:
       package-name: nx-cugraph
       package-type: python
       pure-wheel: true
+      matrix_type: nightly
     permissions:
       actions: read
       contents: read
@@ -130,4 +132,4 @@ jobs:
       packages: write
     with:
       push: true
-      cuda: '["12.9", "13.3"]'
+      cuda: '["12.9", "13.4"]'
