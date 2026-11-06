@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 SHELL= /bin/bash
 
@@ -9,9 +9,6 @@ all: plugin-info readme
 plugin-info:
 	python _nx_cugraph/__init__.py
 
-objects.inv:
-	wget https://networkx.org/documentation/stable/objects.inv
-
 .PHONY: readme
-readme: objects.inv
-	python scripts/update_readme.py README.md objects.inv
+readme:
+	python scripts/update_readme.py README.md
