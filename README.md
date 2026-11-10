@@ -1,5 +1,8 @@
 # <div align="left"><img src="img/rapids_logo.png" width="90px"/>&nbsp;nx-cugraph - GPU Backend for NetworkX</div>
 
+> **Deprecation notice:** nx-cugraph is deprecated. RAPIDS 26.12 will be its last release.
+> For GPU-accelerated graph algorithms in Python, migrate to [cuGraph](https://github.com/rapidsai/cugraph).
+
 ## Description
 [nx-cugraph](https://rapids.ai/nx-cugraph) is a [backend to NetworkX](https://networkx.org/documentation/stable/backends.html) to run algorithms with zero code change GPU acceleration.
 
