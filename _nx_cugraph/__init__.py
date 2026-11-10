@@ -14,6 +14,8 @@ $ python _nx_cugraph/__init__.py
 """
 
 import os
+import warnings
+from functools import cache
 
 from _nx_cugraph._version import __version__
 
@@ -21,6 +23,20 @@ from _nx_cugraph._version import __version__
 # an additional runtime dependency on "packaging", assume __version__ will
 # always be in <major>.<minor>.<build> format.
 _version_major, _version_minor = __version__.split(".")[:2]
+
+
+@cache
+def _warn_deprecated():
+    """Warn once when nx-cugraph is imported or enabled, not merely discovered."""
+    warnings.warn(
+        # rapids-pre-commit-hooks: disable-next-line[verify-hardcoded-version]
+        "\n\nnx-cugraph is deprecated. RAPIDS 26.12 will be its last release.\n"
+        "For GPU-accelerated graph algorithms in Python, migrate to cuGraph: "
+        "https://github.com/rapidsai/cugraph\n",
+        FutureWarning,
+        stacklevel=2,
+    )
+
 
 # Entries between BEGIN and END are automatically generated
 _info = {
@@ -322,6 +338,10 @@ def get_info():
     for key in info_keys:
         del d[key]
 
+    # Hide backend API notices during NetworkX's documentation build.
+    if "_NETWORKX_BUILDING_DOCS_" in os.environ:
+        d["functions"] = {}
+
     d["default_config"] = {
         "use_compat_graphs": os.environ.get("NX_CUGRAPH_USE_COMPAT_GRAPHS", "true")
         .strip()
@@ -332,6 +352,7 @@ def get_info():
     # Enable zero-code change usage with a simple environment variable
     # by setting or updating other NETWORKX environment variables.
     if os.environ.get("NX_CUGRAPH_AUTOCONFIG", "").strip().lower() == "true":
+        _warn_deprecated()
         from itertools import chain
 
         def update_env_var(varname):

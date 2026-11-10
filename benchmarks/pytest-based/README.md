@@ -1,5 +1,8 @@
 ## `nx-cugraph` Benchmarks
 
+> **Deprecation notice:** nx-cugraph is deprecated. RAPIDS 26.12 will be its last release.
+> For GPU-accelerated graph algorithms in Python, migrate to [cuGraph](https://github.com/rapidsai/cugraph).
+
 ### Overview
 
 This directory contains a set of scripts designed to benchmark NetworkX with the `nx-cugraph` backend and deliver a report that summarizes the speed-up and runtime deltas over default NetworkX.
