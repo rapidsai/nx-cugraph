@@ -143,7 +143,17 @@ repos:
         args: ["--fix"]
       - id: verify-pyproject-license
       - id: verify-hardcoded-version
-        exclude: "(?x)\n  devcontainer[.]json$|\n  dependencies[.]yaml$|\n  ^[.]github/workflows/|\n  [.]md$|\n  pom[.]xml$|\n  ^[.]pre-commit-config[.]yaml$|\n  [.]rst$|\n  ^conda/environments/|\n  ^[.]github/ISSUE_TEMPLATE/\n|^(?:notebooks/cugraph_benchmarks/nx_cugraph_benchmark\\.ipynb)$"
+        exclude: |
+          (?x)
+            devcontainer[.]json$|
+            dependencies[.]yaml$|
+            ^[.]github/workflows/|
+            [.]md$|
+            pom[.]xml$|
+            ^[.]pre-commit-config[.]yaml$|
+            [.]rst$|
+            ^conda/environments/|
+            ^[.]github/ISSUE_TEMPLATE/
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
