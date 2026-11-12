@@ -148,6 +148,7 @@ repos:
     rev: v6.0.0
     hooks:
       - id: no-commit-to-branch
+        stages: [pre-commit]
         args: [-p, "^release/.*$|^main$"]
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
