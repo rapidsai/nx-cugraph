@@ -32,5 +32,9 @@ pyproject.toml     @rapidsai/packaging-codeowners
 # notebooks code owners
 *.ipynb @rapidsai/cugraph-notebook-codeowners
 
+# docs files updated when platform support (CUDA, Python, etc.) changes
+/CONTRIBUTING.md   @rapidsai/packaging-codeowners
+/README.md         @rapidsai/packaging-codeowners
+
 # Ops code owners
 /SECURITY.md             @rapidsai/ops-codeowners
