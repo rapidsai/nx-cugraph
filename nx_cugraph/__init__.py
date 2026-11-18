@@ -1,11 +1,13 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 from networkx.exception import *
 
 from _nx_cugraph._version import __git_commit__, __version__
-from _nx_cugraph import _check_networkx_version
+from _nx_cugraph import _check_networkx_version, _warn_deprecated
 
 _nxver: tuple[int, int] | tuple[int, int, int] = _check_networkx_version()
+
+_warn_deprecated()
 
 from . import utils
 
