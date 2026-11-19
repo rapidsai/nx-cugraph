@@ -46,6 +46,7 @@ jobs:
       enable_check_version_files_changed: false
       enable_check_version_against_tag: false
   build-details:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.branch == 'release/26.12' || github.event_name == 'push' && (github.ref == 'refs/heads/release/26.12' || startsWith(github.ref, 'refs/tags/v26.12.')) }}
     uses: rapidsai/shared-workflows/.github/workflows/compute-build-details.yaml@main
   conda-python-build:
     needs: [build-details]
@@ -125,6 +126,7 @@ jobs:
       packages: read
       pull-requests: read
   devcontainers:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.branch == 'release/26.12' || github.event_name == 'push' && (github.ref == 'refs/heads/release/26.12' || startsWith(github.ref, 'refs/tags/v26.12.')) }}
     name: Build devcontainers
     secrets: inherit  # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/build-devcontainers.yaml@main

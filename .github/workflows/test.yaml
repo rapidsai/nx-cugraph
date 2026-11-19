@@ -23,6 +23,7 @@ on:
 permissions: {}
 jobs:
   conda-python-tests:
+    if: ${{ inputs.branch == 'release/26.12' }}
     secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/conda-python-tests.yaml@main
     with:
@@ -42,6 +43,7 @@ jobs:
       packages: read
       pull-requests: read
   wheel-tests-nx-cugraph:
+    if: ${{ inputs.branch == 'release/26.12' }}
     secrets: inherit # zizmor: ignore[secrets-inherit]
     uses: rapidsai/shared-workflows/.github/workflows/wheels-test.yaml@main
     with:
