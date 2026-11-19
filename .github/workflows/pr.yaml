@@ -39,6 +39,8 @@ jobs:
         id: get-pr-info
         uses: nv-gha-runners/get-pr-info@090577647b8ddc4e06e809e264f7881650ecdccf # main
       - name: Check if nightly CI is passing
+        # main no longer has binary nightlies after the final 26.12 release.
+        if: ${{ fromJSON(steps.get-pr-info.outputs.pr-info).base.ref == 'release/26.12' }}
         uses: rapidsai/shared-actions/check_nightly_success/dispatch@main
         with:
           repo: ${{ github.repository }}
