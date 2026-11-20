@@ -11,7 +11,6 @@ jobs:
   pr-builder:
     needs:
       - build-details
-      - check-nightly-ci
       - changed-files
       - checks
       - devcontainer
@@ -27,22 +26,6 @@ jobs:
       contents: read
   build-details:
     uses: rapidsai/shared-workflows/.github/workflows/compute-build-details.yaml@main
-  check-nightly-ci:
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      id-token: write
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - name: Get PR Info
-        id: get-pr-info
-        uses: nv-gha-runners/get-pr-info@090577647b8ddc4e06e809e264f7881650ecdccf # main
-      - name: Check if nightly CI is passing
-        uses: rapidsai/shared-actions/check_nightly_success/dispatch@main
-        with:
-          repo: ${{ github.repository }}
-          target-branch: ${{ fromJSON(steps.get-pr-info.outputs.pr-info).base.ref }}
   changed-files:
     uses: rapidsai/shared-workflows/.github/workflows/changed-files.yaml@main
     with:
