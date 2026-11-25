@@ -48,6 +48,7 @@ cufile.log
 ## C++ build directories & artifacts
 CMakeFiles/
 Debug
+devcontainer-lock.json
 build/
 
 ## Eclipse IDE
