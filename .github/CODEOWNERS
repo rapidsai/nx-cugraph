@@ -30,7 +30,7 @@ python/            @rapidsai/nx-cugraph-python-codeowners
 pyproject.toml     @rapidsai/packaging-codeowners
 
 # notebooks code owners
-*.ipynb @rapidsai/cugraph-notebook-codeowners
+*.ipynb @rapidsai/nx-cugraph-python-codeowners
 
 # docs files updated when platform support (CUDA, Python, etc.) changes
 /CONTRIBUTING.md   @rapidsai/packaging-codeowners
